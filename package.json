@@ -15,5 +15,15 @@
   "bugs": {
     "url": "https://github.com/ntvinh11586/TravelAppServer/issues"
   },
-  "homepage": "https://github.com/ntvinh11586/TravelAppServer#readme"
+  "homepage": "https://github.com/ntvinh11586/TravelAppServer#readme",
+  "dependencies": {
+    "connect-mongo": "1.3.2",
+    "ejs": "2.5.6",
+    "express": "4.15.0",
+    "express-session": "1.15.1",
+    "mongoose": "4.8.5",
+    "passport": "0.3.2",
+    "passport-facebook": "2.1.1",
+    "passport-twitter": "1.0.4"
+  }
 }
