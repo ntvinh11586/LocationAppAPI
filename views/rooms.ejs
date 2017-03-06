@@ -13,7 +13,7 @@
 			let socket = io('<%= host %>' + '/roomslist');
 			let newRoomInput = $("input[name='roomName']");
 
-			let renderChatRooms = chatrooms => {
+			let renderNewLocation = chatrooms => {
 				let roomsListDiv = $('#roomsListUL');
 				let listStr = '';
 				for (let cat of chatrooms) {
@@ -22,14 +22,12 @@
 				roomsListDiv.html('').append(listStr);
 			}
 
-			console.log("abc");
-
 			// Get a list of chatrooms
 			socket.emit('getChatrooms');
 
 			// Event listener for chatRoomsList
 			socket.on('chatRoomsList', chatrooms => {
-				renderChatRooms(JSON.parse(chatrooms));
+				renderNewLocation(JSON.parse(chatrooms));
 			});
 
 			$('#createBtn').on('click', () => {

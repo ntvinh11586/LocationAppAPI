@@ -9,51 +9,53 @@ module.exports = () => {
       '/': (req, res, next) => {
         res.render('login');
       },
-      '/rooms': [h.isAuthenticated, (req, res, next) => {
-        res.render('rooms', {
-            user: req.user,
-            host: config.host
-        });
+      // '/rooms': [h.isAuthenticated, (req, res, next) => {
+      //   res.render('rooms', {
+      //       user: req.user,
+      //       host: config.host
+      //   });
+      // }],
+      // '/chat/:id': [h.isAuthenticated, (req, res, next) => {
+      //   // Find a chatroom with the given id
+      //   // Render it if the d is found
+      //   let getRoom = h.findRoomById(req.app.locals.chatrooms, req.params.id);
+      //   if (getRoom === undefined) {
+      //     return next();
+      //   } else {
+      //     res.render('chatroom', {
+      //       user: req.user,
+      //       host: config.host,
+      //       room: getRoom.room,
+      //       roomID: getRoom.roomID
+      //     });
+      //   }
+      // }],
+      '/user': [h.isAuthenticated, (req, res, next) => {
+        res.setHeader('content-type', 'application/json');
+        res.send(req.user);
       }],
-      '/chat/:id': [h.isAuthenticated, (req, res, next) => {
-        // Find a chatroom with the given id
-        // Render it if the d is found
-        let getRoom = h.findRoomById(req.app.locals.chatrooms, req.params.id);
-        if (getRoom === undefined) {
-          return next();
-        } else {
-          res.render('chatroom', {
-            user: req.user,
-            host: config.host,
-            room: getRoom.room,
-            roomID: getRoom.roomID
-          });
-        }
+      '/locations': [h.isAuthenticated, (req, res, next) => {
+        res.render('locations', {
+          user: req.user,
+          host: config.host
+        })
       }],
-      '/getsession': (req, res, next) => {
-        res.send("My favourite color: " + req.session.favColor);
-      },
-      '/setsession': (req, res, next) => {
-        req.session.favColor = "Red",
-        res.send("Session Set");
-      },
       '/auth/facebook': passport.authenticate('facebook'),
       '/auth/facebook/callback': passport.authenticate('facebook', {
-        successRedirect: '/rooms',
+        successRedirect: '/user',
         failureRedirect: '/'
       }),
       '/auth/twitter': passport.authenticate('twitter'),
       '/auth/twitter/callback': passport.authenticate('twitter', {
-        successRedirect: '/rooms',
+        successRedirect: '/user',
         failureRedirect: '/'
       }),
       '/logout': (req, res, next) => {
         req.logout();
-        res.redirect('/');
+        res.send("Logout successfully!");
       }
     },
     'post': {
-
     },
     'NA': (req, res, next) => {
       res.status(404).sendFile(process.cwd() + '/views/404.htm');
