@@ -25,7 +25,7 @@
 
 `BASE_URL = "http://localhost:3000"`
 
-**REST API**:
+**RESTful API**:
 
 `GET /`: Mount point.
 
@@ -48,4 +48,10 @@
 
 **Socket API**
 
-Comming soon...
+Connection `/locations`:
+- Usecase 1: Get current location: `emit: getCurrentLocation` -> `on: getLocation`.
+  - Request: None.
+  - Response: Current location (x, y).
+- Usecase 2: Create new location and broadcast back: `emit: newLocation` -> `on: getLocation`.
+  - Request: New location (x, y).
+  - Response: New location (x, y) to current client and broadcast client.
