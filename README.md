@@ -20,20 +20,28 @@
 ~~~~
 
 #API
+
 **REST API**:
+
 `GET /`: Mount point.
+
 `GET /auth/facebook`: Authenticate with FB.
+
 `GET /auth/facebook/callback`: Callback after doing FB authentication.
 - Success: `/user`.
 - Failure: `/`.
+
 `GET /auth/twitter`: Authenticate with Twitter.
+
 `GET /auth/twitter/callback`: Callback after doing Twitter authentication.
 - Success: `/user`.
 - Failure: `/`.
+
 `GET /user`: Get current user account information.
 - Required: Authenticated.
 - Request: `none`.
 - Response: ["id", "displayName", "photos"].
 
 **Socket API**
+
 Comming soon...
