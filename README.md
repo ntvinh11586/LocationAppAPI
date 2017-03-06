@@ -1,5 +1,5 @@
 #Development configuration
-~~~~
+~~~~json
 {
   "host": "http://localhost:3000",
   "dbURI": "mongodb://ntvinh11586:qwertyuiop@ds119250.mlab.com:19250/travelappdb",
@@ -21,6 +21,10 @@
 
 #API
 
+**Header**
+
+`BASE_URL = "http://localhost:3000"`
+
 **REST API**:
 
 `GET /`: Mount point.
@@ -40,7 +44,7 @@
 `GET /user`: Get current user account information.
 - Required: Authenticated.
 - Request: `none`.
-- Response: ["id", "displayName", "photos"].
+- Response: `["id", "displayName", "photos"]`.
 
 **Socket API**
 
