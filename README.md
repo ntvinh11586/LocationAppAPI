@@ -55,3 +55,11 @@ Connection `/locations`:
 - Usecase 2: Create new location and broadcast back: `emit: newLocation` -> `on: getLocation`.
   - Request: New location (x, y).
   - Response: New location (x, y) to current client and broadcast client.
+
+Example for request and response `New location` object pattern: 
+~~~~json
+{
+  x: 1234, 
+  y: 5678
+}
+~~~~
