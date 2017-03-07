@@ -49,11 +49,11 @@
 Example: Response Object from `GET /user`
 ~~~~json
 {
-  _id: "58bca98c8289adaf100778a5",
-  profileId: "666087390237404",
-  fullName: "Vinh Nguyen",
-  profilePic: "https://scontent.xx.fbcdn.net/v/t1.0-1/p50x50/13139129_529432210569590_7029118375391825969_n.jpg?oh=0dbb02395acbe76603827125efcd5c94&oe=59729825",
-  __v: 0
+  "_id": "58bca98c8289adaf100778a5",
+  "profileId": "666087390237404",
+  "fullName": "Vinh Nguyen",
+  "profilePic": "https://scontent.xx.fbcdn.net/v/t1.0-1/p50x50/13139129_529432210569590_7029118375391825969_n.jpg?oh=0dbb02395acbe76603827125efcd5c94&oe=59729825",
+  "__v": 0
 }
 ~~~~
 
