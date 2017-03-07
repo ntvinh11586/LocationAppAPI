@@ -1,4 +1,5 @@
 #Development configuration
+
 ~~~~json
 {
   "host": "http://localhost:3000",
@@ -30,12 +31,14 @@
 `GET /`: Mount point.
 
 `GET /auth/facebook`: Authenticate with FB.
+- Success: If users connect FB successfully, this route will redirect to `GET /auth/facebook/callback`.
 
 `GET /auth/facebook/callback`: Callback after doing FB authentication.
 - Success: Redirect to `/user` and response object declared in `user`.
 - Failure: Redirect to `/`.
 
 `GET /auth/twitter`: Authenticate with Twitter.
+- Success: If users connect Twitter successfully, this route will redirect to `GET /auth/twitter/callback`.
 
 `GET /auth/twitter/callback`: Callback after doing Twitter authentication.
 - Success: Redirect to `/user` and response object declared in `user`.
@@ -59,10 +62,10 @@ Example: Response Object from `GET /user`
 
 **Socket API**
 
-Connection `/locations`:
+Connection `/locations` (for more information how to use this routes, please see this implement in `/views/locations`:
 - Usecase 1: Get current location: `emit: getCurrentLocation` -> `on: getLocation`.
   - Request: None.
-  - Response: Current location (x, y).
+  - Response: Current location (x, y) in system.
 - Usecase 2: Create new location and broadcast back: `emit: newLocation` -> `on: getLocation`.
   - Request: New location (x, y).
   - Response: New location (x, y) to current client and broadcast client.
