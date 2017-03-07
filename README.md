@@ -56,10 +56,10 @@ Connection `/locations`:
   - Request: New location (x, y).
   - Response: New location (x, y) to current client and broadcast client.
 
-Example for request and response `New location` object pattern: 
+Example: Request and Response Object `New location`: 
 ~~~~json
 {
-  x: 1234, 
-  y: 5678
+  "x": "1234", 
+  "y": "5678"
 }
 ~~~~
