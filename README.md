@@ -32,14 +32,14 @@
 `GET /auth/facebook`: Authenticate with FB.
 
 `GET /auth/facebook/callback`: Callback after doing FB authentication.
-- Success: `/user`.
-- Failure: `/`.
+- Success: Redirect to `/user` and response object declared in `user`.
+- Failure: Redirect to `/`.
 
 `GET /auth/twitter`: Authenticate with Twitter.
 
 `GET /auth/twitter/callback`: Callback after doing Twitter authentication.
-- Success: `/user`.
-- Failure: `/`.
+- Success: Redirect to `/user` and response object declared in `user`.
+- Failure: Redirect to `/`.
 
 `GET /user`: Get current user account information.
 - Required: Authenticated.
