@@ -60,6 +60,10 @@ module.exports = () => {
       }
     },
     'post': {
+      '/demopost': (req, res, next) => {
+        res.setHeader('content-type', 'application/json');
+        res.send({name:"demopost", version:"1"});
+      }
     },
     'NA': (req, res, next) => {
       res.status(404).sendFile(process.cwd() + '/views/404.htm');
