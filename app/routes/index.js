@@ -53,6 +53,10 @@ module.exports = () => {
       '/logout': (req, res, next) => {
         req.logout();
         res.send("Logout successfully!");
+      },
+      '/demo': (req, res, next) => {
+        res.setHeader('content-type', 'application/json');
+        res.send({name:"demo", version:"1"});
       }
     },
     'post': {
