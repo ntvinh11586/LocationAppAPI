@@ -1,6 +1,12 @@
 'use strict';
 const config = require('../config');
-const Mongoose = require('mongoose').connect(config.dbURI);
+const Mongoose = require('mongoose');
+
+// Fix deprecation warning mpromise
+// by using the default promise of Node.js.
+// https://github.com/Automattic/mongoose/issues/4291
+Mongoose.Promise = global.Promise;
+Mongoose.connect(config.dbURI);
 
 // Log an error if the connection fails
 Mongoose.connection.on('error', error => {
