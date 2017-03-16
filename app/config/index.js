@@ -20,6 +20,6 @@ if (process.env.NODE_ENV === 'production') {
     }
   }
 } else {
-  // Ofer dev stage settings and data
+  // Offer dev stage settings and data
   module.exports = require('./development.json');
 }

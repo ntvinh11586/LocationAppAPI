@@ -76,101 +76,10 @@ let isAuthenticated = (req, res, next) => {
   }
 }
 
-// Find a chatroom by a given name
-let findRoomByname = (allrooms, room) => {
-  let findRoom = allrooms.findIndex((element, index, array) => {
-    if (element.room === room) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-  return findRoom > -1 ? true : false;
-}
-
-// A function that generates a unique roomID
-let randomHex = () => {
-  return crypto.randomBytes(24).toString('hex');
-}
-
-// Find a chatrom with a given ID
-let findRoomById = (allrooms, roomID) => {
-  return allrooms.find((element, index, array) => {
-    if (element.roomID === roomID) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-}
-
-// Add a user to a chatroom
-let addUserToRoom = (allrooms, data, socket) => {
-  // Get the room object
-  let getRoom = findRoomById(allrooms, data.roomID);
-  if (getRoom !== undefined) {
-    // Get the active user's ID (ObjectID) as used in session
-    let userID = socket.request.session.passport.user;
-    // Check to see if the user already exists in the chatroom
-    let checkUser = getRoom.users.findIndex((element, index, array) => {
-      if (element.userID === userID) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-
-    // If the user is already present in th room, remove him first
-    if (checkUser > -1) {
-      getRoom.users.splice(checkUser, 1);
-    }
-
-    // Push the user into the room's users array
-    getRoom.users.push({
-      socketID: socket.id,
-      userID,
-      user: data.user,
-      userPic: data.userPic
-    });
-
-    // Join the room channel
-    socket.join(data.roomID);
-
-    // Return the updated room object
-    return getRoom;
-  }
-}
-
-// Find and purge the user when a socket disconnects
-let removeUserFromRoom = (allrooms, socket) => {
-  for (let room of allrooms) {
-    // Find the user
-    let findUser = room.users.findIndex((element, index, array) => {
-      if (element.socketID === socket.id) {
-        return true;
-      } else {
-        return false;
-      }
-      // return element.socketID === socket.id ? true : false
-    });
-
-    if (findUser > -1) {
-      socket.leave(room.ID);
-      room.users.splice(findUser, 1);
-      return room;
-    }
-  }
-}
-
 module.exports = {
   route,
   findOne,
   createNewUser,
   findById,
-  isAuthenticated,
-  findRoomByname,
-  randomHex,
-  findRoomById,
-  addUserToRoom,
-  removeUserFromRoom
+  isAuthenticated
 }
