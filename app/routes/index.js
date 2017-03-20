@@ -6,18 +6,12 @@ const config = require('../config');
 module.exports = () => {
   let routes = {
     'get': {
-      '/': (req, res, next) => {
-        res.render('login');
-      },
+      // '/': (req, res, next) => {
+      //   res.render('login');
+      // },
       '/user': [h.isAuthenticated, (req, res, next) => {
         res.setHeader('content-type', 'application/json');
         res.send(req.user);
-      }],
-      '/locations': [h.isAuthenticated, (req, res, next) => {
-        res.render('locations', {
-          user: req.user,
-          host: config.host
-        })
       }],
       '/auth/facebook': passport.authenticate('facebook'),
       '/auth/facebook/callback': passport.authenticate('facebook', {
