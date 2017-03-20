@@ -1,39 +1,13 @@
 'use strict';
-const h = require('../helpers');
-const passport = require('passport');
-const config = require('../config');
+const express = require("express");
+const router = express.Router();
 
-module.exports = () => {
-  let routes = {
-    'get': {
-      // '/': (req, res, next) => {
-      //   res.render('login');
-      // },
-      '/user': [h.isAuthenticated, (req, res, next) => {
-        res.setHeader('content-type', 'application/json');
-        res.send(req.user);
-      }],
-      '/auth/facebook': passport.authenticate('facebook'),
-      '/auth/facebook/callback': passport.authenticate('facebook', {
-        successRedirect: '/user',
-        failureRedirect: '/'
-      }),
-      '/auth/twitter': passport.authenticate('twitter'),
-      '/auth/twitter/callback': passport.authenticate('twitter', {
-        successRedirect: '/user',
-        failureRedirect: '/'
-      }),
-      '/logout': (req, res, next) => {
-        req.logout();
-        res.send("Logout successfully!");
-      }
-    },
-    'post': {
-    },
-    'NA': (req, res, next) => {
-      res.status(404).sendFile(process.cwd() + '/views/404.htm');
-    }
-  }
+const renderRouter = require("./render");
+const demoRouter = require("./demo");
+const authRouter = require("./auth");
 
-  return h.route(routes);
-}
+router.use('/', renderRouter);
+router.use('/demo', demoRouter);
+router.use('/auth', authRouter);
+
+module.exports = router;
