@@ -1,4 +1,4 @@
-#Development configuration
+# Development configuration
 
 ~~~~json
 {
@@ -20,13 +20,13 @@
 }
 ~~~~
 
-#API
+# API
 
-**Header**
+## Header
 
 `BASE_URL = "http://localhost:3000"`
 
-**RESTful API**:
+## RESTful API
 
 `GET /`: Mount point.
 
@@ -60,7 +60,7 @@ Example: Response Object from `GET /user`
 }
 ~~~~
 
-**Socket API**
+## Socket API
 
 Connection `/locations` (for more information how to use this routes, please see this implement in `/views/locations`:
 - Usecase 1: Get current location: `emit: getCurrentLocation` -> `on: getLocation`.
@@ -70,10 +70,10 @@ Connection `/locations` (for more information how to use this routes, please see
   - Request: New location (x, y).
   - Response: New location (x, y) to current client and broadcast client.
 
-Example: Request and Response Object `New location`: 
+Example: Request and Response Object `New location`:
 ~~~~json
 {
-  "x": "1234", 
+  "x": "1234",
   "y": "5678"
 }
 ~~~~

@@ -3,7 +3,7 @@ const passport = require('passport');
 const config = require('../config');
 const h = require('../helpers');
 const FacebookStrategy = require('passport-facebook').Strategy;
-const TwitterStrategy = require('passport-twitter') .Strategy;
+const TwitterStrategy = require('passport-twitter').Strategy;
 
 module.exports = () => {
   // serialize and deserialize - 052
