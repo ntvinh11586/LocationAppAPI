@@ -12,7 +12,7 @@ let ioServer = app => {
   const server = require('http').Server(app);
   const io = require('socket.io')(server);
 
-  // add sessions
+  // Add sessions for Socket.io
   // http://stackoverflow.com/a/25618636/5557789
   io.use((socket, next) => {
     require('./session')(socket.request, {}, next);

@@ -10,10 +10,14 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
+// Configure sessions
 app.use(locationAppAPI.sessions);
+
+// Configure passport.js
 app.use(passport.initialize());
 app.use(passport.session());
 
+// routes' pointer
 app.use('/', locationAppAPI.router);
 
 locationAppAPI.ioServer(app).listen(app.get('port'), () => {

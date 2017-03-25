@@ -6,23 +6,19 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 
 module.exports = () => {
-  // serialize and deserialize - 052
+  // Serialize and deserialize for Sessions
+  // https://github.com/jaredhanson/passport#sessions
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
-
-  // serialize and deserialize - 052
+  
   passport.deserializeUser((id, done) => {
-    // Find the user using the _id
     h.findById(id)
         .then(user => done(null, user))
-        .catch(error => console.log('Error when deserialize the user'))
+        .catch(error => console.log('Error when deserialize users'));
   });
 
   let authProcessor = (accessToken, refreshToken, profile, done) => {
-    // Find a user in the local db using profile.id
-    // If the user is found, return the user data using the done()
-    // If the user is not found, create one in the local db and return
     h.findOne(profile.id)
       .then(result => {
         if (result) {
@@ -31,7 +27,7 @@ module.exports = () => {
           // Create a new user and return
           h.createNewUser(profile)
               .then(newChatUser => done(null, newChatUser))
-              .catch(error => console.log('error when creating new user'))
+              .catch(error => console.log('Error when creating new user'));
         }
       });
   }
