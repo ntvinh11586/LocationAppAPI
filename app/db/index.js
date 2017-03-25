@@ -14,11 +14,11 @@ Mongoose.connection.on('error', error => {
 });
 
 // Create a Schema that defines the structure for storing user data
-const chatUser = new Mongoose.Schema({
-  profileId: String,
-  fullName: String,
-  profilePic: String
-});
+// const chatUser = new Mongoose.Schema({
+//   profileId: String,
+//   fullName: String,
+//   profilePic: String
+// });
 
 const newfeed = new Mongoose.Schema({
   title: String,
@@ -45,7 +45,7 @@ const comment = new Mongoose.Schema({
 });
 
 // Turn the schema into a usable model
-let userModel = Mongoose.model('User', chatUser);
+// let userModel = Mongoose.model('User', chatUser);
 let newfeedModel = Mongoose.model('Newfeed', newfeed);
 let commentModel = Mongoose.model('Comment', comment);
 
