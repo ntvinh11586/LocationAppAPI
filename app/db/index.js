@@ -25,16 +25,33 @@ const newfeed = new Mongoose.Schema({
   image: String,
   description: String,
   location: String,
-  rate: Number
+  rate: Number,
+  comments: [
+    {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: "Comment"
+    }
+  ]
+});
+
+const comment = new Mongoose.Schema({
+  description: String
+  // author: {
+  //   id: {
+  //     type: Mongoose.Schema.Types.ObjectId,
+  //     ref: "User"
+  //   }
+  // }
 });
 
 // Turn the schema into a usable model
-let userModel = Mongoose.model('chatUser', chatUser);
-let newfeedModel = Mongoose.model('newfeed', newfeed);
-
+let userModel = Mongoose.model('User', chatUser);
+let newfeedModel = Mongoose.model('Newfeed', newfeed);
+let commentModel = Mongoose.model('Comment', comment);
 
 module.exports = {
   Mongoose,
   userModel,
-  newfeedModel
+  newfeedModel,
+  commentModel
 }
