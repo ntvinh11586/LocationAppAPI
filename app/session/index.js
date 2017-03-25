@@ -17,6 +17,13 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = session({
     secret: config.sessionSecret,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    // dev mode: open store sessions for testing how session works.
+    store: new MongoStore({
+      mongooseConnection: db.Mongoose.connection
+    })
+    // Default dev mode:
+    // http://stackoverflow.com/a/40396102/5557789
+    // saveUninitialized: true
   });
 }
