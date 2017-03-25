@@ -51,7 +51,7 @@ let commentModel = Mongoose.model('Comment', comment);
 
 module.exports = {
   Mongoose,
-  userModel,
+  // userModel,
   newfeedModel,
   commentModel
 }
