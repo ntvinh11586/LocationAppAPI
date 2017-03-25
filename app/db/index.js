@@ -20,11 +20,21 @@ const chatUser = new Mongoose.Schema({
   profilePic: String
 });
 
+const newfeed = new Mongoose.Schema({
+  title: String,
+  image: String,
+  description: String,
+  location: String,
+  rate: Number
+});
+
 // Turn the schema into a usable model
 let userModel = Mongoose.model('chatUser', chatUser);
+let newfeedModel = Mongoose.model('newfeed', newfeed);
 
 
 module.exports = {
   Mongoose,
-  userModel
+  userModel,
+  newfeedModel
 }
