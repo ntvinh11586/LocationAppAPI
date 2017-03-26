@@ -3,11 +3,9 @@ var router = express.Router();
 var db = require('../db');
 
 router.post('/', (req, res) => {
-  console.log(req.query.id);
   db.newfeedModel.findById(req.query.newfeed_id, (err, newfeed) => {
     if (err) {
-      console.log(err);
-      res.send('error');
+      res.send(err);
     } else {
       var description = req.body.description;
       var comment = {
