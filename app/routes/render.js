@@ -8,10 +8,4 @@ router.get('/', (req, res, next) => {
   res.send('Welcome');
 });
 
-router.get('/location_one_user', (req, res) => {
-  res.render('location_one_user', {
-    host: config.host
-  });
-});
-
 module.exports = router;
