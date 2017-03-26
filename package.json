@@ -1,6 +1,6 @@
 {
-  "name": "travelappserver",
-  "version": "0.1.0",
+  "name": "locationappapi",
+  "version": "0.2.0",
   "description": "Thesis Application",
   "main": "server.js",
   "scripts": {
