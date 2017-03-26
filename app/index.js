@@ -12,10 +12,9 @@ let ioServer = app => {
   const server = require('http').Server(app);
   const io = require('socket.io')(server);
 
-  // add sessions
+  // Add sessions for Socket.io
   // http://stackoverflow.com/a/25618636/5557789
   io.use((socket, next) => {
-    console.log(socket.request);
     require('./session')(socket.request, {}, next);
   });
   require('./socket')(io, app);
@@ -24,7 +23,7 @@ let ioServer = app => {
 }
 
 module.exports = {
-  router: require('./routes')(),
+  router: require('./routes'),
   sessions: require('./session'),
   ioServer
 }

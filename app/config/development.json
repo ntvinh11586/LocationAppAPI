@@ -1,16 +1,16 @@
 {
   "host": "http://localhost:3000",
-  "dbURI": "mongodb://ntvinh11586:qwertyuiop@ds119250.mlab.com:19250/travelappdb",
+  "dbURI": "mongodb://luanvantnk13:datvavinh@ds139470.mlab.com:39470/locationappdb",
   "sessionSecret": "catscanfly",
   "fb": {
-    "clientID": "405870893138343",
-    "clientSecret": "b56fc7c5328cd1756917ab32574c5b5f",
+    "clientID": "739982332830059",
+    "clientSecret": "b7b79be09db86477cd1173f8e0014fd3",
     "callbackURL": "//localhost:3000/auth/facebook/callback",
     "profileFields": ["id", "displayName", "photos"]
   },
   "twitter": {
-    "consumerKey": "QwiS9OYdy5S0mKK3htfUW165t",
-    "consumerSecret": "FWKST9OPHnZqJZSjRNYFNzMYD2VFzbDPJmGi0Vb4tKVRJLS1F7",
+    "consumerKey": "pO6OqybqbYDf0IEQtB14LKKfQ",
+    "consumerSecret": "TPzSUMxeJYrG8RhjVZuKAJXbZuScL65TXgiD76k7xti9kzIotS",
     "callbackURL": "//localhost:3000/auth/twitter/callback",
     "profileFields": ["id", "displayName", "photos"]
   }

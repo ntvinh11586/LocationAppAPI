@@ -1,55 +1,19 @@
 'use strict';
-const h = require('../helpers');
-const passport = require('passport');
-const config = require('../config');
+const express = require("express");
+const router = express.Router();
 
-module.exports = () => {
-  let routes = {
-    'get': {
-      '/': (req, res, next) => {
-        res.render('login');
-      },
-      '/user': [h.isAuthenticated, (req, res, next) => {
-        res.setHeader('content-type', 'application/json');
-        res.send(req.user);
-      }],
-      '/locations': [h.isAuthenticated, (req, res, next) => {
-        res.render('locations', {
-          user: req.user,
-          host: config.host
-        })
-      }],
-      '/auth/facebook': passport.authenticate('facebook'),
-      '/auth/facebook/callback': passport.authenticate('facebook', {
-        successRedirect: '/user',
-        failureRedirect: '/'
-      }),
-      '/auth/twitter': passport.authenticate('twitter'),
-      '/auth/twitter/callback': passport.authenticate('twitter', {
-        successRedirect: '/user',
-        failureRedirect: '/'
-      }),
-      '/logout': (req, res, next) => {
-        req.logout();
-        res.send("Logout successfully!");
-      },
-      '/demo': (req, res, next) => {
-        console.log("/demo for demo get method");
-        res.setHeader('content-type', 'application/json');
-        res.send({name:"demo", version:"1"});
-      }
-    },
-    'post': {
-      '/demopost': (req, res, next) => {
-        console.log("/demopost for demo post method");
-        res.setHeader('content-type', 'application/json');
-        res.send({name:"demopost", version:"1"});
-      }
-    },
-    'NA': (req, res, next) => {
-      res.status(404).sendFile(process.cwd() + '/views/404.htm');
-    }
-  }
+const renderRouter = require("./render");
+const demoRouter = require("./demo");
+const authRouter = require("./auth");
+const newfeedRouter = require("./newfeed");
+const commentRouter = require("./comment");
+const userRouter = require("./user");
 
-  return h.route(routes);
-}
+router.use('/', renderRouter);
+router.use('/demo', demoRouter);
+router.use('/auth', authRouter);
+router.use('/newfeed', newfeedRouter);
+router.use('/comment', commentRouter);
+router.use('/user', userRouter);
+
+module.exports = router;

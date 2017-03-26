@@ -10,7 +10,7 @@
 	<script>
 		'use strict';
 		$(() => {
-			let socket = io('<%= host %>' + '/locations');
+			let socket = io('<%= host %>' + '/location_one_user');
       let newRoomInputX = $("input[name='locationx']");
 			let newRoomInputY = $("input[name='locationy']");
 
@@ -18,25 +18,28 @@
 				let locationListDiv = $('#locationListUL');
 				console.log(location);
 				if (location) {
-					let listStr = `x = ${location.x} - y = ${location.y}`
+					let listStr = `x = ${location.latitude} - y = ${location.longitude}`
 					locationListDiv.html('').append(listStr);
 				}
 			}
 
-			socket.emit('getCurrentLocation');
-			socket.on('getLocation', location => {
+			socket.emit('get_location');
+			socket.on('get_location_callback', location => {
+				console.log(location);
 				renderNewLocation(JSON.parse(location));
 			});
 
 			$('#createBtn').on('click', () => {
+				// emit
 				if (newRoomInputX.val() != '' && newRoomInputY.val() != '') {
-          let newLocation = {
-            x: newRoomInputX.val(),
-            y: newRoomInputY.val()
+          let newLatlng = {
+            latitude: newRoomInputX.val(),
+            longitude: newRoomInputY.val(),
+						_id: '58d71877f677991fe0bf574f'	// dummy users
           }
 
-					console.log(newLocation);
-					socket.emit('newLocation', newLocation);
+					console.log(newLatlng);
+					socket.emit('set_location', newLatlng);
           newRoomInputX.val('');
 					newRoomInputY.val('');
 				}
@@ -50,8 +53,6 @@
 			<h1>Location</h1>
 		</div>
 		<div class="controls">
-			<div class="userPicHolder"><img src="<%= user.profilePic %>" alt="John Doe"></div>
-			<p class="userName"><%= user.fullName %></p>
 			<a href="/auth/logout" id="logOutBtn">Logout</a>
 		</div>
 		<div class="controls">
