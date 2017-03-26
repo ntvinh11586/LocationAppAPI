@@ -38,7 +38,6 @@ router.post('/login', (req, res) => {
       res.send(err);
     } else {
       if (hasAccount) {
-        console.log(hasAccount);
         var _id = hasAccount._id;
         var token = jwt.sign({_id}, 'supersecret', {expiresIn: 10000});
         var userInfo = {

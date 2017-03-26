@@ -15,7 +15,9 @@ router.get('/info', (req, res) => {
         if (err) {
           res.send(err);
         } else {
+          console.log(user);
           var user = {
+            _id: user._id,
             username: user.username
           }
           res.json(user);

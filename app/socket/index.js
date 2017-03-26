@@ -41,15 +41,12 @@ module.exports = (io, app) => {
     });
 
     socket.on('set_location', newLatlng => {
-      console.log(newLatlng);
       db.latlngModel.findOne({_user_id: newLatlng._user_id}, (err, latlng) => {
         if (err) {
-          console.log(err);
           socket.emit('get_location_callback', JSON.stringify(latlng));
           socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
         } else {
           if (latlng) {
-            console.log(latlng);
             latlng.longitude = newLatlng.longitude;
             latlng.latitude = newLatlng.latitude;
             latlng.save();
