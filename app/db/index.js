@@ -13,12 +13,10 @@ Mongoose.connection.on('error', error => {
   console.log("MongoDB Error: ", error);
 });
 
-// Create a Schema that defines the structure for storing user data
-// const chatUser = new Mongoose.Schema({
-//   profileId: String,
-//   fullName: String,
-//   profilePic: String
-// });
+const user = new Mongoose.Schema({
+  username: String,
+  password: String
+});
 
 const newfeed = new Mongoose.Schema({
   title: String,
@@ -45,13 +43,13 @@ const comment = new Mongoose.Schema({
 });
 
 // Turn the schema into a usable model
-// let userModel = Mongoose.model('User', chatUser);
+let userModel = Mongoose.model('User', user);
 let newfeedModel = Mongoose.model('Newfeed', newfeed);
 let commentModel = Mongoose.model('Comment', comment);
 
 module.exports = {
   Mongoose,
-  // userModel,
+  userModel,
   newfeedModel,
   commentModel
 }
