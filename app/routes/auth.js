@@ -20,6 +20,7 @@ router.post('/register', (req, res) => {
         db.userModel.create({username, password}, (err, account) => {
           var token = jwt.sign({username: account.username}, 'supersecret', {expiresIn: 10000});
           var userInfo = {
+            _id: account._id,
             username: account.username,
             token: token
           }
@@ -41,6 +42,7 @@ router.post('/login', (req, res) => {
         var _id = hasAccount._id;
         var token = jwt.sign({_id}, 'supersecret', {expiresIn: 10000});
         var userInfo = {
+          _id: _id,
           username: username,
           token: token
         }
