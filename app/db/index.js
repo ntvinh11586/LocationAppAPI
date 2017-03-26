@@ -42,13 +42,24 @@ const comment = new Mongoose.Schema({
   }
 });
 
+const latlng = new Mongoose.Schema({
+  latitude: String,
+  longitude: String,
+  _user_id: {
+    type: Mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }
+});
+
 let userModel = Mongoose.model('User', user);
 let newfeedModel = Mongoose.model('Newfeed', newfeed);
 let commentModel = Mongoose.model('Comment', comment);
+let latlngModel = Mongoose.model('Latlng', latlng);
 
 module.exports = {
   Mongoose,
   userModel,
   newfeedModel,
-  commentModel
+  commentModel,
+  latlngModel
 }
