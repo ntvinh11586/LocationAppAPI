@@ -16,11 +16,11 @@ router.post("/post", (req, res) => {
 
 router.get("/get_local_auth", (req, res) => {
   var token = req.query.token;
-  jwt.verify(token, 'supersecret', function(err, decoded) {
+  jwt.verify(token, 'supersecret', (err, decoded) => {
     if (err) {
       res.send(err);
     } else {
-      res.send("Successful!");
+      res.send(decoded._id);
     }
   });
 });

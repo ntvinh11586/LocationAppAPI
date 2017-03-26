@@ -33,7 +33,7 @@ const newfeed = new Mongoose.Schema({
 });
 
 const comment = new Mongoose.Schema({
-  description: String
+  description: String,
   author: {
     id: {
       type: Mongoose.Schema.Types.ObjectId,
