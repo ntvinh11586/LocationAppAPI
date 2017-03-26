@@ -4,7 +4,7 @@ var db = require('../db');
 
 router.post('/', (req, res) => {
   console.log(req.query.id);
-  db.newfeedModel.findById(req.query.id, (err, newfeed) => {
+  db.newfeedModel.findById(req.query.newfeed_id, (err, newfeed) => {
     if (err) {
       console.log(err);
       res.send('error');
@@ -18,9 +18,8 @@ router.post('/', (req, res) => {
           console.log(err);
           res.send('error');
         } else {
-          // TODO: Implement author in here
-          // comment.author.id = req.user._id;
-          // comment.save();
+          comment.author._id = req.query.user_id; // user _id
+          comment.save();
           newfeed.comments.push(comment);
           newfeed.save();
           res.json(newfeed);

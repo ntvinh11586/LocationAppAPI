@@ -3,11 +3,11 @@ var router = express.Router();
 var db = require('../db');
 
 router.get('/:id', (req, res) => {
-  db.newfeedModel.findById(req.params.id).populate("comments").exec((err, foundCampground) => {
+  db.newfeedModel.findById(req.params.id).populate("comments").exec((err, newfeed) => {
     if (err) {
       console.log(err);
     } else {
-      res.json(foundCampground);
+      res.json(newfeed);
     }
   });
 });
