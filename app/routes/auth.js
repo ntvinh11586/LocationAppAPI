@@ -6,25 +6,6 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-// router.get('/facebook', passport.authenticate('facebook'));
-//
-// router.get('/facebook/callback', passport.authenticate('facebook', {
-//   successRedirect: '../user',
-//   failureRedirect: '/'
-// }));
-//
-// router.get('/twitter', passport.authenticate('twitter'));
-//
-// router.get('/twitter/callback', passport.authenticate('twitter', {
-//   successRedirect: '../user',
-//   failureRedirect: '/'
-// }));
-//
-// router.get('/user', h.isAuthenticated, (req, res, next) => {
-//     res.setHeader('content-type', 'application/json');
-//     res.send(req.user);
-// });
-
 router.post('/register', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;

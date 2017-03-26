@@ -34,15 +34,14 @@ const newfeed = new Mongoose.Schema({
 
 const comment = new Mongoose.Schema({
   description: String
-  // author: {
-  //   id: {
-  //     type: Mongoose.Schema.Types.ObjectId,
-  //     ref: "User"
-  //   }
-  // }
+  author: {
+    id: {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  }
 });
 
-// Turn the schema into a usable model
 let userModel = Mongoose.model('User', user);
 let newfeedModel = Mongoose.model('Newfeed', newfeed);
 let commentModel = Mongoose.model('Comment', comment);
