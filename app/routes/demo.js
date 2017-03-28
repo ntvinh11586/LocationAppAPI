@@ -10,8 +10,7 @@ router.get("/get", (req, res) => {
 
 router.post("/post", (req, res) => {
   console.log("demo POST method for /post");
-  res.setHeader('content-type', 'application/json');
-  res.send(req.body);
+  res.json(req.body);
 });
 
 router.get("/get_local_auth", (req, res) => {
