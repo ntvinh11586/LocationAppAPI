@@ -1,13 +1,12 @@
-'use strict';
-const express = require("express");
-const router = express.Router();
+const express = require('express');
+const renderRouter = require('./render');
+const demoRouter = require('./demo');
+const authRouter = require('./auth');
+const newfeedRouter = require('./newfeed');
+const commentRouter = require('./comment');
+const userRouter = require('./user');
 
-const renderRouter = require("./render");
-const demoRouter = require("./demo");
-const authRouter = require("./auth");
-const newfeedRouter = require("./newfeed");
-const commentRouter = require("./comment");
-const userRouter = require("./user");
+const router = express.Router();
 
 router.use('/', renderRouter);
 router.use('/demo', demoRouter);
