@@ -30,20 +30,20 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  var username = req.body.username;
-  var password = req.body.password;
-  db.userModel.findOne({username, password}, (err, hasAccount) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  db.userModel.findOne({ username, password }, (err, hasAccount) => {
     if (err) {
       res.send(err);
     } else {
       if (hasAccount) {
-        var _id = hasAccount._id;
-        var token = jwt.sign({_id}, 'supersecret', {expiresIn: 10000});
-        var userInfo = {
-          _id: _id,
-          username: username,
-          token: token
-        }
+        const _id = hasAccount._id;
+        const token = jwt.sign({ _id }, 'supersecret', { expiresIn: 10000 });
+        const userInfo = {
+          _id,
+          username,
+          token,
+        };
         res.json(userInfo);
       } else {
         res.send("Username or password don't match!");
@@ -52,9 +52,9 @@ router.post('/login', (req, res) => {
   });
 });
 
-router.get('/logout', (req, res, next) => {
-    req.logout();
-    res.send("Logout successfully!");
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.send('Logout successfully!');
 });
 
 module.exports = router;
