@@ -1,15 +1,15 @@
 const db = require('../db');
 
 // find a single user based on a key
-const findOne = (profileId) => {
-  return db.userModel.findOne({
+function findOne(profileId) {
+  return db.UserModel.findOne({
     profileId,
   });
-};
+}
 
-const createNewUser = (profile) => {
+function createNewUser(profile) {
   return new Promise((resolve, reject) => {
-    const newChatUser = new db.userModel({
+    const newChatUser = new db.UserModel({
       profileId: profile.id,
       fullName: profile.displayName,
       profilePic: profile.photos[0].value || '',
@@ -23,13 +23,13 @@ const createNewUser = (profile) => {
       }
     });
   });
-};
+}
 
 // serialize and deserialize - 052
 // The ES6 promisified version of findById
-const findById = (id) => {
+function findById(id) {
   return new Promise((resolve, reject) => {
-    db.userModel.findById(id, (error, user) => {
+    db.UserModel.findById(id, (error, user) => {
       if (error) {
         reject(error);
       } else {
@@ -37,7 +37,7 @@ const findById = (id) => {
       }
     });
   });
-};
+}
 
 // A middleware that checks to see if the user is authenticated & logged in
 const isAuthenticated = (req, res, next) => {

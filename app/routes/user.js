@@ -11,7 +11,7 @@ router.get('/:id', (req, res) => {
       res.send(err);
     } else {
       const _id = req.params.id;
-      db.userModel.findById(_id, (err, user) => {
+      db.UserModel.findById(_id, (err, user) => {
         if (err) {
           res.send(err);
         } else {

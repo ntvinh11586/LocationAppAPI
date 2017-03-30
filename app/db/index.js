@@ -50,14 +50,14 @@ const latlng = new Mongoose.Schema({
   },
 });
 
-const userModel = Mongoose.model('User', user);
+const UserModel = Mongoose.model('User', user);
 const newfeedModel = Mongoose.model('Newfeed', newfeed);
 const commentModel = Mongoose.model('Comment', comment);
 const latlngModel = Mongoose.model('Latlng', latlng);
 
 module.exports = {
   Mongoose,
-  userModel,
+  UserModel,
   newfeedModel,
   commentModel,
   latlngModel,

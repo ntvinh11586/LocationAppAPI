@@ -18,25 +18,23 @@ module.exports = (io, app) => {
         if (err) {
           socket.emit('get_location_callback', JSON.stringify(latlng));
           socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
+        } else if (latlng) {
+          latlng.longitude = newLatlng.longitude;
+          latlng.latitude = newLatlng.latitude;
+          latlng.save();
+          socket.emit('get_location_callback', JSON.stringify(latlng));
+          socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
         } else {
-          if (latlng) {
-            latlng.longitude = newLatlng.longitude;
-            latlng.latitude = newLatlng.latitude;
-            latlng.save();
-            socket.emit('get_location_callback', JSON.stringify(latlng));
-            socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
-          } else {
-            db.latlngModel.create(newLatlng, (err, latlng) => {
-              if (err) {
-                console.log(err);
-                socket.emit('get_location_callback', JSON.stringify(latlng));
-                socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
-              } else {
-                socket.emit('get_location_callback', JSON.stringify(latlng));
-                socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
-              }
-            });
-          }
+          db.latlngModel.create(newLatlng, (err, latlng) => {
+            if (err) {
+              console.log(err);
+              socket.emit('get_location_callback', JSON.stringify(latlng));
+              socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
+            } else {
+              socket.emit('get_location_callback', JSON.stringify(latlng));
+              socket.broadcast.emit('get_location_callback', JSON.stringify(latlng));
+            }
+          });
         }
       });
     });

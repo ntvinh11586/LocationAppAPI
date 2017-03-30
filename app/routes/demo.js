@@ -5,8 +5,7 @@ const router = express.Router();
 
 router.get('/get', (req, res) => {
   console.log('demo GET method for /get');
-  res.setHeader('content-type', 'application/json');
-  res.send({ name: 'demo', version: '2' });
+  res.json({ name: 'demo', version: '2' });
 });
 
 router.post('/post', (req, res) => {
