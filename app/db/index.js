@@ -1,4 +1,3 @@
-'use strict';
 const config = require('../config');
 const Mongoose = require('mongoose');
 
@@ -9,13 +8,13 @@ Mongoose.Promise = global.Promise;
 Mongoose.connect(config.dbURI);
 
 // Log an error if the connection fails
-Mongoose.connection.on('error', error => {
-  console.log("MongoDB Error: ", error);
+Mongoose.connection.on('error', (error) => {
+  console.log('MongoDB Error: ', error);
 });
 
 const user = new Mongoose.Schema({
   username: String,
-  password: String
+  password: String,
 });
 
 const newfeed = new Mongoose.Schema({
@@ -27,9 +26,9 @@ const newfeed = new Mongoose.Schema({
   comments: [
     {
       type: Mongoose.Schema.Types.ObjectId,
-      ref: "Comment"
-    }
-  ]
+      ref: 'Comment',
+    },
+  ],
 });
 
 const comment = new Mongoose.Schema({
@@ -37,9 +36,9 @@ const comment = new Mongoose.Schema({
   author: {
     _id: {
       type: Mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  }
+      ref: 'User',
+    },
+  },
 });
 
 const latlng = new Mongoose.Schema({
@@ -47,19 +46,19 @@ const latlng = new Mongoose.Schema({
   longitude: String,
   _user_id: {
     type: Mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  }
+    ref: 'User',
+  },
 });
 
-let userModel = Mongoose.model('User', user);
-let newfeedModel = Mongoose.model('Newfeed', newfeed);
-let commentModel = Mongoose.model('Comment', comment);
-let latlngModel = Mongoose.model('Latlng', latlng);
+const UserModel = Mongoose.model('User', user);
+const newfeedModel = Mongoose.model('Newfeed', newfeed);
+const commentModel = Mongoose.model('Comment', comment);
+const latlngModel = Mongoose.model('Latlng', latlng);
 
 module.exports = {
   Mongoose,
-  userModel,
+  UserModel,
   newfeedModel,
   commentModel,
-  latlngModel
-}
+  latlngModel,
+};

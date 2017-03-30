@@ -1,9 +1,10 @@
-var express = require("express");
-var router = express.Router();
-var db = require('../db');
+const express = require('express');
+const db = require('../db');
+
+const router = express.Router();
 
 router.get('/:id', (req, res) => {
-  db.newfeedModel.findById(req.params.id).populate("comments").exec((err, newfeed) => {
+  db.newfeedModel.findById(req.params.id).populate('comments').exec((err, newfeed) => {
     if (err) {
       console.log(err);
     } else {
@@ -13,12 +14,13 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  var title = req.body.title;
-  var image = req.body.image;
-  var description = req.body.description;
-  var location = req.body.location;
-  var rate = req.body.rate;
-  var newfeed = { title, image, description, location, rate };
+  const newfeed = {
+    title: req.body.title,
+    image: req.body.image,
+    description: req.body.description,
+    location: req.body.location,
+    rate: req.body.rate,
+  };
   db.newfeedModel.create(newfeed, (err, newlyNewfeed) => {
     if (err) {
       console.log(err);
@@ -26,6 +28,5 @@ router.post('/', (req, res) => {
     res.json(newlyNewfeed);
   });
 });
-
 
 module.exports = router;

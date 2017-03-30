@@ -1,6 +1,4 @@
-'use strict';
 const passport = require('passport');
-const config = require('../config');
 const h = require('../helpers');
 
 module.exports = () => {
@@ -13,6 +11,6 @@ module.exports = () => {
   passport.deserializeUser((id, done) => {
     h.findById(id)
         .then(user => done(null, user))
-        .catch(error => console.log('Error when deserialize users'));
+        .catch(error => console.log('Error when deserialize users', error));
   });
-}
+};

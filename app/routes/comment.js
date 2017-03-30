@@ -1,17 +1,14 @@
-var express = require('express');
-var router = express.Router();
-var db = require('../db');
+const express = require('express');
+const db = require('../db');
+
+const router = express.Router();
 
 router.post('/', (req, res) => {
   db.newfeedModel.findById(req.query.newfeed_id, (err, newfeed) => {
     if (err) {
       res.send(err);
     } else {
-      var description = req.body.description;
-      var comment = {
-        description: description
-      };
-      db.commentModel.create(comment, (err, comment) => {
+      db.commentModel.create({ description: req.body.description }, (err, comment) => {
         if (err) {
           console.log(err);
           res.send('error');
