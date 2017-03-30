@@ -1,8 +1,6 @@
 {
   "extends": "airbnb",
   "rules": {
-        "no-console":0,
-        "allowAfterThis":true,
-        "allowAfterSuper":ture
+        "no-console":0
     }
 }
