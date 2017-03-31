@@ -1,16 +1,14 @@
-'use strict';
-const h = require('../helpers');
-const passport = require('passport');
-const express = require("express");
-const router = express.Router();
+const express = require('express');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-router.post('/register', (req, res) => {
-  var username = req.body.username;
-  var password = req.body.password;
+const router = express.Router();
 
-  db.userModel.findOne({username}, (err, hasAccount) => {
+router.post('/register', (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  db.UserModel.findOne({ username }, (err, hasAccount) => {
     if (err) {
       res.json({status: 'error', message: err});
     } else {
@@ -32,9 +30,9 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  var username = req.body.username;
-  var password = req.body.password;
-  db.userModel.findOne({username, password}, (err, hasAccount) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  db.UserModel.findOne({ username, password }, (err, hasAccount) => {
     if (err) {
       res.json({status: 'error', message: err});
     } else {
