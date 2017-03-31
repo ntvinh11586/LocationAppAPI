@@ -3,6 +3,16 @@ const db = require('../db');
 
 const router = express.Router();
 
+router.get('/', (req, res) => {
+  db.newfeedModel.find({}).populate('comments').exec((err, allNewfeed) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.json({ newfeeds: allNewfeed });
+    }
+  });
+});
+
 router.get('/:id', (req, res) => {
   db.newfeedModel.findById(req.params.id).populate('comments').exec((err, newfeed) => {
     if (err) {
