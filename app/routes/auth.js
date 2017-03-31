@@ -10,19 +10,21 @@ router.post('/register', (req, res) => {
 
   db.UserModel.findOne({ username }, (err, hasAccount) => {
     if (err) {
-      res.send(err);
-    } else if (hasAccount) {
-      res.send('Have currently account');
+      res.json({status: 'error', message: err});
     } else {
-      db.UserModel.create({ username, password }, (err, account) => {
-        const token = jwt.sign({ username: account.username }, 'supersecret', { expiresIn: 10000 });
-        const userInfo = {
-          _id: account._id,
-          username: account.username,
-          token,
-        };
-        res.json(userInfo);
-      });
+      if (hasAccount) {
+        res.json({status: 'error', message: 'Acount already exists!'});
+      } else {
+        db.userModel.create({username, password}, (err, account) => {
+          var token = jwt.sign({username: account.username}, 'supersecret', {expiresIn: 10000});
+          var userInfo = {
+            _id: account._id,
+            username: account.username,
+            token: token
+          }
+          res.json({status: 'success', message: 'Congratulations! Your account has been successfully created!', userInfo: userInfo});
+        });
+      }
     }
   });
 });
@@ -32,25 +34,27 @@ router.post('/login', (req, res) => {
   const password = req.body.password;
   db.UserModel.findOne({ username, password }, (err, hasAccount) => {
     if (err) {
-      res.send(err);
-    } else if (hasAccount) {
-      const _id = hasAccount._id;
-      const token = jwt.sign({ _id }, 'supersecret', { expiresIn: 10000 });
-      const userInfo = {
-        _id,
-        username,
-        token,
-      };
-      res.json(userInfo);
+      res.json({status: 'error', message: err});
     } else {
-      res.send("Username or password don't match!");
+      if (hasAccount) {
+        var _id = hasAccount._id;
+        var token = jwt.sign({_id}, 'supersecret', {expiresIn: 10000});
+        var userInfo = {
+          _id: _id,
+          username: username,
+          token: token
+        }
+        res.json({status: 'success', message: "You've successfully logged in!", userInfo: userInfo});
+      } else {
+        res.json({status: 'error', message: "Username or password is incorrect!"});
+      }
     }
   });
 });
 
-router.get('/logout', (req, res) => {
-  req.logout();
-  res.send('Logout successfully!');
+router.get('/logout', (req, res, next) => {
+    req.logout();
+    res.json({status: 'success', message: "Logged Out!"});
 });
 
 module.exports = router;
