@@ -55,4 +55,16 @@ router.post('/add_friend/:id', (req, res) => {
   });
 });
 
+router.get('/friend_list/:id', (req, res) => {
+  db.UserModel.findById(req.params.id).populate('users').exec((err, user) => {
+    res.json({ friend_list: user.friends });
+  });
+});
+
+router.get('/friend_requests/:id', (req, res) => {
+  db.UserModel.findById(req.params.id).populate('users').exec((err, user) => {
+    res.json({ friend_requests: user.friends });
+  });
+});
+
 module.exports = router;
