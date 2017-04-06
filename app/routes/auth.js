@@ -15,7 +15,7 @@ router.post('/register', (req, res) => {
       if (hasAccount) {
         res.json({status: 'error', message: 'Acount already exists!'});
       } else {
-        db.userModel.create({username, password}, (err, account) => {
+        db.UserModel.create({username, password}, (err, account) => {
           var token = jwt.sign({username: account.username}, 'supersecret', {expiresIn: 10000});
           var userInfo = {
             _id: account._id,

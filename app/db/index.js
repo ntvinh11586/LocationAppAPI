@@ -15,6 +15,24 @@ Mongoose.connection.on('error', (error) => {
 const user = new Mongoose.Schema({
   username: String,
   password: String,
+  friend_requests: [
+    {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  friends_pending: [
+    {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  friends: [
+    {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 const newfeed = new Mongoose.Schema({
