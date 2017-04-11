@@ -63,7 +63,7 @@ router.get('/friend_list/:id', (req, res) => {
 
 router.get('/friend_requests/:id', (req, res) => {
   db.UserModel.findById(req.params.id).populate('users').exec((err, user) => {
-    res.json({ friend_requests: user.friends });
+    res.json({ friend_requests: user.friend_requests });
   });
 });
 
