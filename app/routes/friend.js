@@ -48,8 +48,8 @@ router.post('/add_friend/:id', (req, res) => {
       requestedFriend.friend_requests.push(user);
       requestedFriend.save();
       res.json({
-        _id: friend._id,
-        username: friend.username,
+        _id: requestedFriend._id,
+        username: requestedFriend.username,
       });
     });
   });
