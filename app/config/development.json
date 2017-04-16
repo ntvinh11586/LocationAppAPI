@@ -1,17 +1,4 @@
 {
   "host": "http://localhost:3000",
-  "dbURI": "mongodb://luanvantnk13:datvavinh@ds139470.mlab.com:39470/locationappdb",
-  "sessionSecret": "catscanfly",
-  "fb": {
-    "clientID": "739982332830059",
-    "clientSecret": "b7b79be09db86477cd1173f8e0014fd3",
-    "callbackURL": "//localhost:3000/auth/facebook/callback",
-    "profileFields": ["id", "displayName", "photos"]
-  },
-  "twitter": {
-    "consumerKey": "pO6OqybqbYDf0IEQtB14LKKfQ",
-    "consumerSecret": "TPzSUMxeJYrG8RhjVZuKAJXbZuScL65TXgiD76k7xti9kzIotS",
-    "callbackURL": "//localhost:3000/auth/twitter/callback",
-    "profileFields": ["id", "displayName", "photos"]
-  }
+  "dbURI": "mongodb://luanvantnk13:datvavinh@ds139470.mlab.com:39470/locationappdb"
 }

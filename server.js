@@ -12,9 +12,6 @@ app.set('port', process.env.PORT || 3000);
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
-// Configure sessions
-app.use(locationAppAPI.sessions);
-
 // Configure passport.js
 app.use(passport.initialize());
 app.use(passport.session());

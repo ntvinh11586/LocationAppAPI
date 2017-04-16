@@ -10,7 +10,6 @@ router.post('/', (req, res) => {
     } else {
       db.commentModel.create({ description: req.body.description }, (err, comment) => {
         if (err) {
-          console.log(err);
           res.send('error');
         } else {
           comment.author._id = req.query.user_id; // user _id
