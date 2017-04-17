@@ -12,11 +12,13 @@ router.post('/', (req, res) => {
         if (err) {
           res.send('error');
         } else {
-          comment.author._id = req.query.user_id; // user _id
+          comment.author._id = req.query.user_id;
           comment.save();
+
           newfeed.comments.push(comment);
           newfeed.save();
-          res.json(newfeed);
+
+          res.json(comment);
         }
       });
     }
