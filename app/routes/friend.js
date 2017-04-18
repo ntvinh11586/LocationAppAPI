@@ -38,20 +38,23 @@ router.post('/add_friend/:id', (req, res) => {
   db.UserModel.findById(req.params.id, (err, user) => {
     if (err) {
       res.json({ err: 'error' });
-    }
-    db.UserModel.findById(req.query.user_id, (err, requestedFriend) => {
-      if (err) {
-        res.json({ err: 'error' });
-      }
-      user.friends_pending.push(requestedFriend);
-      user.save();
-      requestedFriend.friend_requests.push(user);
-      requestedFriend.save();
-      res.json({
-        _id: requestedFriend._id,
-        username: requestedFriend.username,
+    } else if (user.friends.some(x => x.equals(req.query.user_id))) {
+      res.json({ err: 'already friend' });
+    } else {
+      db.UserModel.findById(req.query.user_id, (err, requestedFriend) => {
+        if (err) {
+          res.json({ err: 'error' });
+        }
+        user.friends_pending.push(requestedFriend);
+        user.save();
+        requestedFriend.friend_requests.push(user);
+        requestedFriend.save();
+        res.json({
+          _id: requestedFriend._id,
+          username: requestedFriend.username,
+        });
       });
-    });
+    }
   });
 });
 
