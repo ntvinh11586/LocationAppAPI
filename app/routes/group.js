@@ -42,8 +42,21 @@ router.post('/add_friend', (req, res) => {
   db.GroupModel.findOne({ users: userId }, (err, group) => {
     db.UserModel.findOne({ _id: friendId }, (err, friendUser) => {
       group.users.push(friendUser);
+      group.save();
       res.json(group);
     });
+  });
+});
+
+router.get('/:id', (req, res) => {
+  const groupId = req.params.id;
+
+  db.GroupModel.findOne({ _id: groupId }, (err, group) => {
+    if (group == null) {
+      res.json({ err: 'err' });
+    } else {
+      res.json(group);
+    }
   });
 });
 
