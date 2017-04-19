@@ -68,10 +68,21 @@ const latlng = new Mongoose.Schema({
   },
 });
 
+const group = new Mongoose.Schema({
+  name: String,
+  users: [
+    {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+});
+
 const UserModel = Mongoose.model('User', user);
 const newfeedModel = Mongoose.model('Newfeed', newfeed);
 const commentModel = Mongoose.model('Comment', comment);
 const latlngModel = Mongoose.model('Latlng', latlng);
+const GroupModel = Mongoose.model('Group', group);
 
 module.exports = {
   Mongoose,
@@ -79,4 +90,5 @@ module.exports = {
   newfeedModel,
   commentModel,
   latlngModel,
+  GroupModel,
 };
