@@ -15,6 +15,10 @@ Mongoose.connection.on('error', (error) => {
 const user = new Mongoose.Schema({
   username: String,
   password: String,
+  latlng: {
+    lng: Number,
+    lat: Number,
+  },
   friend_requests: [
     {
       type: Mongoose.Schema.Types.ObjectId,
