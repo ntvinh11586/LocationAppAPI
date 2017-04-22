@@ -1,6 +1,6 @@
 const db = require('../db');
 
-module.exports = (io, app) => {
+module.exports = (io) => {
   io.of('/group_location').on('connection', (socket) => {
     socket.on('update_new_user_location', (newLocationInfo) => {
       const newLocationInfoJSON = JSON.parse(newLocationInfo);
