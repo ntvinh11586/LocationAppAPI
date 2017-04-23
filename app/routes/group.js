@@ -13,7 +13,6 @@ router.post('/', (req, res) => {
     } else {
       db.GroupModel.create({ name: groupName }, (err, newGroup) => {
         db.UserModel.findById(userId, (err, user) => {
-          console.log(user);
           newGroup.users.push(user);
           newGroup.save();
           res.json(newGroup);

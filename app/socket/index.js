@@ -4,7 +4,8 @@ module.exports = (io) => {
   io.of('/group_location').on('connection', (socket) => {
     socket.on('update_new_user_location', (newLocationInfo) => {
       const newLocationInfoJSON = JSON.parse(newLocationInfo);
-      const userId = newLocationInfoJSON._id;
+      const groupId = newLocationInfoJSON._group_id;
+      const userId = newLocationInfoJSON._user_id;
       const latlng = newLocationInfoJSON.latlng;
       console.log(newLocationInfoJSON);
       db.UserModel.findById(userId, (err, user) => {
@@ -24,7 +25,7 @@ module.exports = (io) => {
 
     socket.on('get_all_users_location', (groupInfo) => {
       const groupJSON = JSON.parse(groupInfo);
-      const groupId = groupJSON.id;
+      const groupId = groupJSON._group_id;
       db.GroupModel.findById(groupId).populate('users').populate('latlng').exec((err, group) => {
         if (err) {
           console.log('err');
@@ -38,7 +39,7 @@ module.exports = (io) => {
               locations.push({ _id: users[i]._id, latlng: users[i].latlng });
             }
           }
-          socket.emit('get_all_users_location_callback', { latlng: locations });
+          socket.emit('get_all_users_location_callback', { latlngs: locations });
         }
       });
     });
