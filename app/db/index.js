@@ -90,6 +90,16 @@ const group = new Mongoose.Schema({
       },
     },
   ],
+  markers: [
+    {
+      lat: Number,
+      lng: Number,
+      user: {
+        type: Mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
 });
 
 const UserModel = Mongoose.model('User', user);
