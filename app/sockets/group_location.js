@@ -43,6 +43,29 @@ function groupLocation(io) {
         }
       });
     });
+
+    socket.on('add_marker', (markerInfo) => {
+      const markerInfoJSON = JSON.parse(markerInfo);
+      const groupId = markerInfoJSON._group_id;
+      const userId = markerInfoJSON._user_id;
+      const lat = markerInfoJSON.lat;
+      const lng = markerInfoJSON.lng;
+
+      db.GroupModel.findById(groupId, (err, group) => {
+        if (err) {
+          console.log('err');
+        } else if (group == null) {
+          console.log('no group');
+        } else {
+          const marker = { lat, lng, user: userId };
+          group.markers.push(marker);
+          console.log(group);
+          group.save();
+          socket.emit('add_marker_callback', marker);
+          socket.broadcast.emit('add_marker_callback', marker);
+        }
+      });
+    });
   });
 }
 
