@@ -66,6 +66,23 @@ function groupLocation(io) {
         }
       });
     });
+
+    socket.on('get_all_markers', (groupInfo) => {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON._group_id;
+
+      db.GroupModel.findById(groupId, (err, group) => {
+        if (err) {
+          console.log('err');
+        } else if (group == null) {
+          console.log('no group');
+        } else {
+          const markers = group.markers;
+          console.log(markers);
+          socket.emit('get_all_markers_callback', markers);
+        }
+      });
+    });
   });
 }
 
