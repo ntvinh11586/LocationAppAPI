@@ -1,7 +1,7 @@
 const http = require('http');
 const socketio = require('socket.io');
 const router = require('./routes');
-const socket = require('./socket');
+const socket = require('./sockets');
 
 // Create an IO Server instance.
 const ioServer = (app) => {
