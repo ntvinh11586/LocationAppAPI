@@ -25,6 +25,7 @@ function groupMessenger(io) {
               group.chats.push(chat);
               group.save();
               socket.emit('add_group_message_callback', chat);
+              socket.broadcast.emit('add_group_message_callback', chat);
             }
           });
         }
