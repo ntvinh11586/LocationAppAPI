@@ -80,6 +80,16 @@ const group = new Mongoose.Schema({
       ref: 'User',
     },
   ],
+  chats: [
+    {
+      content: String,
+      date: String,
+      chatter: {
+        type: Mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
 });
 
 const UserModel = Mongoose.model('User', user);

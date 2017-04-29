@@ -7,7 +7,7 @@ function groupLocation(io) {
       const groupId = newLocationInfoJSON._group_id;
       const userId = newLocationInfoJSON._user_id;
       const latlng = newLocationInfoJSON.latlng;
-      console.log(newLocationInfoJSON);
+
       db.UserModel.findById(userId, (err, user) => {
         if (err) {
           console.log('err');
