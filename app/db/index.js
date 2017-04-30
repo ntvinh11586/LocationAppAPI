@@ -109,7 +109,6 @@ const latlngModel = Mongoose.model('Latlng', latlng);
 const GroupModel = Mongoose.model('Group', group);
 
 module.exports = {
-  Mongoose,
   UserModel,
   newfeedModel,
   commentModel,
