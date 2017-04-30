@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
+const config = require('../config');
 
 function register(username, password, callback) {
   db.UserModel.findOne({ username }, (err, hasAccount) => {
@@ -9,9 +10,18 @@ function register(username, password, callback) {
       callback(null, { status: 'error', message: 'Acount already exists!' });
     } else {
       db.UserModel.create({ username, password }, (err, account) => {
-        const token = jwt.sign({ username: account.username }, 'supersecret', { expiresIn: 10000 });
+        const token = jwt.sign(
+          { username: account.username, _id: account._id },
+          config.tokenSecretKey,
+          { expiresIn: config.tokenExpired });
+
         const userInfo = { _id: account._id, username: account.username, token };
-        callback(null, { status: 'success', message: 'Congratulations! Your account has been successfully created!', userInfo });
+
+        callback(null, {
+          status: 'success',
+          message: 'Your account has been created!',
+          userInfo,
+        });
       });
     }
   });
