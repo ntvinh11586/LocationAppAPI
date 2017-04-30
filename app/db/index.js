@@ -16,14 +16,14 @@ Mongoose.connection.on('error', (error) => {
   console.log('MongoDB Error: ', error);
 });
 
-const UserModel = Mongoose.model('User', userSchema);
-const newfeedModel = Mongoose.model('Newfeed', newfeedSchema);
-const commentModel = Mongoose.model('Comment', commentSchema);
-const GroupModel = Mongoose.model('Group', groupSchema);
+const UserRepository = Mongoose.model('User', userSchema);
+const NewfeedRepository = Mongoose.model('Newfeed', newfeedSchema);
+const CommentRepository = Mongoose.model('Comment', commentSchema);
+const GroupRepository = Mongoose.model('Group', groupSchema);
 
 module.exports = {
-  UserModel,
-  newfeedModel,
-  commentModel,
-  GroupModel,
+  UserRepository,
+  NewfeedRepository,
+  CommentRepository,
+  GroupRepository,
 };

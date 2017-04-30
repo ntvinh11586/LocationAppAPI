@@ -1,7 +1,7 @@
 const db = require('../db');
 
 function getUserInfo(userId, token, callback) {
-  db.UserModel.findById(userId, (err, user) => {
+  db.UserRepository.findById(userId, (err, user) => {
     if (err) {
       callback(err, { err: 'err' });
     } else {

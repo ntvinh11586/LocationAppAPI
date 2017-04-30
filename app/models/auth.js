@@ -3,13 +3,13 @@ const db = require('../db');
 const config = require('../config');
 
 function register(username, password, callback) {
-  db.UserModel.findOne({ username }, (err, hasAccount) => {
+  db.UserRepository.findOne({ username }, (err, hasAccount) => {
     if (err) {
       callback(err, { status: 'error', message: err });
     } else if (hasAccount) {
       callback(null, { status: 'error', message: 'Acount already exists!' });
     } else {
-      db.UserModel.create({ username, password }, (err, account) => {
+      db.UserRepository.create({ username, password }, (err, account) => {
         const token = jwt.sign(
           { username: account.username, _id: account._id },
           config.tokenSecretKey,
@@ -28,7 +28,7 @@ function register(username, password, callback) {
 }
 
 function login(username, password, callback) {
-  db.UserModel.findOne({ username, password }, (err, hasAccount) => {
+  db.UserRepository.findOne({ username, password }, (err, hasAccount) => {
     if (err) {
       callback(err, { status: 'error', message: err });
     } else if (hasAccount) {

@@ -9,13 +9,13 @@ function groupMessenger(io) {
       const content = chatMessageJSON.content;
       const date = chatMessageJSON.date;
 
-      db.GroupModel.findById(groupId, (err, group) => {
+      db.GroupRepository.findById(groupId, (err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {
           console.log('no group');
         } else {
-          db.UserModel.findById(chatterId, (err, chatter) => {
+          db.UserRepository.findById(chatterId, (err, chatter) => {
             if (err) {
               console.log('err');
             } else if (chatter == null) {
@@ -36,7 +36,7 @@ function groupMessenger(io) {
       const groupJSON = JSON.parse(group);
       const groupId = groupJSON._group_id;
 
-      db.GroupModel.findById(groupId, (err, group) => {
+      db.GroupRepository.findById(groupId, (err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {
