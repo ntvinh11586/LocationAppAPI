@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-function database1(username, password, callback) {
+function register(username, password, callback) {
   db.UserModel.findOne({ username }, (err, hasAccount) => {
     if (err) {
       callback(err, { status: 'error', message: err });
@@ -17,7 +17,7 @@ function database1(username, password, callback) {
   });
 }
 
-function database2(username, password, callback) {
+function login(username, password, callback) {
   db.UserModel.findOne({ username, password }, (err, hasAccount) => {
     if (err) {
       callback(err, { status: 'error', message: err });
@@ -35,12 +35,12 @@ function database2(username, password, callback) {
   });
 }
 
-function database3(callback) {
+function logout(callback) {
   callback(null, { status: 'success', message: 'Logged Out!' });
 }
 
 module.exports = {
-  database1,
-  database2,
-  database3,
+  register,
+  login,
+  logout,
 };

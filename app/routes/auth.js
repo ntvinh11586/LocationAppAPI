@@ -14,13 +14,13 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  authModel.database2(username, password, (err, json) => {
+  authModel.login(username, password, (err, json) => {
     res.json(json);
   });
 });
 
 router.get('/logout', (req, res) => {
-  authModel.database3((err, json) => {
+  authModel.logout((err, json) => {
     res.json(json);
   });
 });
