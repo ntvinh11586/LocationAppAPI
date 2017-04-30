@@ -1,88 +1,68 @@
-const db = require('../db');
-const userRepository = require('../db/user');
-const groupRepository = require('../db/group');
+const latlngModel = require('../models/latlng');
+const markerModel = require('../models/marker');
+
+function updateNewUserLocation(newLocationInfo, callback) {
+  const newLocationInfoJSON = JSON.parse(newLocationInfo);
+  const groupId = newLocationInfoJSON._group_id;
+  const userId = newLocationInfoJSON._user_id;
+  const latlng = newLocationInfoJSON.latlng;
+  latlngModel.updateUserLatlng(groupId, userId, latlng, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getAllUsersLocation(groupInfo, callback) {
+  const groupJSON = JSON.parse(groupInfo);
+  const groupId = groupJSON._group_id;
+  latlngModel.getUsersLatlng(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function addMarker(markerInfo, callback) {
+  const markerInfoJSON = JSON.parse(markerInfo);
+  const groupId = markerInfoJSON._group_id;
+  const userId = markerInfoJSON._user_id;
+  const lat = markerInfoJSON.lat;
+  const lng = markerInfoJSON.lng;
+  markerModel.addMarker(groupId, userId, lat, lng, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getAllMarkers(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON._group_id;
+  markerModel.getMarkers(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
 
 function groupLocation(io) {
   io.of('/group_location').on('connection', (socket) => {
     socket.on('update_new_user_location', (newLocationInfo) => {
-      const newLocationInfoJSON = JSON.parse(newLocationInfo);
-      const groupId = newLocationInfoJSON._group_id;
-      const userId = newLocationInfoJSON._user_id;
-      const latlng = newLocationInfoJSON.latlng;
-
-      userRepository.findById(userId, (err, user) => {
-        if (err) {
-          console.log('err');
-        } else if (user == null) {
-          console.log('no users');
-        } else {
-          user.latlng.lat = latlng.lat;
-          user.latlng.lng = latlng.lng;
-          user.save();
-          socket.emit('update_new_user_location_callback', newLocationInfo);
-          socket.broadcast.emit('update_new_user_location_callback', newLocationInfo);
-        }
+      updateNewUserLocation(newLocationInfo, (err, data) => {
+        socket.emit('update_new_user_location_callback', data);
+        socket.broadcast.emit('update_new_user_location_callback', data);
       });
     });
 
     socket.on('get_all_users_location', (groupInfo) => {
-      const groupJSON = JSON.parse(groupInfo);
-      const groupId = groupJSON._group_id;
-      groupRepository.findById(groupId).populate('users').populate('latlng').exec((err, group) => {
-        if (err) {
-          console.log('err');
-        } else if (group == null) {
-          console.log('no group');
-        } else {
-          const users = group.users;
-          let locations = [];
-          for (let i = 0; i < users.length; i += 1) {
-            if (users[i].latlng != null) {
-              locations.push({ _id: users[i]._id, latlng: users[i].latlng });
-            }
-          }
-          socket.emit('get_all_users_location_callback', { latlngs: locations });
-        }
+      getAllUsersLocation(groupInfo, (err, data) => {
+        socket.emit('get_all_users_location_callback', data);
       });
     });
 
     socket.on('add_marker', (markerInfo) => {
-      const markerInfoJSON = JSON.parse(markerInfo);
-      const groupId = markerInfoJSON._group_id;
-      const userId = markerInfoJSON._user_id;
-      const lat = markerInfoJSON.lat;
-      const lng = markerInfoJSON.lng;
-
-      groupRepository.findById(groupId, (err, group) => {
-        if (err) {
-          console.log('err');
-        } else if (group == null) {
-          console.log('no group');
-        } else {
-          const marker = { lat, lng, user: userId };
-          group.markers.push(marker);
-          console.log(group);
-          group.save();
-          socket.emit('add_marker_callback', marker);
-          socket.broadcast.emit('add_marker_callback', marker);
-        }
+      addMarker(markerInfo, (err, data) => {
+        socket.emit('add_marker_callback', data);
+        socket.broadcast.emit('add_marker_callback', data);
       });
     });
 
     socket.on('get_all_markers', (groupInfo) => {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON._group_id;
-
-      groupRepository.findById(groupId, (err, group) => {
-        if (err) {
-          console.log('err');
-        } else if (group == null) {
-          console.log('no group');
-        } else {
-          const markers = group.markers;
-          console.log(markers);
-          socket.emit('get_all_markers_callback', markers);
-        }
+      getAllMarkers(groupInfo, (err, data) => {
+        socket.emit('get_all_markers_callback', data);
       });
     });
   });
