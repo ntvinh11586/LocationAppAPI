@@ -24,5 +24,5 @@ function createComment(newfeedId, userId, description, callback) {
 }
 
 module.exports = {
-  createComment
-}
+  createComment,
+};
