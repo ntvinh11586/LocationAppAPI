@@ -1,25 +1,18 @@
 const express = require('express');
-const db = require('../db');
+const newfeedModel = require('../models/newfeed');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  db.newfeedModel.find({}).populate('comments').exec((err, allNewfeed) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json({ newfeeds: allNewfeed });
-    }
+  newfeedModel.getNewFeeds((err, data) => {
+    res.json(data);
   });
 });
 
 router.get('/:id', (req, res) => {
-  db.newfeedModel.findById(req.params.id).populate('comments').exec((err, newfeed) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(newfeed);
-    }
+  const newfeedId = req.params.id;
+  newfeedModel.getNewFeed(newfeedId, (err, data) => {
+    res.json(data);
   });
 });
 
@@ -31,11 +24,8 @@ router.post('/', (req, res) => {
     location: req.body.location,
     rate: req.body.rate,
   };
-  db.newfeedModel.create(newfeed, (err, newlyNewfeed) => {
-    if (err) {
-      console.log(err);
-    }
-    res.json(newlyNewfeed);
+  newfeedModel.createNewfeed(newfeed, (err, data) => {
+    res.json(data);
   });
 });
 
