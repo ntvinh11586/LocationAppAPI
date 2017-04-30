@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-const router = express.Router();
-
 function get(callback) {
   callback(null, { name: 'demo', version: '2' });
 }
