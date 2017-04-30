@@ -1,6 +1,6 @@
-const Mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-module.exports = new Mongoose.Schema({
+const newfeedSchema = new mongoose.Schema({
   title: String,
   image: String,
   description: String,
@@ -8,8 +8,10 @@ module.exports = new Mongoose.Schema({
   rate: Number,
   comments: [
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Comment',
     },
   ],
 });
+
+module.exports = mongoose.model('Newfeed', newfeedSchema);

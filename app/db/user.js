@@ -1,6 +1,6 @@
-const Mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-module.exports = new Mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   latlng: {
@@ -9,20 +9,22 @@ module.exports = new Mongoose.Schema({
   },
   friend_requests: [
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
   ],
   friends_pending: [
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
   ],
   friends: [
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
   ],
 });
+
+module.exports = mongoose.model('User', userSchema);

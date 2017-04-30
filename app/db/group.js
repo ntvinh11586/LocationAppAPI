@@ -1,10 +1,10 @@
-const Mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-module.exports = new Mongoose.Schema({
+const groupSchema = new mongoose.Schema({
   name: String,
   users: [
     {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
   ],
@@ -13,7 +13,7 @@ module.exports = new Mongoose.Schema({
       content: String,
       date: String,
       chatter: {
-        type: Mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
       },
     },
@@ -23,9 +23,11 @@ module.exports = new Mongoose.Schema({
       lat: Number,
       lng: Number,
       user: {
-        type: Mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
       },
     },
   ],
 });
+
+module.exports = mongoose.model('Group', groupSchema);
