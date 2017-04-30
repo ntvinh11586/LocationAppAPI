@@ -1,27 +1,14 @@
 const express = require('express');
-const db = require('../db');
+const commentModel = require('../models/comment');
 
 const router = express.Router();
 
 router.post('/', (req, res) => {
-  db.newfeedModel.findById(req.query.newfeed_id, (err, newfeed) => {
-    if (err) {
-      res.send(err);
-    } else {
-      db.commentModel.create({ description: req.body.description }, (err, comment) => {
-        if (err) {
-          res.send('error');
-        } else {
-          comment.author._id = req.query.user_id;
-          comment.save();
-
-          newfeed.comments.push(comment);
-          newfeed.save();
-
-          res.json(comment);
-        }
-      });
-    }
+  const newfeedId = req.query.newfeed_id;
+  const userId = req.query.user_id;
+  const description = req.body.description;
+  commentModel.createComment(newfeedId, userId, description, (err, json) => {
+    res.json(json);
   });
 });
 

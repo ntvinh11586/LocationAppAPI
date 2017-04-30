@@ -1,38 +1,21 @@
 const express = require('express');
-const db = require('../db');
+const gpsModel = require('../models/gps');
 
 const router = express.Router();
 
 router.post('/:id', (req, res) => {
+  const userId = req.params.id;
   const lng = req.body.lng;
   const lat = req.body.lat;
-  const userId = req.params.id;
-
-  db.UserModel.findById(userId, (err, user) => {
-    if (err) {
-      res.json({ err: 'err' });
-    } else if (user == null) {
-      res.json({ err: 'Cannot find users' });
-    } else {
-      user.latlng.lng = lng;
-      user.latlng.lat = lat;
-      user.save();
-      res.json({ lat, lng });
-    }
+  gpsModel.createCurrentLatlng(userId, lat, lng, (err, data) => {
+    res.json(data);
   });
 });
 
 router.get('/:id', (req, res) => {
   const userId = req.params.id;
-
-  db.UserModel.findById(userId, (err, user) => {
-    if (err) {
-      res.json({ err: 'err' });
-    } else if (user == null) {
-      res.json({ err: 'Cannot find users' });
-    } else {
-      res.json(user.latlng);
-    }
+  gpsModel.getPreviousLatlng(userId, (err, data) => {
+    res.json(data);
   });
 });
 
