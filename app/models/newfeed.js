@@ -1,7 +1,7 @@
-const db = require('../db');
+const newfeedRepository = require('../db/newfeed');
 
 function getNewFeeds(callback) {
-  db.NewfeedRepository.find({}).populate('comments').exec((err, allNewfeed) => {
+  newfeedRepository.find({}).populate('comments').exec((err, allNewfeed) => {
     if (err) {
       callback(null, err);
     } else {
@@ -11,7 +11,7 @@ function getNewFeeds(callback) {
 }
 
 function getNewFeed(newfeedId, callback) {
-  db.NewfeedRepository.findById(newfeedId).populate('comments').exec((err, newfeed) => {
+  newfeedRepository.findById(newfeedId).populate('comments').exec((err, newfeed) => {
     if (err) {
       callback(err, { err: 'err' });
     } else {
@@ -21,7 +21,7 @@ function getNewFeed(newfeedId, callback) {
 }
 
 function createNewfeed(newfeed, callback) {
-  db.NewfeedRepository.create(newfeed, (err, newlyNewfeed) => {
+  newfeedRepository.create(newfeed, (err, newlyNewfeed) => {
     if (err) {
       callback(err, { err: 'err' });
     }

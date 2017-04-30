@@ -1,12 +1,12 @@
-const db = require('../db');
+const userRepository = require('../db/user');
 
 function acceptFriend(userId, acceptedFriendId, callback) {
-  db.UserRepository.findById(userId, (err, user) => {
+  userRepository.findById(userId, (err, user) => {
     if (err) {
       callback(err, { err: 'error' });
     }
     if (user.friend_requests.some(x => x.equals(acceptedFriendId))) {
-      db.UserRepository.findById(acceptedFriendId, (err, friend) => {
+      userRepository.findById(acceptedFriendId, (err, friend) => {
         if (err) {
           callback(err, { err: 'error' });
         }
@@ -32,13 +32,13 @@ function acceptFriend(userId, acceptedFriendId, callback) {
 }
 
 function addFriend(userId, acceptedFriendId, callback) {
-  db.UserRepository.findById(userId, (err, user) => {
+  userRepository.findById(userId, (err, user) => {
     if (err) {
       callback(err, { err: 'error' });
     } else if (user.friends.some(x => x.equals(acceptedFriendId))) {
       callback(err, { err: 'already friend' });
     } else {
-      db.UserRepository.findById(acceptedFriendId, (err, requestedFriend) => {
+      userRepository.findById(acceptedFriendId, (err, requestedFriend) => {
         if (err) {
           callback(err, { err: 'error' });
         }
@@ -56,13 +56,13 @@ function addFriend(userId, acceptedFriendId, callback) {
 }
 
 function getFriendLists(userId, callback) {
-  db.UserRepository.findById(userId).populate('users').exec((err, user) => {
+  userRepository.findById(userId).populate('users').exec((err, user) => {
     callback(null, { friend_list: user.friends });
   });
 }
 
 function getFriendRequests(userId, callback) {
-  db.UserRepository.findById(userId).populate('users').exec((err, user) => {
+  userRepository.findById(userId).populate('users').exec((err, user) => {
     callback(null, { friend_requests: user.friend_requests });
   });
 }

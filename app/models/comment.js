@@ -1,11 +1,12 @@
-const db = require('../db');
+const newfeedRepository = require('../db/newfeed');
+const commentRepository = require('../db/comment');
 
 function createComment(newfeedId, userId, description, callback) {
-  db.NewfeedRepository.findById(newfeedId, (err, newfeed) => {
+  newfeedRepository.findById(newfeedId, (err, newfeed) => {
     if (err) {
       callback(err, { err });
     } else {
-      db.CommentRepository.create({ description }, (err, comment) => {
+      commentRepository.create({ description }, (err, comment) => {
         if (err) {
           callback(err, { err });
         } else {

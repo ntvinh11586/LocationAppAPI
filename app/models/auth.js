@@ -1,15 +1,15 @@
 const jwt = require('jsonwebtoken');
-const db = require('../db');
 const config = require('../config');
+const userRepository = require('../db/user');
 
 function register(username, password, callback) {
-  db.UserRepository.findOne({ username }, (err, hasAccount) => {
+  userRepository.findOne({ username }, (err, hasAccount) => {
     if (err) {
       callback(err, { status: 'error', message: err });
     } else if (hasAccount) {
       callback(null, { status: 'error', message: 'Acount already exists!' });
     } else {
-      db.UserRepository.create({ username, password }, (err, account) => {
+      userRepository.create({ username, password }, (err, account) => {
         const token = jwt.sign(
           { username: account.username, _id: account._id },
           config.tokenSecretKey,
@@ -28,7 +28,7 @@ function register(username, password, callback) {
 }
 
 function login(username, password, callback) {
-  db.UserRepository.findOne({ username, password }, (err, hasAccount) => {
+  userRepository.findOne({ username, password }, (err, hasAccount) => {
     if (err) {
       callback(err, { status: 'error', message: err });
     } else if (hasAccount) {

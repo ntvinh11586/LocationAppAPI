@@ -1,4 +1,6 @@
 const db = require('../db');
+const userRepository = require('../db/user');
+const groupRepository = require('../db/group');
 
 function groupLocation(io) {
   io.of('/group_location').on('connection', (socket) => {
@@ -8,7 +10,7 @@ function groupLocation(io) {
       const userId = newLocationInfoJSON._user_id;
       const latlng = newLocationInfoJSON.latlng;
 
-      db.UserRepository.findById(userId, (err, user) => {
+      userRepository.findById(userId, (err, user) => {
         if (err) {
           console.log('err');
         } else if (user == null) {
@@ -26,7 +28,7 @@ function groupLocation(io) {
     socket.on('get_all_users_location', (groupInfo) => {
       const groupJSON = JSON.parse(groupInfo);
       const groupId = groupJSON._group_id;
-      db.GroupRepository.findById(groupId).populate('users').populate('latlng').exec((err, group) => {
+      groupRepository.findById(groupId).populate('users').populate('latlng').exec((err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {
@@ -51,7 +53,7 @@ function groupLocation(io) {
       const lat = markerInfoJSON.lat;
       const lng = markerInfoJSON.lng;
 
-      db.GroupRepository.findById(groupId, (err, group) => {
+      groupRepository.findById(groupId, (err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {
@@ -71,7 +73,7 @@ function groupLocation(io) {
       const groupInfoJSON = JSON.parse(groupInfo);
       const groupId = groupInfoJSON._group_id;
 
-      db.GroupRepository.findById(groupId, (err, group) => {
+      groupRepository.findById(groupId, (err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {

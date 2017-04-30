@@ -1,4 +1,6 @@
 const db = require('../db');
+const userRepository = require('../db/user');
+const groupRepository = require('../db/group');
 
 function groupMessenger(io) {
   io.of('/group_messenger').on('connection', (socket) => {
@@ -9,13 +11,13 @@ function groupMessenger(io) {
       const content = chatMessageJSON.content;
       const date = chatMessageJSON.date;
 
-      db.GroupRepository.findById(groupId, (err, group) => {
+      groupRepository.findById(groupId, (err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {
           console.log('no group');
         } else {
-          db.UserRepository.findById(chatterId, (err, chatter) => {
+          userRepository.findById(chatterId, (err, chatter) => {
             if (err) {
               console.log('err');
             } else if (chatter == null) {
@@ -36,7 +38,7 @@ function groupMessenger(io) {
       const groupJSON = JSON.parse(group);
       const groupId = groupJSON._group_id;
 
-      db.GroupRepository.findById(groupId, (err, group) => {
+      groupRepository.findById(groupId, (err, group) => {
         if (err) {
           console.log('err');
         } else if (group == null) {

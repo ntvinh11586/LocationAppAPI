@@ -1,12 +1,13 @@
-const db = require('../db');
+const userRepository = require('../db/user');
+const groupRepository = require('../db/group');
 
 function createGroup(userId, groupName, callback) {
-  db.GroupRepository.findOne({ name: groupName }, (err, group) => {
+  groupRepository.findOne({ name: groupName }, (err, group) => {
     if (group != null) {
       callback(null, { err: 'Already have group' });
     } else {
-      db.GroupRepository.create({ name: groupName }, (err, newGroup) => {
-        db.UserRepository.findById(userId, (err, user) => {
+      groupRepository.create({ name: groupName }, (err, newGroup) => {
+        userRepository.findById(userId, (err, user) => {
           newGroup.users.push(user);
           newGroup.save();
           callback(null, newGroup);
@@ -17,7 +18,7 @@ function createGroup(userId, groupName, callback) {
 }
 
 function getUserOwnGroups(userId, callback) {
-  db.GroupRepository.find({ users: userId }, (err, group) => {
+  groupRepository.find({ users: userId }, (err, group) => {
     if (group == null) {
       callback(null, { err: 'Cannot find any groups' });
     } else {
@@ -27,8 +28,8 @@ function getUserOwnGroups(userId, callback) {
 }
 
 function addFriendIntoGroup(userId, friendId, callback) {
-  db.GroupRepository.findOne({ users: userId }, (err, group) => {
-    db.UserRepository.findOne({ _id: friendId }, (err, friendUser) => {
+  groupRepository.findOne({ users: userId }, (err, group) => {
+    userRepository.findOne({ _id: friendId }, (err, friendUser) => {
       group.users.push(friendUser);
       group.save();
       callback(null, group);
@@ -37,7 +38,7 @@ function addFriendIntoGroup(userId, friendId, callback) {
 }
 
 function getUserOwnGroup(groupId, callback) {
-  db.GroupRepository.findOne({ _id: groupId }, (err, group) => {
+  groupRepository.findOne({ _id: groupId }, (err, group) => {
     if (group == null) {
       callback(null, { err: 'err' });
     } else {
@@ -51,4 +52,4 @@ module.exports = {
   getUserOwnGroups,
   getUserOwnGroup,
   addFriendIntoGroup,
-}
+};

@@ -1,7 +1,7 @@
-const db = require('../db');
+const userRepository = require('../db/user');
 
 function createCurrentLatlng(userId, lat, lng, callback) {
-  db.UserRepository.findById(userId, (err, user) => {
+  userRepository.findById(userId, (err, user) => {
     if (err) {
       callback(err, { err: 'err' });
     } else if (user == null) {
@@ -16,7 +16,7 @@ function createCurrentLatlng(userId, lat, lng, callback) {
 }
 
 function getPreviousLatlng(userId, callback) {
-  db.UserRepository.findById(userId, (err, user) => {
+  userRepository.findById(userId, (err, user) => {
     if (err) {
       callback(err, { err: 'err' });
     } else if (user == null) {
