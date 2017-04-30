@@ -1,17 +1,21 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
+const deprecate = require('deprecate');
 
 const router = express.Router();
 
+// Depricated router
 router.post('/register', (req, res) => {
+  deprecate("router.post('/register') is deprecated");
+
   const username = req.body.username;
   const password = req.body.password;
 
   db.UserModel.findOne({ username }, (err, hasAccount) => {
     if (err) {
       res.json({ status: 'error', message: err });
-    } else if (hasAccount) {
+    }   else if (hasAccount) {
         res.json({ status: 'error', message: 'Acount already exists!' });
     } else {
       db.UserModel.create({ username, password }, (err, account) => {
@@ -28,6 +32,8 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
+  deprecate("router.post('/login') is deprecated");
+
   const username = req.body.username;
   const password = req.body.password;
   db.UserModel.findOne({ username, password }, (err, hasAccount) => {
@@ -48,7 +54,8 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  req.logout();
+  deprecate("router.get('/logout') is deprecated");
+
   res.json({ status: 'success', message: 'Logged Out!' });
 });
 
