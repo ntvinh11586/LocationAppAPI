@@ -1,4 +1,4 @@
-const userRepository = require('../db/user');
+const userRepository = require('../repositories/user');
 
 function createCurrentLatlng(userId, lat, lng, callback) {
   userRepository.findById(userId, (err, user) => {

@@ -39,6 +39,6 @@ function getMessages(groupId, callback) {
 }
 
 module.exports = {
-  getMessages,
   addMessageIntoGroup,
-}
+  getMessages,
+};

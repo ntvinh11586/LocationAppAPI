@@ -1,5 +1,5 @@
-const newfeedRepository = require('../db/newfeed');
-const commentRepository = require('../db/comment');
+const newfeedRepository = require('../repositories/newfeed');
+const commentRepository = require('../repositories/comment');
 
 function createComment(newfeedId, userId, description, callback) {
   newfeedRepository.findById(newfeedId, (err, newfeed) => {

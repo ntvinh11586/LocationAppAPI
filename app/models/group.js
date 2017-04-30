@@ -1,5 +1,5 @@
-const userRepository = require('../db/user');
-const groupRepository = require('../db/group');
+const userRepository = require('../repositories/user');
+const groupRepository = require('../repositories/group');
 
 function createGroup(userId, groupName, callback) {
   groupRepository.findOne({ name: groupName }, (err, group) => {

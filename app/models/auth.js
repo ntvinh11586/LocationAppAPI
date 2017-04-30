@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const userRepository = require('../db/user');
+const userRepository = require('../repositories/user');
 
 function register(username, password, callback) {
   userRepository.findOne({ username }, (err, hasAccount) => {

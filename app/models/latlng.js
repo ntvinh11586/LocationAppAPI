@@ -1,5 +1,5 @@
-const userRepository = require('../db/user');
-const groupRepository = require('../db/group');
+const userRepository = require('../repositories/user');
+const groupRepository = require('../repositories/group');
 
 function updateUserLatlng(groupId, userId, latlng, callback) {
   userRepository.findById(userId, (err, user) => {

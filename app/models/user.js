@@ -1,4 +1,4 @@
-const userRepository = require('../db/user');
+const userRepository = require('../repositories/user');
 
 function getUserInfo(userId, token, callback) {
   userRepository.findById(userId, (err, user) => {

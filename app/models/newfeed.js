@@ -1,4 +1,4 @@
-const newfeedRepository = require('../db/newfeed');
+const newfeedRepository = require('../repositories/newfeed');
 
 function getNewFeeds(callback) {
   newfeedRepository.find({}).populate('comments').exec((err, allNewfeed) => {

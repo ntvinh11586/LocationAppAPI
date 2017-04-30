@@ -1,4 +1,4 @@
-const groupRepository = require('../db/group');
+const groupRepository = require('../repositories/group');
 
 function addMarker(groupId, userId, lat, lng, callback) {
   groupRepository.findById(groupId, (err, group) => {
