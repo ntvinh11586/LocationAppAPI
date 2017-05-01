@@ -1,6 +1,5 @@
-const db = require('../db');
-const userRepository = require('../db/user');
-const groupRepository = require('../db/group');
+const userRepository = require('../repositories/user');
+const groupRepository = require('../repositories/group');
 
 function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
   groupRepository.findById(groupId, (err, group) => {
