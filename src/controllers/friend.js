@@ -41,4 +41,12 @@ router.delete('/:friend_id', (req, res) => {
   });
 });
 
+router.get('/:friend_id', (req, res) => {
+  const userId = req.headers.user_id;
+  const friendId = req.params.friend_id;
+  friendModel.getFriend(userId, friendId, (err, data) => {
+    res.json(data);
+  });
+});
+
 module.exports = router;

@@ -96,10 +96,37 @@ function deleteFriend(userId, friendId, callback) {
   });
 }
 
+function getFriend(userId, friendId, callback) {
+  userRepository.findById(userId, (err, user) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (user == null) {
+      callback(null, { err: 'user not found' });
+    } else {
+      const friends = user.friends;
+      if (friends != null && friends.some(id => id.equals(friendId))) {
+        userRepository.findById(friendId, (err, friend) => {
+          if (err) {
+            callback(err, { err: 'err' });
+          } else if (user == null) {
+            callback(null, { err: 'no friend found' });
+          } else {
+            callback(null, { id: friend._id, username: friend.username });
+          }
+        });
+      } else {
+        callback(null, { err: 'no friend' });
+      }
+    }
+  });
+}
+
+
 module.exports = {
   acceptFriend,
   addFriend,
   getFriendLists,
   getFriendRequests,
   deleteFriend,
+  getFriend,
 };
