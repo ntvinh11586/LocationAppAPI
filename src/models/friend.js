@@ -76,9 +76,19 @@ function deleteFriend(userId, friendId, callback) {
     } else {
       const friends = user.friends;
       if (friends != null && friends.some(id => id.equals(friendId))) {
-        user.friends = friends.filter(id => !id.equals(friendId));
-        user.save();
-        callback(null, { message: 'Delete friend successfully' });
+        userRepository.findById(friendId, (err, friend) => {
+          if (err) {
+            callback(err, { err: 'err' });
+          } else if (user == null) {
+            callback(null, { err: 'no friend found' });
+          } else {
+            user.friends = user.friends.filter(id => !id.equals(friendId));
+            friend.friends = friend.friends.filter(id => !id.equals(userId));
+            user.save();
+            friend.save();
+            callback(null, { message: 'Delete friend successfully' });
+          }
+        });
       } else {
         callback(null, { err: 'no friend' });
       }
