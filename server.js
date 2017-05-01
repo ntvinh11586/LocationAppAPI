@@ -3,9 +3,11 @@ const express = require('express');
 const locationAppAPI = require('./app');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const logger = require('morgan');
 
 const app = express();
 
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
