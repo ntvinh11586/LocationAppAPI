@@ -41,9 +41,17 @@ router.delete('/:friend_id', (req, res) => {
   });
 });
 
+router.get('/pendings', (req, res) => {
+  const userId = req.headers.user_id;
+  friendModel.getFriendPendings(userId, (err, data) => {
+    res.json(data);
+  });
+});
+
 router.get('/:friend_id', (req, res) => {
   const userId = req.headers.user_id;
   const friendId = req.params.friend_id;
+  console.log('lala');
   friendModel.getFriend(userId, friendId, (err, data) => {
     res.json(data);
   });

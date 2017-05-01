@@ -121,6 +121,17 @@ function getFriend(userId, friendId, callback) {
   });
 }
 
+function getFriendPendings(userId, callback) {
+  userRepository.findById(userId, (err, user) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (user == null) {
+      callback(null, { err: 'no user' });
+    } else {
+      callback(err, { friend_pendings: user.friends_pending });
+    }
+  });
+}
 
 module.exports = {
   acceptFriend,
@@ -129,4 +140,5 @@ module.exports = {
   getFriendRequests,
   deleteFriend,
   getFriend,
+  getFriendPendings,
 };
