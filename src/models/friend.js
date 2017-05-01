@@ -76,12 +76,59 @@ function deleteFriend(userId, friendId, callback) {
     } else {
       const friends = user.friends;
       if (friends != null && friends.some(id => id.equals(friendId))) {
-        user.friends = friends.filter(id => !id.equals(friendId));
-        user.save();
-        callback(null, { message: 'Delete friend successfully' });
+        userRepository.findById(friendId, (err, friend) => {
+          if (err) {
+            callback(err, { err: 'err' });
+          } else if (user == null) {
+            callback(null, { err: 'no friend found' });
+          } else {
+            user.friends = user.friends.filter(id => !id.equals(friendId));
+            friend.friends = friend.friends.filter(id => !id.equals(userId));
+            user.save();
+            friend.save();
+            callback(null, { message: 'Delete friend successfully' });
+          }
+        });
       } else {
         callback(null, { err: 'no friend' });
       }
+    }
+  });
+}
+
+function getFriend(userId, friendId, callback) {
+  userRepository.findById(userId, (err, user) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (user == null) {
+      callback(null, { err: 'user not found' });
+    } else {
+      const friends = user.friends;
+      if (friends != null && friends.some(id => id.equals(friendId))) {
+        userRepository.findById(friendId, (err, friend) => {
+          if (err) {
+            callback(err, { err: 'err' });
+          } else if (user == null) {
+            callback(null, { err: 'no friend found' });
+          } else {
+            callback(null, { id: friend._id, username: friend.username });
+          }
+        });
+      } else {
+        callback(null, { err: 'no friend' });
+      }
+    }
+  });
+}
+
+function getFriendPendings(userId, callback) {
+  userRepository.findById(userId, (err, user) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (user == null) {
+      callback(null, { err: 'no user' });
+    } else {
+      callback(err, { friend_pendings: user.friends_pending });
     }
   });
 }
@@ -92,4 +139,6 @@ module.exports = {
   getFriendLists,
   getFriendRequests,
   deleteFriend,
+  getFriend,
+  getFriendPendings,
 };

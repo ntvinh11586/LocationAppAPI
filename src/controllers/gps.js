@@ -19,4 +19,20 @@ router.get('/:id', (req, res) => {
   });
 });
 
+router.put('/', (req, res) => {
+  const userId = req.headers.user_id;
+  const lat = req.body.lat;
+  const lng = req.body.lng;
+  gpsModel.updateLatlng(userId, lat, lng, (err, data) => {
+    res.json(data);
+  });
+});
+
+router.delete('/', (req, res) => {
+  const userId = req.headers.user_id;
+  gpsModel.deleteLatlng(userId, (err, data) => {
+    res.json(data);
+  });
+});
+
 module.exports = router;
