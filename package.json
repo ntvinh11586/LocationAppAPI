@@ -1,16 +1,17 @@
 {
   "name": "locationappapi",
   "version": "0.2.0",
-  "description": "Thesis Application",
+  "description": "Thesis Application API",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ntvinh11586/LocationAppAPI.git"
   },
-  "author": "Vinh",
+  "author": "ntvinh11586",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ntvinh11586/LocationAppAPI/issues"
