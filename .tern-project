@@ -12,12 +12,22 @@
       "load": "",
       "modules": ""
     },
+    "node-express": {},
     "node_resolve": {},
     "modules": {
       "dontLoad": "",
       "load": "",
       "modules": ""
     },
-    "es_modules": {}
+    "es_modules": {},
+    "commonjs": {},
+    "requirejs": {
+      "baseURL": "",
+      "paths": "",
+      "override": ""
+    },
+    "complete_strings": {
+      "maxLength": 15
+    }
   }
 }
