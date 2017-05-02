@@ -38,6 +38,15 @@ function getAllMarkers(groupInfo, callback) {
   });
 }
 
+function deleteMarker(markerInfo, callback) {
+  const markerInfoJSON = JSON.parse(markerInfo);
+  const groupId = markerInfoJSON.group_id;
+  const markerId = markerInfoJSON.marker_id;
+  markerModel.deleteMarker(groupId, markerId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function groupLocation(io) {
   io.of('/group_location').on('connection', (socket) => {
     socket.on('update_new_user_location', (newLocationInfo) => {
@@ -56,6 +65,13 @@ function groupLocation(io) {
     socket.on('add_marker', (markerInfo) => {
       addMarker(markerInfo, (err, data) => {
         socket.emit('add_marker_callback', data);
+        socket.broadcast.emit('add_marker_callback', data);
+      });
+    });
+
+    socket.on('delete_marker', (markerInfo) => {
+      deleteMarker(markerInfo, (err, data) => {
+        socket.emit('delete_marker_callback', data);
         socket.broadcast.emit('add_marker_callback', data);
       });
     });
