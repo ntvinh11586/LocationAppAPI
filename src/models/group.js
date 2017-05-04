@@ -27,13 +27,19 @@ function getUserOwnGroups(userId, callback) {
   });
 }
 
-function addFriendIntoGroup(userId, friendId, callback) {
-  groupRepository.findOne({ users: userId }, (err, group) => {
-    userRepository.findOne({ _id: friendId }, (err, friendUser) => {
-      group.users.push(friendUser);
+function addFriendIntoGroup(groupId, userId, friendId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (group == null) {
+      callback(null, { err: 'no group' });
+    } else if (group.users.some(x => x.equals(friendId))) {
+      callback(null, { err: 'already have this friend' });
+    } else {
+      group.users.push(friendId);
       group.save();
-      callback(null, group);
-    });
+      callback(null, { message: 'successfull!' });
+    }
   });
 }
 
