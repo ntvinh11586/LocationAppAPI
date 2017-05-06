@@ -76,6 +76,39 @@ function deleteTripPlan(groupId, callback) {
   setTripPlan(groupId, undefined, undefined, callback);
 }
 
+function createPersonalChat(userId, friendId, callback) {
+  groupRepository.findOne({ users: [userId, friendId] }, (err, group) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (group != null) {
+      callback(null, { err: 'already have group' });
+    } else {
+      groupRepository.create({ name: `${userId}${friendId}` }, (err, newGroup) => {
+        if (err) {
+          callback(err, { err: 'err' });
+        } else {
+          newGroup.users.push(userId);
+          newGroup.users.push(friendId);
+          newGroup.save();
+          callback(null, newGroup);
+        }
+      });
+    }
+  });
+}
+
+function getPersonalChat(userId, friendId, callback) {
+  groupRepository.findOne({ users: [userId, friendId] }, (err, group) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } if (group == null) {
+      callback(null, { err: 'no group' });
+    } else {
+      callback(null, group);
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -84,4 +117,6 @@ module.exports = {
   setTripPlan,
   updateTripPlan,
   deleteTripPlan,
+  createPersonalChat,
+  getPersonalChat,
 };
