@@ -37,7 +37,17 @@ function getMessages(groupId, callback) {
   });
 }
 
+function addPersonalMessage(groupId, chatterId, content, date, callback) {
+  addMessageIntoGroup(groupId, chatterId, content, date, callback);
+}
+
+function getPersonalMessages(groupId, callback) {
+  getMessages(groupId, callback);
+}
+
 module.exports = {
   addMessageIntoGroup,
   getMessages,
+  addPersonalMessage,
+  getPersonalMessages,
 };
