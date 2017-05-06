@@ -6,7 +6,7 @@ function addPersonalMessage(chatMessage, callback) {
   const chatterId = chatMessageJSON._chatter_id;
   const content = chatMessageJSON.content;
   const date = chatMessageJSON.date;
-  messageModel.addMessageIntoGroup(groupId, chatterId, content, date, (err, data) => {
+  messageModel.addPersonalMessage(groupId, chatterId, content, date, (err, data) => {
     callback(err, data);
   });
 }
