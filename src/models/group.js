@@ -53,9 +53,35 @@ function getUserOwnGroup(groupId, callback) {
   });
 }
 
+function setTripPlan(groupId, startTime, endTime, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, { err: 'err' });
+    } else if (group == null) {
+      callback(null, { err: 'no group' });
+    } else {
+      group.start_time = startTime;
+      group.end_time = endTime;
+      group.save();
+      callback(null, group);
+    }
+  });
+}
+
+function updateTripPlan(groupId, startTime, endTime, callback) {
+  setTripPlan(groupId, startTime, endTime, callback);
+}
+
+function deleteTripPlan(groupId, callback) {
+  setTripPlan(groupId, undefined, undefined, callback);
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
   getUserOwnGroup,
   addFriendIntoGroup,
+  setTripPlan,
+  updateTripPlan,
+  deleteTripPlan,
 };
