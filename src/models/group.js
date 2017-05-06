@@ -18,11 +18,16 @@ function createGroup(userId, groupName, callback) {
 }
 
 function getUserOwnGroups(userId, callback) {
-  groupRepository.find({ users: userId }, (err, group) => {
-    if (group == null) {
+  groupRepository.find({ users: userId }, (err, groups) => {
+    if (groups == null) {
       callback(null, { err: 'Cannot find any groups' });
     } else {
-      callback(null, group);
+      groups.map((group) => {
+        group.markers = undefined;
+        group.users = undefined;
+        group.chats = group.chats.slice(-1);
+      });
+      callback(null, { groups });
     }
   });
 }
