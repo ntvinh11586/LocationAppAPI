@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 // main routes pointer
 app.use('/', locationAppAPI.router);
 
-// Another way to handle 404 status error:
+// Handle on 404 error in json instead html or text.
 // http://stackoverflow.com/a/9802006/5557789
 app.use((req, res, next) => {
   res.status(404);
@@ -33,11 +33,17 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    status_code: 500,
-    status_message: 'Internal server error.',
-  });
+  if (err.status === 500) {
+    res.status(500).json({
+      status_code: 500,
+      status_message: 'Internal server error.',
+    });
+  } else {
+    res.status(err.status).json({
+      status_code: err.status,
+      status_message: err.message,
+    });
+  }
 });
 
 // Fix deprecation warning mpromise
