@@ -6,7 +6,9 @@ const groupModel = require('../models/group');
 const router = express.Router({ mergeParams: true });
 
 router.post('/', (req, res) => {
-  const groupId = req.params.id;
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
+  const groupId = req.params.group_id;
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
   groupModel.setTripPlan(groupId, startTime, endTime, (err, data) => {
@@ -15,7 +17,9 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-  const groupId = req.params.id;
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
+  const groupId = req.params.group_id;
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
   groupModel.updateTripPlan(groupId, startTime, endTime, (err, data) => {
@@ -24,7 +28,9 @@ router.put('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-  const groupId = req.params.id;
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
+  const groupId = req.params.group_id;
   groupModel.deleteTripPlan(groupId, (err, data) => {
     res.json(data);
   });
