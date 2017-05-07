@@ -4,9 +4,17 @@ const groupRepository = require('../repositories/group');
 function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else if (group == null) {
-      callback(null, { err: 'no group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
     } else {
       userRepository.findById(chatterId, (err, chatter) => {
         if (err) {
@@ -27,9 +35,17 @@ function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
 function getMessages(groupId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else if (group == null) {
-      callback(null, { err: 'no group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
     } else {
       const chats = group.chats;
       callback(err, chats);

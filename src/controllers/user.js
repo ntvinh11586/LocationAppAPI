@@ -7,7 +7,11 @@ router.get('/:user_id', (req, res) => {
   const token = req.headers.token;
   const userId = req.headers.user_id;
   userModel.getUserInfo(userId, token, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 

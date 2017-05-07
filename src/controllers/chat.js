@@ -8,7 +8,11 @@ router.post('/', (req, res) => {
   const token = req.headers.token;
   const friendId = req.query.friend_id;
   groupModel.createPersonalChat(userId, friendId, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
@@ -17,7 +21,11 @@ router.get('/:friend_id', (req, res) => {
   const token = req.headers.token;
   const friendId = req.params.friend_id;
   groupModel.getPersonalChat(userId, friendId, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 

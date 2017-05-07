@@ -3,7 +3,11 @@ const newfeedRepository = require('../repositories/newfeed');
 function getNewFeeds(callback) {
   newfeedRepository.find({}).populate('comments').exec((err, allNewfeed) => {
     if (err) {
-      callback(null, err);
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else {
       callback(null, { newfeeds: allNewfeed });
     }
@@ -13,7 +17,11 @@ function getNewFeeds(callback) {
 function getNewFeed(newfeedId, callback) {
   newfeedRepository.findById(newfeedId).populate('comments').exec((err, newfeed) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else {
       callback(null, newfeed);
     }
@@ -23,9 +31,14 @@ function getNewFeed(newfeedId, callback) {
 function createNewfeed(newfeed, callback) {
   newfeedRepository.create(newfeed, (err, newlyNewfeed) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } else {
+      callback(null, newlyNewfeed);
     }
-    callback(null, newlyNewfeed);
   });
 }
 
