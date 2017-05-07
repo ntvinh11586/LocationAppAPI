@@ -18,7 +18,7 @@ function authorization(token, callback) {
       callback(err, {
         status_code: 401,
         success: false,
-        status_message: 'Invalid authrization.',
+        status_message: 'Invalid authorization.',
       });
     } else {
       callback(null, {
