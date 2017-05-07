@@ -1,13 +1,14 @@
 const express = require('express');
 const commentModel = require('../models/comment');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post('/', (req, res) => {
-  const newfeedId = req.query.newfeed_id;
-  const userId = req.query.user_id;
+  const userId = req.headers.user_id;
+  const token = req.headers.token;
+  const newsfeedId = req.params.newsfeed_id;
   const description = req.body.description;
-  commentModel.createComment(newfeedId, userId, description, (err, json) => {
+  commentModel.createComment(newsfeedId, userId, description, (err, json) => {
     res.json(json);
   });
 });

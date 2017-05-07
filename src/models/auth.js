@@ -5,48 +5,80 @@ const userRepository = require('../repositories/user');
 function register(username, password, callback) {
   userRepository.findOne({ username }, (err, hasAccount) => {
     if (err) {
-      callback(err, { status: 'error', message: err });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else if (hasAccount) {
-      callback(null, { status: 'error', message: 'Acount already exists!' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Account already exists.',
+      });
     } else {
       userRepository.create({ username, password }, (err, account) => {
-        const token = jwt.sign(
-          { username: account.username, _id: account._id },
-          config.tokenSecretKey,
-          { expiresIn: config.tokenExpired });
-
-        const userInfo = { _id: account._id, username: account.username, token };
-
-        callback(null, {
-          status: 'success',
-          message: 'Your account has been created!',
-          userInfo,
-        });
+        if (err) {
+          callback(err, {
+            status_code: 422,
+            success: false,
+            status_message: err.message,
+          });
+        } else {
+          const userInfo = {
+            username: account.username,
+            user_id: account._id,
+          };
+          const tokenSecretKey = config.tokenSecretKey;
+          const expiresIn = { expiresIn: config.tokenExpired };
+          const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
+          callback(null, {
+            user_id: account._id,
+            username: account.username,
+            user_token: token,
+          });
+        }
       });
     }
   });
 }
 
 function login(username, password, callback) {
-  userRepository.findOne({ username, password }, (err, hasAccount) => {
+  userRepository.findOne({ username, password }, (err, account) => {
     if (err) {
-      callback(err, { status: 'error', message: err });
-    } else if (hasAccount) {
-      const token = jwt.sign({ _id: hasAccount._id }, 'supersecret', { expiresIn: 10000 });
-      const userInfo = {
-        _id: hasAccount._id,
-        username,
-        token,
-      };
-      callback(null, { status: 'success', message: "You've successfully logged in!", userInfo });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } else if (account == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Username or password is incorrect.',
+      });
     } else {
-      callback(null, { status: 'error', message: 'Username or password is incorrect!' });
+      const userInfo = {
+        username: account.username,
+        user_id: account._id,
+      };
+      const tokenSecretKey = config.tokenSecretKey;
+      const expiresIn = { expiresIn: config.tokenExpired };
+      const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
+      callback(null, {
+        user_id: account._id,
+        username: account.username,
+        user_token: token,
+      });
     }
   });
 }
 
 function logout(callback) {
-  callback(null, { status: 'success', message: 'Logged Out!' });
+  callback(null, {
+    status: 'success',
+    message: 'Logged Out!',
+  });
 }
 
 module.exports = {

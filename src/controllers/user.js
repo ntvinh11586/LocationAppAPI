@@ -3,9 +3,9 @@ const userModel = require('../models/user');
 
 const router = express.Router();
 
-router.get('/:id', (req, res) => {
-  const userId = req.params.id;
-  const token = req.query.token;
+router.get('/:user_id', (req, res) => {
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
   userModel.getUserInfo(userId, token, (err, data) => {
     res.json(data);
   });
