@@ -3,33 +3,38 @@ const groupModel = require('../models/group');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  const groupName = req.body.group_name;
-  const userId = req.body.user_id;
-  groupModel.createGroup(userId, groupName, (err, data) => {
-    res.json(data);
-  });
-});
-
 router.get('/', (req, res) => {
-  const userId = req.query.user_id;
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
   groupModel.getUserOwnGroups(userId, (err, data) => {
     res.json(data);
   });
 });
 
-router.post('/add_friend', (req, res) => {
-  const groupId = req.body.group_id;
-  const userId = req.body.user_id;
-  const friendId = req.body.friend_id;
-  groupModel.addFriendIntoGroup(groupId, userId, friendId, (err, data) => {
+router.post('/', (req, res) => {
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
+  const groupName = req.body.group_name;
+  groupModel.createGroup(userId, groupName, (err, data) => {
     res.json(data);
   });
 });
 
-router.get('/:id', (req, res) => {
-  const groupId = req.params.id;
+router.get('/:group_id', (req, res) => {
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
+  const groupId = req.params.group_id;
   groupModel.getUserOwnGroup(groupId, (err, data) => {
+    res.json(data);
+  });
+});
+
+router.post('/:group_id/members', (req, res) => {
+  const token = req.headers.token;
+  const userId = req.headers.user_id;
+  const groupId = req.params.group_id;
+  const friendId = req.query.friend_id;
+  groupModel.addFriendIntoGroup(groupId, userId, friendId, (err, data) => {
     res.json(data);
   });
 });

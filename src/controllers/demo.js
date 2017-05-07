@@ -15,8 +15,9 @@ router.post('/post', (req, res) => {
   });
 });
 
-router.get('/get_user_id_with_authorization', (req, res) => {
+router.get('/authorization', (req, res) => {
   const token = req.query.token;
+  const user_id = req.headers.user_id;
   demoModel.getUserIdWithAuthorization(token, (err, data) => {
     res.json(data);
   });

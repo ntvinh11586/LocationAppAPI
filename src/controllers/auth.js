@@ -20,6 +20,8 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
+  const userId = req.headers.user_id;
+  const token = req.headers.token;
   authModel.logout((err, json) => {
     res.json(json);
   });
