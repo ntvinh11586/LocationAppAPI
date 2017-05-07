@@ -12,8 +12,8 @@ const gpsRouter = require('./gps');
 
 const router = express.Router();
 
-router.use('/demos', demoRouter);
-router.use('/auths', authRouter);
+router.use('/demo', demoRouter);
+router.use('/auth', authRouter);
 router.use('/newsfeeds', newfeedRouter);
 router.use('/newsfeeds/:newsfeed_id/comments', commentRouter);
 router.use('/users', userRouter);
