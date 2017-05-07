@@ -4,7 +4,11 @@ const groupRepository = require('../repositories/group');
 function createGroup(userId, groupName, callback) {
   groupRepository.findOne({ name: groupName }, (err, group) => {
     if (group != null) {
-      callback(null, { err: 'Already have group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Already have groups',
+      });
     } else {
       groupRepository.create({ name: groupName }, (err, newGroup) => {
         userRepository.findById(userId, (err, user) => {
@@ -20,7 +24,11 @@ function createGroup(userId, groupName, callback) {
 function getUserOwnGroups(userId, callback) {
   groupRepository.find({ users: userId }, (err, groups) => {
     if (groups == null) {
-      callback(null, { err: 'Cannot find any groups' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Cannot find this group.',
+      });
     } else {
       groups.map((group) => {
         group.markers = undefined;
@@ -35,15 +43,32 @@ function getUserOwnGroups(userId, callback) {
 function addFriendIntoGroup(groupId, userId, friendId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else if (group == null) {
-      callback(null, { err: 'no group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
     } else if (group.users.some(x => x.equals(friendId))) {
-      callback(null, { err: 'already have this friend' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Already have this friend.',
+      });
     } else {
       group.users.push(friendId);
       group.save();
-      callback(null, { message: 'successfull!' });
+
+      callback(null, {
+        status_code: 200,
+        success: true,
+        status_message: 'Add friend successfully.',
+      });
     }
   });
 }
@@ -61,9 +86,17 @@ function getUserOwnGroup(groupId, callback) {
 function setTripPlan(groupId, startTime, endTime, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else if (group == null) {
-      callback(null, { err: 'no group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
     } else {
       group.start_time = startTime;
       group.end_time = endTime;
@@ -84,13 +117,25 @@ function deleteTripPlan(groupId, callback) {
 function createPersonalChat(userId, friendId, callback) {
   groupRepository.findOne({ users: [userId, friendId] }, (err, group) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } else if (group != null) {
-      callback(null, { err: 'already have group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group already exists.',
+      });
     } else {
       groupRepository.create({ name: `${userId}${friendId}` }, (err, newGroup) => {
         if (err) {
-          callback(err, { err: 'err' });
+          callback(err, {
+            status_code: 422,
+            success: false,
+            status_message: err.message,
+          });
         } else {
           newGroup.users.push(userId);
           newGroup.users.push(friendId);
@@ -105,9 +150,17 @@ function createPersonalChat(userId, friendId, callback) {
 function getPersonalChat(userId, friendId, callback) {
   groupRepository.findOne({ users: [userId, friendId] }, (err, group) => {
     if (err) {
-      callback(err, { err: 'err' });
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
     } if (group == null) {
-      callback(null, { err: 'no group' });
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
     } else {
       callback(null, group);
     }

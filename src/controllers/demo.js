@@ -18,7 +18,7 @@ router.post('/post', (req, res) => {
 router.get('/authorization', (req, res) => {
   const token = req.query.token;
   const user_id = req.headers.user_id;
-  demoModel.getUserIdWithAuthorization(token, (err, data) => {
+  demoModel.authorization(token, (err, data) => {
     res.json(data);
   });
 });

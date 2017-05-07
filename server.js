@@ -16,19 +16,28 @@ app.use(express.static('public'));
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 
-// Another way to handle 404
+// main routes pointer
+app.use('/', locationAppAPI.router);
+
+// Another way to handle 404 status error:
 // http://stackoverflow.com/a/9802006/5557789
 app.use((req, res, next) => {
   res.status(404);
   // respond with json
   if (req.accepts('json')) {
-    res.status(404).json({ error: 'Not found error - 404' });
+    res.status(404).json({
+      status_code: 404,
+      status_message: 'The resource you requested could not be found.',
+    });
   }
 });
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  res.json({ err: 'Internal error - 500' });
+  res.json({
+    status_code: 500,
+    status_message: 'Internal server error.',
+  });
 });
 
 // Fix deprecation warning mpromise
