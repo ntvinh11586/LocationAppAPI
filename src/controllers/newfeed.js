@@ -1,7 +1,9 @@
 const express = require('express');
 const newfeedModel = require('../models/newfeed');
+const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
+router.use(authMiddleware.isUserAuthenticated());
 
 router.get('/', (req, res) => {
   const token = req.headers.token;
