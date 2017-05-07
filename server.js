@@ -16,7 +16,7 @@ app.use(express.static('public'));
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 
-// Another handle 404 or something error
+// Another way to handle 404
 // http://stackoverflow.com/a/9802006/5557789
 app.use((req, res, next) => {
   res.status(404);
