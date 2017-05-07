@@ -12,7 +12,11 @@ router.post('/', (req, res) => {
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
   groupModel.setTripPlan(groupId, startTime, endTime, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
@@ -23,7 +27,11 @@ router.put('/', (req, res) => {
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
   groupModel.updateTripPlan(groupId, startTime, endTime, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
@@ -32,7 +40,11 @@ router.delete('/', (req, res) => {
   const userId = req.headers.user_id;
   const groupId = req.params.group_id;
   groupModel.deleteTripPlan(groupId, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 

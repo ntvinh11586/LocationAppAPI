@@ -7,7 +7,11 @@ router.get('/', (req, res) => {
   const token = req.headers.token;
   const userId = req.headers.user_id;
   newfeedModel.getNewFeeds((err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
@@ -16,7 +20,11 @@ router.get('/:id', (req, res) => {
   const userId = req.headers.user_id;
   const newsfeedId = req.params.newsfeed_id;
   newfeedModel.getNewFeed(newsfeedId, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
@@ -31,7 +39,11 @@ router.post('/', (req, res) => {
     rate: req.body.rate,
   };
   newfeedModel.createNewfeed(newfeed, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
