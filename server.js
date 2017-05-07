@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 const config = require('./src/config');
 const express = require('express');
 const locationAppAPI = require('./src');
