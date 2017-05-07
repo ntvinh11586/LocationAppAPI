@@ -21,6 +21,6 @@ router.use('/friends', friendRouter);
 router.use('/groups', groupRouter);
 router.use('/groups/:group_id/trip_plan', tripPlanRouter);
 router.use('/chats', chatRouter);
-router.use('/geo', gpsRouter);
+router.use('/gps', gpsRouter);
 
 module.exports = router;
