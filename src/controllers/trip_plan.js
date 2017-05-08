@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth');
 // Merge parent params with their child
 // https://expressjs.com/en/api.html
 const router = express.Router({ mergeParams: true });
-router.use(authMiddleware.isUserAuthenticated());
+router.use(authMiddleware.isUserAuthenticated);
 
 router.post('/', (req, res) => {
   const token = req.headers.token;

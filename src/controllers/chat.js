@@ -3,7 +3,7 @@ const groupModel = require('../models/group');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
-router.use(authMiddleware.isUserAuthenticated());
+router.use(authMiddleware.isUserAuthenticated);
 
 router.post('/', (req, res) => {
   const userId = req.headers.user_id;
