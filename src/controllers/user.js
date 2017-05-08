@@ -8,7 +8,7 @@ router.use(authMiddleware.isUserAuthenticated);
 router.get('/:user_id', (req, res) => {
   const token = req.headers.token;
   const userId = req.headers.user_id;
-  userModel.getUserInfo(userId, token, (err, data) => {
+  userModel.getUserInfo(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).json(data);
     } else {
