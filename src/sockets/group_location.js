@@ -72,7 +72,7 @@ function groupLocation(io) {
     socket.on('delete_marker', (markerInfo) => {
       deleteMarker(markerInfo, (err, data) => {
         socket.emit('delete_marker_callback', data);
-        socket.broadcast.emit('add_marker_callback', data);
+        socket.broadcast.emit('delete_marker_callback', data);
       });
     });
 

@@ -25,7 +25,7 @@ function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
           const chat = { content, date, chatter: chatterId };
           group.chats.push(chat);
           group.save();
-          callback(null, chat);
+          callback(null, group.chats.slice(-1)[0]);
         }
       });
     }
@@ -48,7 +48,7 @@ function getMessages(groupId, callback) {
       });
     } else {
       const chats = group.chats;
-      callback(err, chats);
+      callback(err, { chats });
     }
   });
 }
