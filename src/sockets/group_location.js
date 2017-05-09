@@ -13,7 +13,7 @@ function updateNewUserLocation(newLocationInfo, callback) {
 
 function getAllUsersLocation(groupInfo, callback) {
   const groupJSON = JSON.parse(groupInfo);
-  const groupId = groupJSON._group_id;
+  const groupId = groupJSON.group_id;
   latlngModel.getUsersLatlng(groupId, (err, data) => {
     callback(err, data);
   });
