@@ -39,7 +39,7 @@ function getMarkers(groupId, callback) {
       });
     } else {
       const markers = group.markers;
-      callback(null, markers);
+      callback(null, { markers });
     }
   });
 }
