@@ -1,21 +1,31 @@
 const express = require('express');
 const groupModel = require('../models/group');
+const authMiddleware = require('../middlewares/auth');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
+router.use(authMiddleware.isUserAuthenticated);
 
-router.post('/', (req, res) => {
-  const userId = req.body.user_id;
-  const friendId = req.body.friend_id;
-  groupModel.createPersonalChat(userId, friendId, (err, data) => {
-    res.json(data);
+router.get('/', (req, res) => {
+  const userId = req.headers.user_id;
+  const friendId = req.params.user_id;
+  groupModel.getPersonalChat(userId, friendId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
-router.get('/:id', (req, res) => {
-  const userId = req.params.id;
-  const friendId = req.query.friend_id;
-  groupModel.getPersonalChat(userId, friendId, (err, data) => {
-    res.json(data);
+router.post('/', (req, res) => {
+  const userId = req.headers.user_id;
+  const friendId = req.params.user_id;
+  groupModel.createPersonalChat(userId, friendId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 

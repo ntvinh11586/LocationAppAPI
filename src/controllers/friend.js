@@ -1,59 +1,88 @@
 const express = require('express');
 const friendModel = require('../models/friend');
+const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
+router.use(authMiddleware.isUserAuthenticated);
 
-router.post('/accept_friend/:id', (req, res) => {
-  const userId = req.params.id;
-  const acceptedFriendId = req.query.user_id;
-  friendModel.acceptFriend(userId, acceptedFriendId, (err, data) => {
-    res.json(data);
-  });
-});
-
-router.post('/add_friend/:id', (req, res) => {
-  const userId = req.params.id;
-  const acceptedFriendId = req.query.user_id;
-  friendModel.addFriend(userId, acceptedFriendId, (err, data) => {
-    res.json(data);
-  });
-});
-
-router.get('/friend_list/:id', (req, res) => {
-  const userId = req.params.id;
-  friendModel.getFriendLists(userId, (err, data) => {
-    res.json(data);
-  });
-});
-
-router.get('/friend_requests/:id', (req, res) => {
-  const userId = req.params.id;
-  friendModel.getFriendRequests(userId, (err, data) => {
-    res.json(data);
-  });
-});
-
-router.delete('/:friend_id', (req, res) => {
+router.get('/', (req, res) => {
   const userId = req.headers.user_id;
-  const friendId = req.params.friend_id;
-  friendModel.deleteFriend(userId, friendId, (err, data) => {
-    res.json(data);
+  friendModel.getFriendLists(userId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+router.get('/requests', (req, res) => {
+  const userId = req.headers.user_id;
+  friendModel.getFriendRequests(userId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
 router.get('/pendings', (req, res) => {
   const userId = req.headers.user_id;
   friendModel.getFriendPendings(userId, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
 router.get('/:friend_id', (req, res) => {
   const userId = req.headers.user_id;
   const friendId = req.params.friend_id;
-  console.log('lala');
   friendModel.getFriend(userId, friendId, (err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+router.post('/:friend_id/add', (req, res) => {
+  const userId = req.headers.user_id;
+  const acceptedFriendId = req.params.friend_id;
+  friendModel.addFriend(userId, acceptedFriendId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+router.post('/:friend_id/accept', (req, res) => {
+  const userId = req.headers.user_id;
+  const friendId = req.params.friend_id;
+  friendModel.acceptFriend(userId, friendId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+router.delete('/:friend_id/unfriend', (req, res) => {
+  const userId = req.headers.user_id;
+  const friendId = req.params.friend_id;
+  friendModel.deleteFriend(userId, friendId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 

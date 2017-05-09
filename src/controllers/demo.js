@@ -1,25 +1,37 @@
 const express = require('express');
 const demoModel = require('../models/demo');
+const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
 router.get('/get', (req, res) => {
   demoModel.get((err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
 router.post('/post', (req, res) => {
   demoModel.post((err, data) => {
-    res.json(data);
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
-router.get('/get_user_id_with_authorization', (req, res) => {
-  const token = req.query.token;
-  demoModel.getUserIdWithAuthorization(token, (err, data) => {
-    res.json(data);
+router.get('/authorization',
+  authMiddleware.isUserAuthenticated,
+  (req, res) => {
+    res.json({
+      status_code: 200,
+      success: true,
+      status_message: 'Valid token key.',
+    });
   });
-});
 
 module.exports = router;

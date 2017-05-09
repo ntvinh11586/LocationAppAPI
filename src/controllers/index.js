@@ -14,13 +14,13 @@ const router = express.Router();
 
 router.use('/demo', demoRouter);
 router.use('/auth', authRouter);
-router.use('/newfeed', newfeedRouter);
-router.use('/comment', commentRouter);
-router.use('/user', userRouter);
-router.use('/friend', friendRouter);
-router.use('/group', groupRouter);
-router.use('/chat', chatRouter);
-router.use('/group/:id/trip_plan/', tripPlanRouter);
+router.use('/newsfeeds', newfeedRouter);
+router.use('/newsfeeds/:newsfeed_id/comments', commentRouter);
+router.use('/users', userRouter);
+router.use('/users/:user_id/chat', chatRouter);
+router.use('/friends', friendRouter);
+router.use('/groups', groupRouter);
+router.use('/groups/:group_id/trip_plan', tripPlanRouter);
 router.use('/gps', gpsRouter);
 
 module.exports = router;

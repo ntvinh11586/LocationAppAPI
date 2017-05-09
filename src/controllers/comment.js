@@ -1,14 +1,20 @@
 const express = require('express');
 const commentModel = require('../models/comment');
+const authMiddleware = require('../middlewares/auth');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
+router.use(authMiddleware.isUserAuthenticated);
 
 router.post('/', (req, res) => {
-  const newfeedId = req.query.newfeed_id;
-  const userId = req.query.user_id;
+  const userId = req.headers.user_id;
+  const newsfeedId = req.params.newsfeed_id;
   const description = req.body.description;
-  commentModel.createComment(newfeedId, userId, description, (err, json) => {
-    res.json(json);
+  commentModel.createComment(newsfeedId, userId, description, (err, data) => {
+    if (err) {
+      res.status(data.status_code).json(data);
+    } else {
+      res.json(data);
+    }
   });
 });
 
