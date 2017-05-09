@@ -17,10 +17,10 @@ router.use('/auth', authRouter);
 router.use('/newsfeeds', newfeedRouter);
 router.use('/newsfeeds/:newsfeed_id/comments', commentRouter);
 router.use('/users', userRouter);
+router.use('/users/:user_id/chat', chatRouter);
 router.use('/friends', friendRouter);
 router.use('/groups', groupRouter);
 router.use('/groups/:group_id/trip_plan', tripPlanRouter);
-router.use('/chats', chatRouter);
 router.use('/gps', gpsRouter);
 
 module.exports = router;

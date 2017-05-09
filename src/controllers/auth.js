@@ -1,5 +1,6 @@
 const express = require('express');
 const authModel = require('../models/auth');
+const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
@@ -27,16 +28,16 @@ router.post('/login', (req, res) => {
   });
 });
 
-router.get('/logout', (req, res) => {
-  const userId = req.headers.user_id;
-  const token = req.headers.token;
-  authModel.logout((err, data) => {
-    if (err) {
-      res.status(data.status_code).json(data);
-    } else {
-      res.json(data);
-    }
+router.get('/logout',
+  authMiddleware.isUserAuthenticated,
+  (req, res) => {
+    authModel.logout((err, data) => {
+      if (err) {
+        res.status(data.status_code).json(data);
+      } else {
+        res.json(data);
+      }
+    });
   });
-});
 
 module.exports = router;

@@ -76,8 +76,9 @@ function login(username, password, callback) {
 
 function logout(callback) {
   callback(null, {
-    status: 'success',
-    message: 'Logged Out!',
+    status_code: 200,
+    success: true,
+    status_message: 'Logout successfully',
   });
 }
 

@@ -5,11 +5,9 @@ const authMiddleware = require('../middlewares/auth');
 // Merge parent params with their child
 // https://expressjs.com/en/api.html
 const router = express.Router({ mergeParams: true });
-router.use(authMiddleware.isUserAuthenticated());
+router.use(authMiddleware.isUserAuthenticated);
 
 router.post('/', (req, res) => {
-  const token = req.headers.token;
-  const userId = req.headers.user_id;
   const groupId = req.params.group_id;
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
@@ -23,8 +21,6 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-  const token = req.headers.token;
-  const userId = req.headers.user_id;
   const groupId = req.params.group_id;
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
@@ -38,8 +34,6 @@ router.put('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-  const token = req.headers.token;
-  const userId = req.headers.user_id;
   const groupId = req.params.group_id;
   groupModel.deleteTripPlan(groupId, (err, data) => {
     if (err) {

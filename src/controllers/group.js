@@ -4,10 +4,9 @@ const groupModel = require('../models/group');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
-router.use(authMiddleware.isUserAuthenticated());
+router.use(authMiddleware.isUserAuthenticated);
 
 router.get('/', (req, res) => {
-  const token = req.headers.token;
   const userId = req.headers.user_id;
   groupModel.getUserOwnGroups(userId, (err, data) => {
     if (err) {
@@ -19,7 +18,6 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const token = req.headers.token;
   const userId = req.headers.user_id;
   const groupName = req.body.group_name;
   groupModel.createGroup(userId, groupName, (err, data) => {
@@ -32,8 +30,6 @@ router.post('/', (req, res) => {
 });
 
 router.get('/:group_id', (req, res) => {
-  const token = req.headers.token;
-  const userId = req.headers.user_id;
   const groupId = req.params.group_id;
   groupModel.getUserOwnGroup(groupId, (err, data) => {
     if (err) {
@@ -45,7 +41,6 @@ router.get('/:group_id', (req, res) => {
 });
 
 router.post('/:group_id/members', (req, res) => {
-  const token = req.headers.token;
   const userId = req.headers.user_id;
   const groupId = req.params.group_id;
   const friendId = req.query.friend_id;

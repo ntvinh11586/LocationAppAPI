@@ -46,13 +46,16 @@ function acceptFriend(userId, acceptedFriendId, callback) {
 
 function addFriend(userId, acceptedFriendId, callback) {
   userRepository.findById(userId, (err, user) => {
+    console.log(userId);
+    console.log(acceptedFriendId);
+    console.log(user);
     if (err) {
       callback(err, {
         status_code: 422,
         success: false,
         status_message: err.message,
       });
-    } else if (user.friends.some(x => x.equals(acceptedFriendId))) {
+    } else if (user.friends != null && user.friends.some(x => x.equals(acceptedFriendId))) {
       callback(new Error('422'), {
         status_code: 422,
         success: false,
@@ -91,7 +94,7 @@ function getFriendLists(userId, callback) {
       });
     } else {
       callback(null, {
-        friend_lists: user.friends,
+        friends: user.friends,
       });
     }
   });
@@ -151,7 +154,7 @@ function deleteFriend(userId, friendId, callback) {
 
             callback(null, {
               status_code: 200,
-              success: false,
+              success: true,
               status_message: 'Delete friend successfully.',
             });
           }
