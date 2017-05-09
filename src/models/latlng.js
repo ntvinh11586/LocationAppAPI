@@ -44,7 +44,8 @@ function getUsersLatlng(groupId, callback) {
       });
     } else {
       const users = group.users;
-      const locations = [];
+      let locations = [];
+      console.log(users);
       for (let i = 0; i < users.length; i += 1) {
         if (users[i].latlng != null) {
           locations.push({ _id: users[i]._id, latlng: users[i].latlng });
