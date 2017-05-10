@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 router.use(authMiddleware.isUserAuthenticated);
 
 router.post('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   const newsfeedId = req.params.newsfeed_id;
   const description = req.body.description;
   commentModel.createComment(newsfeedId, userId, description, (err, data) => {

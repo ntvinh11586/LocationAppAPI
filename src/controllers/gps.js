@@ -6,7 +6,7 @@ const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   gpsModel.getPreviousLatlng(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).json(data);
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   const lng = req.body.lng;
   const lat = req.body.lat;
   gpsModel.createCurrentLatlng(userId, lat, lng, (err, data) => {
@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   const lat = req.body.lat;
   const lng = req.body.lng;
   gpsModel.updateLatlng(userId, lat, lng, (err, data) => {
@@ -43,7 +43,7 @@ router.put('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   gpsModel.deleteLatlng(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).json(data);

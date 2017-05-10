@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   const friendId = req.params.user_id;
   groupModel.getPersonalChat(userId, friendId, (err, data) => {
     if (err) {
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   const friendId = req.params.user_id;
   groupModel.createPersonalChat(userId, friendId, (err, data) => {
     if (err) {

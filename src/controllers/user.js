@@ -6,7 +6,7 @@ const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('/:user_id', (req, res) => {
-  const userId = req.headers.user_id;
+  const userId = res.locals.user_id;
   userModel.getUserInfo(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).json(data);
