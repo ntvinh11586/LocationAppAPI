@@ -9,7 +9,7 @@ router.get('/:user_id', (req, res) => {
   const userId = res.locals.user_id;
   userModel.getUserInfo(userId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

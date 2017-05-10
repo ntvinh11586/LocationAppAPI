@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   const userId = res.locals.user_id;
   gpsModel.getPreviousLatlng(userId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
   const lat = req.body.lat;
   gpsModel.createCurrentLatlng(userId, lat, lng, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -35,7 +35,7 @@ router.put('/', (req, res) => {
   const lng = req.body.lng;
   gpsModel.updateLatlng(userId, lat, lng, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -46,7 +46,7 @@ router.delete('/', (req, res) => {
   const userId = res.locals.user_id;
   gpsModel.deleteLatlng(userId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

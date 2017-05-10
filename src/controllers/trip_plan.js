@@ -13,7 +13,7 @@ router.post('/', (req, res) => {
   const endTime = req.body.end_time;
   groupModel.setTripPlan(groupId, startTime, endTime, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -26,7 +26,7 @@ router.put('/', (req, res) => {
   const endTime = req.body.end_time;
   groupModel.updateTripPlan(groupId, startTime, endTime, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -37,7 +37,7 @@ router.delete('/', (req, res) => {
   const groupId = req.params.group_id;
   groupModel.deleteTripPlan(groupId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

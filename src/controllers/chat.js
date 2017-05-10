@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   const friendId = req.params.user_id;
   groupModel.getPersonalChat(userId, friendId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
   const friendId = req.params.user_id;
   groupModel.createPersonalChat(userId, friendId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

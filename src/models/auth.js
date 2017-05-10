@@ -52,8 +52,8 @@ function login(username, password, callback) {
         status_message: err.message,
       });
     } else if (account == null) {
-      callback(new Error('422'), {
-        status_code: 422,
+      callback(new Error('401'), {
+        status_code: 401,
         success: false,
         status_message: 'Username or password is incorrect.',
       });

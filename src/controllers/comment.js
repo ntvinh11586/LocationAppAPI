@@ -11,7 +11,7 @@ router.post('/', (req, res) => {
   const description = req.body.description;
   commentModel.createComment(newsfeedId, userId, description, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

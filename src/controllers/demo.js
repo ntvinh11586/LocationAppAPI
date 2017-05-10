@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/get', (req, res) => {
   demoModel.get((err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -17,7 +17,7 @@ router.get('/get', (req, res) => {
 router.post('/post', (req, res) => {
   demoModel.post((err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

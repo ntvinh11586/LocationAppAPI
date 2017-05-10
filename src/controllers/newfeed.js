@@ -8,7 +8,7 @@ router.use(authMiddleware.isUserAuthenticated);
 router.get('/', (req, res) => {
   newfeedModel.getNewFeeds((err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -25,7 +25,7 @@ router.post('/', (req, res) => {
   };
   newfeedModel.createNewfeed(newfeed, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }
@@ -36,7 +36,7 @@ router.get('/:newsfeed_id', (req, res) => {
   const newsfeedId = req.params.newsfeed_id;
   newfeedModel.getNewFeed(newsfeedId, (err, data) => {
     if (err) {
-      res.status(data.status_code).err(data);
+      res.status(data.status_code).send(data);
     } else {
       res.json(data);
     }

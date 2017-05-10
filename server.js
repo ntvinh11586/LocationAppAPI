@@ -25,7 +25,7 @@ app.use((req, res, next) => {
   res.status(404);
   // respond with json
   if (req.accepts('json')) {
-    res.status(404).json({
+    res.status(404).send({
       status_code: 404,
       success: true,
       status_message: 'Not found.',
@@ -35,14 +35,15 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status === 500) {
-    res.status(500).json({
+    res.status(500).send({
       status_code: 500,
-      success: true,
+      success: false,
       status_message: 'Internal server error.',
     });
   } else {
-    res.status(err.status).json({
+    res.status(err.status).send({
       status_code: err.status,
+      success: false,
       status_message: err.message,
     });
   }
