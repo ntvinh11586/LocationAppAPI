@@ -1,11 +1,11 @@
-const groupLocation = require('./group_location');
-const groupMessenger = require('./group_messenger');
-const personalMessenger = require('./personal_messenger');
+const map = require('./map');
+const groupChat = require('./group_chat');
+const personalChat = require('./personal_chat');
 const demo = require('./demo');
 
 module.exports = (io) => {
-  groupLocation(io);
-  groupMessenger(io);
+  map(io);
+  groupChat(io);
   demo(io);
-  personalMessenger(io);
+  personalChat(io);
 };
