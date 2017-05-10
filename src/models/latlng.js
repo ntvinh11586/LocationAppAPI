@@ -20,8 +20,8 @@ function updateUserLatlng(groupId, userId, latlng, callback) {
       user.latlng.lng = latlng.lng;
       user.save();
       callback(null, {
-        _group_id: groupId,
-        _user_id: userId,
+        group_id: groupId,
+        user_id: userId,
         latlng,
       });
     }
