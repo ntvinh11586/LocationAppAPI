@@ -46,9 +46,6 @@ function acceptFriend(userId, acceptedFriendId, callback) {
 
 function addFriend(userId, acceptedFriendId, callback) {
   userRepository.findById(userId, (err, user) => {
-    console.log(userId);
-    console.log(acceptedFriendId);
-    console.log(user);
     if (err) {
       callback(err, {
         status_code: 422,
@@ -208,7 +205,11 @@ function getFriend(userId, friendId, callback) {
           }
         });
       } else {
-        callback(null, { err: 'no friend' });
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'No friend found.',
+        });
       }
     }
   });

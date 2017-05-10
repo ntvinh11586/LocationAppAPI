@@ -27,7 +27,8 @@ app.use((req, res, next) => {
   if (req.accepts('json')) {
     res.status(404).json({
       status_code: 404,
-      status_message: 'The resource you requested could not be found.',
+      success: true,
+      status_message: 'Not found.',
     });
   }
 });
@@ -36,6 +37,7 @@ app.use((err, req, res, next) => {
   if (err.status === 500) {
     res.status(500).json({
       status_code: 500,
+      success: true,
       status_message: 'Internal server error.',
     });
   } else {
@@ -54,7 +56,7 @@ mongoose.connect(config.dbURI);
 
 // Log an error if the connection fails
 mongoose.connection.on('error', (error) => {
-  console.log('MongoDB Error: ', error);
+  console.log(error);
 });
 
 locationAppAPI.ioServer(app).listen(app.get('port'), () => {

@@ -1,9 +1,7 @@
 const userRepository = require('../repositories/user');
 
 function getUserInfo(userId, callback) {
-  console.log('abc');
   userRepository.findById(userId, (err, user) => {
-    console.log(user);
     if (err) {
       callback(err, {
         status_code: 422,
