@@ -9,7 +9,7 @@ router.post('/register', (req, res) => {
   const password = req.body.password;
   authModel.register(username, password, (err, data) => {
     if (err) {
-      res.status(data.status_code).json(data);
+      res.status(data.status_code).err(data);
     } else {
       res.json(data);
     }
@@ -21,7 +21,7 @@ router.post('/login', (req, res) => {
   const password = req.body.password;
   authModel.login(username, password, (err, data) => {
     if (err) {
-      res.status(data.status_code).json(data);
+      res.status(data.status_code).err(data);
     } else {
       res.json(data);
     }
@@ -33,7 +33,7 @@ router.get('/logout',
   (req, res) => {
     authModel.logout((err, data) => {
       if (err) {
-        res.status(data.status_code).json(data);
+        res.status(data.status_code).err(data);
       } else {
         res.json(data);
       }

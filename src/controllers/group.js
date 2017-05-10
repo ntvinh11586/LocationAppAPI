@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   const userId = res.locals.user_id;
   groupModel.getUserOwnGroups(userId, (err, data) => {
     if (err) {
-      res.status(data.status_code).json(data);
+      res.status(data.status_code).err(data);
     } else {
       res.json(data);
     }
@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
   const groupName = req.body.group_name;
   groupModel.createGroup(userId, groupName, (err, data) => {
     if (err) {
-      res.status(data.status_code).json(data);
+      res.status(data.status_code).err(data);
     } else {
       res.json(data);
     }
@@ -33,7 +33,7 @@ router.get('/:group_id', (req, res) => {
   const groupId = res.locals.group_id;
   groupModel.getUserOwnGroup(groupId, (err, data) => {
     if (err) {
-      res.status(data.status_code).json(data);
+      res.status(data.status_code).err(data);
     } else {
       res.json(data);
     }
@@ -46,7 +46,7 @@ router.post('/:group_id/members', (req, res) => {
   const friendId = req.query.friend_id;
   groupModel.addFriendIntoGroup(groupId, userId, friendId, (err, data) => {
     if (err) {
-      res.status(data.status_code).json(data);
+      res.status(data.status_code).err(data);
     } else {
       res.json(data);
     }
