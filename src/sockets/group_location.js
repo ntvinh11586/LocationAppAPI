@@ -52,7 +52,7 @@ function groupLocation(io) {
     socket.on('update_latlng', (newLocationInfo) => {
       updateNewUserLocation(newLocationInfo, (err, data) => {
         socket.emit('update_latlng_callback', data);
-        socket.broadcast.emit('update_latlng_calllback', data);
+        socket.broadcast.emit('update_latlng_callback', data);
       });
     });
 
