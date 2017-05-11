@@ -18,7 +18,13 @@ function addMarker(groupId, userId, lat, lng, callback) {
       const marker = { lat, lng, user: userId };
       group.markers.push(marker);
       group.save();
-      callback(null, marker);
+      callback(null, {
+        group_id: groupId,
+        marker_id: group.markers.slice(-1)[0]._id,
+        lat: group.markers.slice(-1)[0].lat,
+        lng: group.markers.slice(-1)[0].lng,
+        user: userId,
+      });
     }
   });
 }
@@ -38,8 +44,10 @@ function getMarkers(groupId, callback) {
         status_message: 'Group not found.',
       });
     } else {
-      const markers = group.markers;
-      callback(null, { markers });
+      callback(null, {
+        group_id: groupId,
+        markers: group.markers,
+      });
     }
   });
 }
@@ -63,7 +71,10 @@ function deleteMarker(groupId, markerId, callback) {
       if (markers.some(x => x._id.equals(markerId))) {
         group.markers.pull({ _id: markerId });
         group.save();
-        callback(null, { marker_id: markerId });
+        callback(null, {
+          group_id: groupId,
+          marker_id: markerId,
+        });
       } else {
         callback(new Error('422'), {
           status_code: 422,

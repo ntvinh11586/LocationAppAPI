@@ -50,7 +50,10 @@ function getUsersLatlng(groupId, callback) {
           locations.push({ _id: users[i]._id, latlng: users[i].latlng });
         }
       }
-      callback(null, { latlngs: locations });
+      callback(null, {
+        group_id: groupId,
+        latlngs: locations,
+      });
     }
   });
 }
