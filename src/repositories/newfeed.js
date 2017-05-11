@@ -6,6 +6,7 @@ const newfeedSchema = new mongoose.Schema({
   description: String,
   location: String,
   rate: Number,
+  date: Number,
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,

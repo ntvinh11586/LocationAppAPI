@@ -13,7 +13,7 @@ const groupSchema = new mongoose.Schema({
   chats: [
     {
       content: String,
-      date: String,
+      date: Number,
       chatter: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
