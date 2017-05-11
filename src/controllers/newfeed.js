@@ -16,14 +16,15 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const newfeed = {
+  const newsfeed = {
     title: req.body.title,
     image: req.body.image,
     description: req.body.description,
     location: req.body.location,
     rate: req.body.rate,
+    date: req.body.date,
   };
-  newfeedModel.createNewfeed(newfeed, (err, data) => {
+  newfeedModel.createNewfeed(newsfeed, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
     } else {
