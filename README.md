@@ -1,7 +1,10 @@
 # LocationAppAPI
 
-For new APIs = v0.6.0, please clone the `master` branch.
+Newest APIs:
+- Development: Checkout `master` branch.
 
-For old APIs < v0.6.0, please clone the `version-0.5.0` branch.
+Old APIs:
+- v0.6.0a: Checkout `version-0.6.0a` branch.
+- v0.5.0: Checkout `version-0.5.0` branch.
 
-API References: https://github.com/ntvinh11586/LocationAppAPI/wiki
+APIs wiki: https://github.com/ntvinh11586/LocationAppAPI/wiki
