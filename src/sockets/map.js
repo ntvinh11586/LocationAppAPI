@@ -1,5 +1,6 @@
 const latlngModel = require('../models/latlng');
 const markerModel = require('../models/marker');
+const groupModel = require('../models/group');
 
 function updateNewUserLocation(newLocationInfo, callback) {
   const newLocationInfoJSON = JSON.parse(newLocationInfo);
@@ -47,6 +48,24 @@ function deleteMarker(markerInfo, callback) {
   });
 }
 
+function updateStartingPoint(startingPointInfo, callback) {
+  const startingPointInfoJSON = JSON.parse(startingPointInfo);
+  const groupId = startingPointInfoJSON.group_id;
+  const startLatlng = startingPointInfoJSON.start_latlng;
+  const startTime = startingPointInfoJSON.start_time;
+  groupModel.updateStartingPoint(groupId, startTime, startLatlng, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getStartingPoint(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getStartingPoint(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function groupLocation(io) {
   io.of('/maps').on('connection', (socket) => {
     socket.on('update_latlng', (newLocationInfo) => {
@@ -81,6 +100,19 @@ function groupLocation(io) {
         socket.emit('get_markers_callback', data);
       });
     });
+
+    socket.on('update_starting_point', (startingPointInfo) => {
+      updateStartingPoint(startingPointInfo, (err, data) => {
+        socket.emit('update_starting_point_callback', data);
+        socket.broadcast.emit('update_starting_point_callback', data);
+      });
+    });
+
+    socket.on('get_starting_point', (groupInfo) => {
+      getStartingPoint(groupInfo, (err, data) => {
+        socket.emit('get_starting_point_callback', data);
+      });
+    })
   });
 }
 

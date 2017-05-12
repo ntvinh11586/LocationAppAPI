@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const groupSchema = new mongoose.Schema({
   name: String,
   start_time: Number,
+  start_latlng: {
+    lat: Number,
+    lng: Number,
+  },
   end_time: Number,
   users: [
     {
