@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const groupSchema = new mongoose.Schema({
   name: String,
-  start_time: String,
-  end_time: String,
+  start_time: Number,
+  end_time: Number,
   users: [
     {
       type: mongoose.Schema.Types.ObjectId,

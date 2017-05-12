@@ -101,6 +101,7 @@ function setTripPlan(groupId, startTime, endTime, callback) {
       group.start_time = startTime;
       group.end_time = endTime;
       group.save();
+
       callback(null, {
         group_id: group._id,
         name: group.name,
