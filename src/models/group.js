@@ -173,6 +173,66 @@ function getPersonalChat(userId, friendId, callback) {
   });
 }
 
+function updateStartingPoint(groupId, startTime, startLatlng, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.start_time = startTime;
+      group.start_latlng = startLatlng;
+      group.save();
+
+      callback(null, {
+        group_id: group._id,
+        name: group.name,
+        start_time: group.start_time,
+        start_latlng: group.start_latlng,
+      });
+    }
+  });
+}
+
+function getStartingPoint(groupId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else if (group.start_latlng.lat !== undefined) {
+      callback(null, {
+        group_id: group._id,
+        name: group.name,
+        start_time: group.start_time,
+        start_latlng: group.start_latlng,
+      });
+    } else {
+      callback(null, {
+        group_id: group._id,
+        name: group.name,
+        start_time: group.start_time,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -183,4 +243,6 @@ module.exports = {
   deleteTripPlan,
   createPersonalChat,
   getPersonalChat,
+  updateStartingPoint,
+  getStartingPoint,
 };
