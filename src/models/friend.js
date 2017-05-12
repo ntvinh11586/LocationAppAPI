@@ -82,19 +82,21 @@ function addFriend(userId, acceptedFriendId, callback) {
 }
 
 function getFriendLists(userId, callback) {
-  userRepository.findById(userId).populate('users').exec((err, user) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else {
-      callback(null, {
-        friends: user.friends,
-      });
-    }
-  });
+  userRepository.findById(userId)
+    .populate({ path: 'friends', model: 'User', select: 'username' })
+    .exec((err, user) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } else {
+        callback(null, {
+          friends: user.friends,
+        });
+      }
+    });
 }
 
 function getFriendRequests(userId, callback) {
