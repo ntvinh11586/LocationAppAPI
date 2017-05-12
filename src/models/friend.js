@@ -82,35 +82,63 @@ function addFriend(userId, acceptedFriendId, callback) {
 }
 
 function getFriendLists(userId, callback) {
-  userRepository.findById(userId).populate('users').exec((err, user) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else {
-      callback(null, {
-        friends: user.friends,
-      });
-    }
-  });
+  userRepository.findById(userId)
+    .populate({ path: 'friends', model: 'User', select: 'username' })
+    .exec((err, user) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } else {
+        callback(null, {
+          friends: user.friends,
+        });
+      }
+    });
 }
 
 function getFriendRequests(userId, callback) {
-  userRepository.findById(userId).populate('users').exec((err, user) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else {
-      callback(null, {
-        friend_requests: user.friend_requests,
-      });
-    }
-  });
+  userRepository.findById(userId)
+    .populate({ path: 'friend_requests', model: 'User', select: 'username' })
+    .exec((err, user) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } else {
+        callback(null, {
+          friend_requests: user.friend_requests,
+        });
+      }
+    });
+}
+
+function getFriendPendings(userId, callback) {
+  userRepository.findById(userId)
+    .populate({ path: 'friends_pending', model: 'User', select: 'username' })
+    .exec((err, user) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } else if (user == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'No user found.',
+        });
+      } else {
+        callback(err, {
+          friend_pendings: user.friends_pending,
+        });
+      }
+    });
 }
 
 function deleteFriend(userId, friendId, callback) {
@@ -211,28 +239,6 @@ function getFriend(userId, friendId, callback) {
           status_message: 'No friend found.',
         });
       }
-    }
-  });
-}
-
-function getFriendPendings(userId, callback) {
-  userRepository.findById(userId, (err, user) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (user == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'No user found.',
-      });
-    } else {
-      callback(err, {
-        friend_pendings: user.friends_pending,
-      });
     }
   });
 }

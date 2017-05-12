@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
 });
 
 router.get('/:group_id', (req, res) => {
-  const groupId = res.locals.group_id;
+  const groupId = req.params.group_id;
   groupModel.getUserOwnGroup(groupId, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
