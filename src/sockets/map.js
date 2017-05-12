@@ -112,7 +112,7 @@ function groupLocation(io) {
       getStartingPoint(groupInfo, (err, data) => {
         socket.emit('get_starting_point_callback', data);
       });
-    })
+    });
   });
 }
 
