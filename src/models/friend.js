@@ -243,6 +243,54 @@ function getFriend(userId, friendId, callback) {
   });
 }
 
+function deleteFriendRequest(userId, friendId, callback) {
+  userRepository.findById(userId, (err, user) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } else if (user == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'No friend found.',
+      });
+    } else {
+      userRepository.findById(friendId, (err, friend) => {
+        if (err) {
+          callback(err, {
+            status_code: 422,
+            success: false,
+            status_message: err.message,
+          });
+        } else if (friend == null) {
+          callback(new Error('422'), {
+            status_code: 422,
+            success: false,
+            status_message: 'No friend found.',
+          });
+        } else if (user.friend_requests.some(u => u.equals(friendId))) {
+          user.friend_requests.pull(friendId); user.save();
+          friend.friends_pending.pull(userId); friend.save();
+          callback(null, {
+            status_code: 200,
+            success: true,
+            status_message: 'Delete friend request successfully.',
+          });
+        } else {
+          callback(new Error('422'), {
+            status_code: 422,
+            success: false,
+            status_message: 'Cannot find user in friend requests',
+          });
+        }
+      });
+    }
+  });
+}
+
 module.exports = {
   acceptFriend,
   addFriend,
@@ -251,4 +299,5 @@ module.exports = {
   deleteFriend,
   getFriend,
   getFriendPendings,
+  deleteFriendRequest,
 };
