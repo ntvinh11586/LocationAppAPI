@@ -22,22 +22,43 @@ function createGroup(userId, groupName, callback) {
 }
 
 function getUserOwnGroups(userId, callback) {
-  groupRepository.find({ users: userId }, (err, groups) => {
-    if (groups == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Cannot find this group.',
-      });
-    } else {
-      groups.map((group) => {
+  groupRepository.find({ users: userId })
+    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
+    .populate({ path: 'users', model: 'User', select: 'username' })
+    .exec((err, groups) => {
+      if (groups == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        groups.map((group) => {
+          group.markers = undefined;
+          group.chats = group.chats.slice(-1);
+        });
+        callback(null, { groups });
+      }
+    });
+}
+
+function getUserOwnGroup(groupId, callback) {
+  groupRepository
+    .findOne({ _id: groupId })
+    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
+    .populate({ path: 'users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
         group.markers = undefined;
-        group.users = undefined;
-        group.chats = group.chats.slice(-1);
-      });
-      callback(null, { groups });
-    }
-  });
+        callback(null, group);
+      }
+    });
 }
 
 function addFriendIntoGroup(groupId, userId, friendId, callback) {
@@ -69,16 +90,6 @@ function addFriendIntoGroup(groupId, userId, friendId, callback) {
         success: true,
         status_message: 'Add friend successfully.',
       });
-    }
-  });
-}
-
-function getUserOwnGroup(groupId, callback) {
-  groupRepository.findOne({ _id: groupId }, (err, group) => {
-    if (group == null) {
-      callback(null, { err: 'err' });
-    } else {
-      callback(null, group);
     }
   });
 }
@@ -154,23 +165,28 @@ function createPersonalChat(userId, friendId, callback) {
 }
 
 function getPersonalChat(userId, friendId, callback) {
-  groupRepository.findOne({ users: [userId, friendId] }, (err, group) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } if (group == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Group not found.',
-      });
-    } else {
-      callback(null, group);
-    }
-  });
+  groupRepository
+    .findOne({ users: [userId, friendId] })
+    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
+    .populate({ path: 'users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        group.markers = undefined;
+        callback(null, group);
+      }
+    });
 }
 
 function updateStartingPoint(groupId, startTime, startLatlng, callback) {

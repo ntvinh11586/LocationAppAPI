@@ -39,27 +39,29 @@ function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
 }
 
 function getMessages(groupId, callback) {
-  groupRepository.findById(groupId, (err, group) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (group == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Group not found.',
-      });
-    } else {
-      const chats = group.chats;
-      callback(err, {
-        group_id: groupId,
-        chats,
-      });
-    }
-  });
+  groupRepository.findById(groupId)
+    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } else if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        const chats = group.chats;
+        callback(err, {
+          group_id: groupId,
+          chats,
+        });
+      }
+    });
 }
 
 function addPersonalMessage(groupId, chatterId, content, date, callback) {

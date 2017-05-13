@@ -26,8 +26,10 @@ const groupSchema = new mongoose.Schema({
   ],
   markers: [
     {
-      lat: Number,
-      lng: Number,
+      latlng: {
+        lat: Number,
+        lng: Number,
+      },
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

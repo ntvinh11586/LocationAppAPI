@@ -18,7 +18,7 @@ function createCurrentLatlng(userId, lat, lng, callback) {
       user.latlng.lng = lng;
       user.latlng.lat = lat;
       user.save();
-      callback(null, { lat, lng });
+      callback(null, { latlng: { lat, lng } });
     }
   });
 }
@@ -38,7 +38,7 @@ function getPreviousLatlng(userId, callback) {
         status_message: 'User not found.',
       });
     } else {
-      callback(null, user.latlng);
+      callback(null, { latlng: user.latlng });
     }
   });
 }
@@ -61,7 +61,7 @@ function updateLatlng(userId, lat, lng, callback) {
       user.latlng.lat = lat;
       user.latlng.lng = lng;
       user.save();
-      callback(null, { lat, lng });
+      callback(null, { latlng: { lat, lng } });
     }
   });
 }
