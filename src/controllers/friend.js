@@ -74,6 +74,20 @@ router.post('/:friend_id/accept', (req, res) => {
   });
 });
 
+router.delete('/requests', (req, res) => {
+  const userId = res.locals.user_id;
+  const friendId = req.query.friend_id;
+  console.log(userId);
+  console.log(friendId);
+  friendModel.deleteFriendRequest(userId, friendId, (err, data) => {
+    if (err) {
+      res.status(data.status_code).send(data);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
 router.delete('/:friend_id/unfriend', (req, res) => {
   const userId = res.locals.user_id;
   const friendId = req.params.friend_id;
