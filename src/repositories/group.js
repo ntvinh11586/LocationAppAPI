@@ -14,6 +14,12 @@ const groupSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  arriving_users: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
   chats: [
     {
       content: String,

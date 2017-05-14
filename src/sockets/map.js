@@ -66,6 +66,32 @@ function getStartingPoint(groupInfo, callback) {
   });
 }
 
+function addArrivingUser(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const userId = groupInfoJSON.user_id;
+  groupModel.addArrivingUser(groupId, userId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function deleteArrivingUser(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const userId = groupInfoJSON.user_id;
+  groupModel.deleteArrivingUser(groupId, userId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getArrivingUsers(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getArrivingUsers(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function groupLocation(io) {
   io.of('/maps').on('connection', (socket) => {
     socket.on('update_latlng', (newLocationInfo) => {
@@ -111,6 +137,26 @@ function groupLocation(io) {
     socket.on('get_starting_point', (groupInfo) => {
       getStartingPoint(groupInfo, (err, data) => {
         socket.emit('get_starting_point_callback', data);
+      });
+    });
+
+    socket.on('add_arriving_user', (groupInfo) => {
+      addArrivingUser(groupInfo, (err, data) => {
+        socket.emit('add_arriving_user_callback', data);
+        socket.broadcast.emit('add_arriving_user_callback', data);
+      });
+    });
+
+    socket.on('delete_arriving_user', (groupInfo) => {
+      deleteArrivingUser(groupInfo, (err, data) => {
+        socket.emit('delete_arriving_user_callback', data);
+        socket.broadcast.emit('delete_arriving_user_callback', data);
+      });
+    });
+
+    socket.on('get_arriving_users', (groupInfo) => {
+      getArrivingUsers(groupInfo, (err, data) => {
+        socket.emit('get_arriving_users_callback', data);
       });
     });
   });
