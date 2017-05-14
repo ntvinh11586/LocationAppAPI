@@ -249,6 +249,83 @@ function getStartingPoint(groupId, callback) {
   });
 }
 
+function addArrivingUser(groupId, userId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      userRepository.findById(userId, (err, user) => {
+        group.arriving_users.push(user);
+        group.save();
+        callback(null, {
+          group_id: groupId,
+          user_id: userId,
+        });
+      });
+    }
+  });
+}
+
+function getArrivingUsers(groupId, callback) {
+  groupRepository.findById(groupId)
+    .populate({ path: 'arriving_users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        callback(null, {
+          group_id: groupId,
+          arriving_users: group.arriving_users,
+        });
+      }
+    });
+}
+
+function deleteArrivingUser(groupId, userId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else if (group.arriving_users.some(u => u.equals(userId))) {
+      group.arriving_users.pull(userId);
+      group.save();
+      callback(null, {
+        group_id: groupId,
+        user_id: userId,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -261,4 +338,7 @@ module.exports = {
   getPersonalChat,
   updateStartingPoint,
   getStartingPoint,
+  addArrivingUser,
+  getArrivingUsers,
+  deleteArrivingUser,
 };
