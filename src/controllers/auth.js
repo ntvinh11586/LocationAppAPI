@@ -28,6 +28,19 @@ router.post('/login', (req, res) => {
   });
 });
 
+router.post('/login_with_token',
+  authMiddleware.isUserAuthenticated,
+  (req, res) => {
+    const username = res.locals.username;
+    const userId = res.locals.user_id;
+    const token = req.headers.token;
+    res.json({
+      token,
+      username,
+      _id: userId,
+    });
+  });
+
 router.get('/logout',
   authMiddleware.isUserAuthenticated,
   (req, res) => {
