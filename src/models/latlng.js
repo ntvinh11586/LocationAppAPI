@@ -47,7 +47,11 @@ function getUsersLatlng(groupId, callback) {
       let locations = [];
       for (let i = 0; i < users.length; i += 1) {
         if (users[i].latlng != null) {
-          locations.push({ _id: users[i]._id, latlng: users[i].latlng });
+          locations.push({
+            _id: users[i]._id,
+            username: users[i].username,
+            latlng: users[i].latlng,
+          });
         }
       }
       callback(null, {

@@ -30,7 +30,10 @@ function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
             _id: group.chats.slice(-1)[0]._id,
             content,
             date,
-            chatter: chatterId,
+            chatter: {
+              _id: chatter._id,
+              username: chatter.username,
+            },
           });
         }
       });
