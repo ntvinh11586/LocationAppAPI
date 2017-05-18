@@ -58,6 +58,16 @@ function updateStartingPoint(startingPointInfo, callback) {
   });
 }
 
+function updateEndingPoint(endingPointInfo, callback) {
+  const endingPointInfoJSON = JSON.parse(endingPointInfo);
+  const groupId = endingPointInfoJSON.group_id;
+  const endLatlng = endingPointInfoJSON.end_latlng;
+  const endTime = endingPointInfoJSON.end_time;
+  groupModel.updateEndingPoint(groupId, endTime, endLatlng, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function getStartingPoint(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -71,6 +81,15 @@ function addArrivingUser(groupInfo, callback) {
   const groupId = groupInfoJSON.group_id;
   const userId = groupInfoJSON.user_id;
   groupModel.addArrivingUser(groupId, userId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function addDestinationUser(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const userId = groupInfoJSON.user_id;
+  groupModel.addDestinationUser(groupId, userId, (err, data) => {
     callback(err, data);
   });
 }
@@ -134,6 +153,13 @@ function groupLocation(io) {
       });
     });
 
+    socket.on('update_ending_point', (endingPointInfo) => {
+      updateEndingPoint(endingPointInfo, (err, data) => {
+        socket.emit('update_ending_point_callback', data);
+        socket.broadcast.emit('update_ending_point_callback', data);
+      });
+    });
+
     socket.on('get_starting_point', (groupInfo) => {
       getStartingPoint(groupInfo, (err, data) => {
         socket.emit('get_starting_point_callback', data);
@@ -157,6 +183,13 @@ function groupLocation(io) {
     socket.on('get_arriving_users', (groupInfo) => {
       getArrivingUsers(groupInfo, (err, data) => {
         socket.emit('get_arriving_users_callback', data);
+      });
+    });
+
+    socket.on('add_destination_user', (groupInfo) => {
+      addDestinationUser(groupInfo, (err, data) => {
+        socket.emit('add_destination_user_callback', data);
+        socket.broadcast.emit('add_destination_user_callback', data);
       });
     });
   });

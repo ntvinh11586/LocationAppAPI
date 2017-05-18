@@ -218,6 +218,35 @@ function updateStartingPoint(groupId, startTime, startLatlng, callback) {
   });
 }
 
+function updateEndingPoint(groupId, endTime, endLatlng, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.end_time = endTime;
+      group.end_latlng = endLatlng;
+      group.save();
+
+      callback(null, {
+        group_id: group._id,
+        name: group.name,
+        end_time: group.end_time,
+        end_latlng: group.end_latlng,
+      });
+    }
+  });
+}
+
 function getStartingPoint(groupId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
@@ -266,6 +295,33 @@ function addArrivingUser(groupId, userId, callback) {
     } else {
       userRepository.findById(userId, (err, user) => {
         group.arriving_users.push(user);
+        group.save();
+        callback(null, {
+          group_id: groupId,
+          user_id: userId,
+        });
+      });
+    }
+  });
+}
+
+function addDestinationUser(groupId, userId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      userRepository.findById(userId, (err, user) => {
+        group.destination_users.push(user);
         group.save();
         callback(null, {
           group_id: groupId,
@@ -341,4 +397,6 @@ module.exports = {
   addArrivingUser,
   getArrivingUsers,
   deleteArrivingUser,
+  addDestinationUser,
+  updateEndingPoint,
 };
