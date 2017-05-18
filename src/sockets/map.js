@@ -76,6 +76,24 @@ function getStartingPoint(groupInfo, callback) {
   });
 }
 
+function updateEndingPoint(endingPointInfo, callback) {
+  const endingPointInfoJSON = JSON.parse(endingPointInfo);
+  const groupId = endingPointInfoJSON.group_id;
+  const endLatlng = endingPointInfoJSON.end_latlng;
+  const endTime = endingPointInfoJSON.end_time;
+  groupModel.updateEndingPoint(groupId, endTime, endLatlng, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getEndingPoint(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getEndingPoint(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function addArrivingUser(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -180,6 +198,19 @@ function groupLocation(io) {
     socket.on('get_starting_point', (groupInfo) => {
       getStartingPoint(groupInfo, (err, data) => {
         socket.emit('get_starting_point_callback', data);
+      });
+    });
+
+    socket.on('update_ending_point', (endingPointInfo) => {
+      updateEndingPoint(endingPointInfo, (err, data) => {
+        socket.emit('update_ending_point_callback', data);
+        socket.broadcast.emit('update_ending_point_callback', data);
+      });
+    });
+
+    socket.on('get_ending_point', (groupInfo) => {
+      getEndingPoint(groupInfo, (err, data) => {
+        socket.emit('get_ending_point_callback', data);
       });
     });
 
