@@ -103,10 +103,27 @@ function deleteArrivingUser(groupInfo, callback) {
   });
 }
 
+function deleteDestinationUser(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const userId = groupInfoJSON.user_id;
+  groupModel.deleteDestinationUser(groupId, userId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function getArrivingUsers(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
   groupModel.getArrivingUsers(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getDestinationUsers(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getDestinationUsers(groupId, (err, data) => {
     callback(err, data);
   });
 }
@@ -186,10 +203,23 @@ function groupLocation(io) {
       });
     });
 
+    socket.on('get_destination_users', (groupInfo) => {
+      getDestinationUsers(groupInfo, (err, data) => {
+        socket.emit('get_destination_users_callback', data);
+      });
+    });
+
     socket.on('add_destination_user', (groupInfo) => {
       addDestinationUser(groupInfo, (err, data) => {
         socket.emit('add_destination_user_callback', data);
         socket.broadcast.emit('add_destination_user_callback', data);
+      });
+    });
+
+    socket.on('delete_destination_user', (groupInfo) => {
+      deleteDestinationUser(groupInfo, (err, data) => {
+        socket.emit('delete_destination_user_callback', data);
+        socket.broadcast.emit('delete_destination_user_callback', data);
       });
     });
   });

@@ -357,6 +357,31 @@ function getArrivingUsers(groupId, callback) {
     });
 }
 
+function getDestinationUsers(groupId, callback) {
+  groupRepository.findById(groupId)
+    .populate({ path: 'destination_users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        callback(null, {
+          group_id: groupId,
+          destination_users: group.destination_users,
+        });
+      }
+    });
+}
+
 function deleteArrivingUser(groupId, userId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
@@ -373,6 +398,31 @@ function deleteArrivingUser(groupId, userId, callback) {
       });
     } else if (group.arriving_users.some(u => u.equals(userId))) {
       group.arriving_users.pull(userId);
+      group.save();
+      callback(null, {
+        group_id: groupId,
+        user_id: userId,
+      });
+    }
+  });
+}
+
+function deleteDestinationUser(groupId, userId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else if (group.destination_users.some(u => u.equals(userId))) {
+      group.destination_users.pull(userId);
       group.save();
       callback(null, {
         group_id: groupId,
@@ -399,4 +449,6 @@ module.exports = {
   deleteArrivingUser,
   addDestinationUser,
   updateEndingPoint,
+  getDestinationUsers,
+  deleteDestinationUser,
 };
