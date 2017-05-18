@@ -278,6 +278,37 @@ function getStartingPoint(groupId, callback) {
   });
 }
 
+function getEndingPoint(groupId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else if (group.end_latlng.lat !== undefined) {
+      callback(null, {
+        group_id: group._id,
+        name: group.name,
+        start_time: group.end_time,
+        start_latlng: group.end_latlng,
+      });
+    } else {
+      callback(null, {
+        group_id: group._id,
+        name: group.name,
+        start_time: group.end_time,
+      });
+    }
+  });
+}
+
 function addArrivingUser(groupId, userId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
@@ -444,6 +475,7 @@ module.exports = {
   getPersonalChat,
   updateStartingPoint,
   getStartingPoint,
+  getEndingPoint,
   addArrivingUser,
   getArrivingUsers,
   deleteArrivingUser,

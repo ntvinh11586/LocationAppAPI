@@ -58,6 +58,14 @@ function updateStartingPoint(startingPointInfo, callback) {
   });
 }
 
+function getStartingPoint(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getStartingPoint(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function updateEndingPoint(endingPointInfo, callback) {
   const endingPointInfoJSON = JSON.parse(endingPointInfo);
   const groupId = endingPointInfoJSON.group_id;
@@ -68,10 +76,10 @@ function updateEndingPoint(endingPointInfo, callback) {
   });
 }
 
-function getStartingPoint(groupInfo, callback) {
+function getEndingPoint(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
-  groupModel.getStartingPoint(groupId, (err, data) => {
+  groupModel.getEndingPoint(groupId, (err, data) => {
     callback(err, data);
   });
 }
@@ -170,6 +178,12 @@ function groupLocation(io) {
       });
     });
 
+    socket.on('get_starting_point', (groupInfo) => {
+      getStartingPoint(groupInfo, (err, data) => {
+        socket.emit('get_starting_point_callback', data);
+      });
+    });
+
     socket.on('update_ending_point', (endingPointInfo) => {
       updateEndingPoint(endingPointInfo, (err, data) => {
         socket.emit('update_ending_point_callback', data);
@@ -177,9 +191,9 @@ function groupLocation(io) {
       });
     });
 
-    socket.on('get_starting_point', (groupInfo) => {
-      getStartingPoint(groupInfo, (err, data) => {
-        socket.emit('get_starting_point_callback', data);
+    socket.on('get_ending_point', (groupInfo) => {
+      getEndingPoint(groupInfo, (err, data) => {
+        socket.emit('get_ending_point_callback', data);
       });
     });
 
