@@ -284,11 +284,27 @@ function groupLocation(io) {
       });
     }
 
+    function deleteStopover(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      const stopoverId = groupInfoJSON.stopover_id;
+      groupModel.deleteStopover(groupId, stopoverId, (err, data) => {
+        callback(err, data);
+      });
+    }
+
     socket.on('add_stopover', (groupInfo) => {
       addStopover(groupInfo, (err, data) => {
         socket.emit('add_stopover_callback', data);
         socket.broadcast.emit('add_stopover_callback', data);
-      })
+      });
+    });
+
+    socket.on('delete_stopover', (groupInfo) => {
+      deleteStopover(groupInfo, (err, data) => {
+        socket.emit('delete_stopover_callback', data);
+        socket.broadcast.emit('delete_stopover_callback', data);
+      });
     });
   });
 }
