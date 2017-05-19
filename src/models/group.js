@@ -577,6 +577,85 @@ function deleteStopover(groupId, stopoverId, callback) {
   });
 }
 
+function addUserIntoStopover(groupId, userId, stopoverId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      const stopover = group.stopovers.find(so => so._id.equals(stopoverId));
+      stopover.users.push(userId);
+      group.save();
+      callback(null, {
+        group_id: groupId,
+        user_id: userId,
+        stopover_id: stopoverId,
+      });
+    }
+  });
+}
+
+function getStopovers(groupId, callback) {
+  groupRepository.findById(groupId)
+    .populate({ path: 'stopovers.users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        callback(null, {
+          group_id: groupId,
+          stopovers: group.stopovers,
+        });
+      }
+    });
+}
+
+function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      const stopover = group.stopovers.find(so => so._id.equals(stopoverId));
+      stopover.users.pull(userId);
+      group.save();
+      callback(null, {
+        group_id: groupId,
+        user_id: userId,
+        stopover_id: stopoverId,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -601,4 +680,7 @@ module.exports = {
   deleteEndingPoint,
   addStopover,
   deleteStopover,
+  addUserIntoStopover,
+  getStopovers,
+  deleteUserIntoStopover,
 };
