@@ -76,16 +76,6 @@ function getStartingPoint(groupInfo, callback) {
   });
 }
 
-function updateEndingPoint(endingPointInfo, callback) {
-  const endingPointInfoJSON = JSON.parse(endingPointInfo);
-  const groupId = endingPointInfoJSON.group_id;
-  const endLatlng = endingPointInfoJSON.end_latlng;
-  const endTime = endingPointInfoJSON.end_time;
-  groupModel.updateEndingPoint(groupId, endTime, endLatlng, (err, data) => {
-    callback(err, data);
-  });
-}
-
 function getEndingPoint(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -142,6 +132,22 @@ function getDestinationUsers(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
   groupModel.getDestinationUsers(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function deleteStartingPoint(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.deleteStartingPoint(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function deleteEndingPoint(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.deleteEndingPoint(groupId, (err, data) => {
     callback(err, data);
   });
 }
@@ -253,22 +259,6 @@ function groupLocation(io) {
         socket.broadcast.emit('delete_destination_user_callback', data);
       });
     });
-
-    function deleteStartingPoint(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      groupModel.deleteStartingPoint(groupId, (err, data) => {
-        callback(err, data);
-      });
-    }
-
-    function deleteEndingPoint(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      groupModel.deleteEndingPoint(groupId, (err, data) => {
-        callback(err, data);
-      });
-    }
 
     socket.on('delete_starting_point', (groupInfo) => {
       deleteStartingPoint(groupInfo, (err, data) => {
