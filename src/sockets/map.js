@@ -152,6 +152,53 @@ function deleteEndingPoint(groupInfo, callback) {
   });
 }
 
+function addStopover(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const latlng = groupInfoJSON.latlng;
+  const position = groupInfoJSON.position;
+  groupModel.addStopover(groupId, latlng, position, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function deleteStopover(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const stopoverId = groupInfoJSON.stopover_id;
+  groupModel.deleteStopover(groupId, stopoverId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function addUserIntoStopover(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const userId = groupInfoJSON.user_id;
+  const stopoverId = groupInfoJSON.stopover_id;
+  groupModel.addUserIntoStopover(groupId, userId, stopoverId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getStopovers(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getStopovers(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function deleteUserIntoStopover(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const userId = groupInfoJSON.user_id;
+  const stopoverId = groupInfoJSON.stopover_id;
+  groupModel.deleteUserIntoStopover(groupId, userId, stopoverId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function groupLocation(io) {
   io.of('/maps').on('connection', (socket) => {
     socket.on('update_latlng', (newLocationInfo) => {
@@ -274,25 +321,6 @@ function groupLocation(io) {
       });
     });
 
-    function addStopover(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      const latlng = groupInfoJSON.latlng;
-      const position = groupInfoJSON.position;
-      groupModel.addStopover(groupId, latlng, position, (err, data) => {
-        callback(err, data);
-      });
-    }
-
-    function deleteStopover(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      const stopoverId = groupInfoJSON.stopover_id;
-      groupModel.deleteStopover(groupId, stopoverId, (err, data) => {
-        callback(err, data);
-      });
-    }
-
     socket.on('add_stopover', (groupInfo) => {
       addStopover(groupInfo, (err, data) => {
         socket.emit('add_stopover_callback', data);
@@ -300,10 +328,30 @@ function groupLocation(io) {
       });
     });
 
+    socket.on('get_stopovers', (groupInfo) => {
+      getStopovers(groupInfo, (err, data) => {
+        socket.emit('get_stopovers_callback', data);
+      });
+    });
+
     socket.on('delete_stopover', (groupInfo) => {
       deleteStopover(groupInfo, (err, data) => {
         socket.emit('delete_stopover_callback', data);
         socket.broadcast.emit('delete_stopover_callback', data);
+      });
+    });
+
+    socket.on('add_user_into_stopover', (groupInfo) => {
+      addUserIntoStopover(groupInfo, (err, data) => {
+        socket.emit('add_user_into_stopover_callback', data);
+        socket.broadcast.emit('add_user_into_stopover_callback', data);
+      });
+    });
+
+    socket.on('delete_user_into_stopover', (groupInfo) => {
+      deleteUserIntoStopover(groupInfo, (err, data) => {
+        socket.emit('delete_user_into_stopover_callback', data);
+        socket.broadcast.emit('delete_user_into_stopover_callback', data);
       });
     });
   });
