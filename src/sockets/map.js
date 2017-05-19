@@ -273,6 +273,23 @@ function groupLocation(io) {
         socket.broadcast.emit('delete_ending_point_callback', data);
       });
     });
+
+    function addStopover(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      const latlng = groupInfoJSON.latlng;
+      const position = groupInfoJSON.position;
+      groupModel.addStopover(groupId, latlng, position, (err, data) => {
+        callback(err, data);
+      });
+    }
+
+    socket.on('add_stopover', (groupInfo) => {
+      addStopover(groupInfo, (err, data) => {
+        socket.emit('add_stopover_callback', data);
+        socket.broadcast.emit('add_stopover_callback', data);
+      })
+    });
   });
 }
 
