@@ -7,24 +7,38 @@ const groupSchema = new mongoose.Schema({
     lat: Number,
     lng: Number,
   },
-  end_time: Number,
-  end_latlng: {
-    lat: Number,
-    lng: Number,
-  },
-  users: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
   arriving_users: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
   ],
+  end_time: Number,
+  end_latlng: {
+    lat: Number,
+    lng: Number,
+  },
   destination_users: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  stopovers: [
+    {
+      latlng: {
+        lat: Number,
+        lng: Number,
+      },
+      users: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      ],
+    },
+  ],
+  users: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

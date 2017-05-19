@@ -513,6 +513,70 @@ function deleteEndingPoint(groupId, callback) {
   });
 }
 
+const insert = (arr, index, newItem) => [
+  // part of the array before the specified index
+  ...arr.slice(0, index),
+  // inserted item
+  newItem,
+  // part of the array after the specified index
+  ...arr.slice(index),
+];
+
+function addStopover(groupId, latlng, position, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      const stopover = {
+        latlng,
+      };
+      group.stopovers = insert(group.stopovers, position, stopover);
+      group.save();
+      callback(null, {
+        stopover_id: group.stopovers.slice(-1 - position)[0]._id,
+        group_id: groupId,
+        latlng,
+        position,
+      });
+    }
+  });
+}
+
+function deleteStopover(groupId, stopoverId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.stopovers.pull(stopoverId);
+      group.save();
+      callback(null, {
+        stopover_id: stopoverId,
+        group_id: groupId,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -535,4 +599,6 @@ module.exports = {
   deleteDestinationUser,
   deleteStartingPoint,
   deleteEndingPoint,
+  addStopover,
+  deleteStopover,
 };
