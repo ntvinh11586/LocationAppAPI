@@ -253,6 +253,36 @@ function groupLocation(io) {
         socket.broadcast.emit('delete_destination_user_callback', data);
       });
     });
+
+    function deleteStartingPoint(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      groupModel.deleteStartingPoint(groupId, (err, data) => {
+        callback(err, data);
+      });
+    }
+
+    function deleteEndingPoint(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      groupModel.deleteEndingPoint(groupId, (err, data) => {
+        callback(err, data);
+      });
+    }
+
+    socket.on('delete_starting_point', (groupInfo) => {
+      deleteStartingPoint(groupInfo, (err, data) => {
+        socket.emit('delete_starting_point_callback', data);
+        socket.broadcast.emit('delete_starting_point_callback', data);
+      });
+    });
+
+    socket.on('delete_ending_point', (groupInfo) => {
+      deleteEndingPoint(groupInfo, (err, data) => {
+        socket.emit('delete_ending_point_callback', data);
+        socket.broadcast.emit('delete_ending_point_callback', data);
+      });
+    });
   });
 }
 
