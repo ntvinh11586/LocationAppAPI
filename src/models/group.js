@@ -543,7 +543,7 @@ function addStopover(groupId, latlng, position, callback) {
       group.stopovers = insert(group.stopovers, position, stopover);
       group.save();
       callback(null, {
-        stopover_id: group.stopovers.slice(-1)[0]._id,
+        stopover_id: group.stopovers.slice(-1 - position)[0]._id,
         group_id: groupId,
         latlng,
         position,
