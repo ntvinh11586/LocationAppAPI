@@ -463,6 +463,56 @@ function deleteDestinationUser(groupId, userId, callback) {
   });
 }
 
+function deleteStartingPoint(groupId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.start_latlng = undefined;
+      group.arriving_users = undefined;
+      group.save();
+      callback(null, {
+        group_id: groupId,
+      });
+    }
+  });
+}
+
+function deleteEndingPoint(groupId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.end_latlng = undefined;
+      group.destination_users = undefined;
+      group.save();
+      callback(null, {
+        group_id: groupId,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -483,4 +533,6 @@ module.exports = {
   updateEndingPoint,
   getDestinationUsers,
   deleteDestinationUser,
+  deleteStartingPoint,
+  deleteEndingPoint,
 };
