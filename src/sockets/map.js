@@ -199,6 +199,33 @@ function deleteUserIntoStopover(groupInfo, callback) {
   });
 }
 
+function addRoute(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const startLatlng = groupInfoJSON.start_latlng;
+  const endLatlng = groupInfoJSON.end_latlng;
+  const stopovers = groupInfoJSON.stopovers;
+  groupModel.addRoute(groupId, startLatlng, endLatlng, stopovers, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function getRoute(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.getRoute(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
+function deleteRoute(groupInfo, callback) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  groupModel.deleteRoute(groupId, (err, data) => {
+    callback(err, data);
+  });
+}
+
 function groupLocation(io) {
   io.of('/maps').on('connection', (socket) => {
     socket.on('update_latlng', (newLocationInfo) => {
@@ -354,33 +381,6 @@ function groupLocation(io) {
         socket.broadcast.emit('delete_user_into_stopover_callback', data);
       });
     });
-
-    function addRoute(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      const startLatlng = groupInfoJSON.start_latlng;
-      const endLatlng = groupInfoJSON.end_latlng;
-      const stopovers = groupInfoJSON.stopovers;
-      groupModel.addRoute(groupId, startLatlng, endLatlng, stopovers, (err, data) => {
-        callback(err, data);
-      });
-    }
-
-    function getRoute(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      groupModel.getRoute(groupId, (err, data) => {
-        callback(err, data);
-      });
-    }
-
-    function deleteRoute(groupInfo, callback) {
-      const groupInfoJSON = JSON.parse(groupInfo);
-      const groupId = groupInfoJSON.group_id;
-      groupModel.deleteRoute(groupId, (err, data) => {
-        callback(err, data);
-      });
-    }
 
     socket.on('add_route', (groupInfo) => {
       addRoute(groupInfo, (err, data) => {
