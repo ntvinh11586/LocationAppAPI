@@ -686,6 +686,66 @@ function addRoute(groupId, startLatlng, endLatlng, stopovers, callback) {
   });
 }
 
+function getRoute(groupId, callback) {
+  groupRepository.findById(groupId)
+    .populate({ path: 'arriving_users', model: 'User', select: 'username' })
+    .populate({ path: 'destination_users', model: 'User', select: 'username' })
+    .populate({ path: 'stopovers.users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else {
+        callback(null, {
+          group_id: groupId,
+          start_latlng: group.start_latlng,
+          end_latlng: group.end_latlng,
+          arriving_users: group.arriving_users,
+          destination_users: group.destination_users,
+          stopovers: group.stopovers,
+        });
+      }
+    });
+}
+
+function deleteRoute(groupId, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.start_latlng = undefined;
+      group.end_latlng = undefined;
+      group.arriving_users = [];
+      group.destination_users = [];
+      group.stopovers = [];
+      group.save();
+
+      callback(null, {
+        group_id: groupId,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -714,4 +774,6 @@ module.exports = {
   getStopovers,
   deleteUserIntoStopover,
   addRoute,
+  getRoute,
+  deleteRoute,
 };
