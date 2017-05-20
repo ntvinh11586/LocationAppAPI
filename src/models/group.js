@@ -10,19 +10,23 @@ function createGroup(userId, groupName, callback) {
         status_message: 'Already have groups',
       });
     } else {
-      groupRepository.create({ name: groupName }, (err, newGroup) => {
-        userRepository.findById(userId, (err, user) => {
-          newGroup.users.push(user);
-          newGroup.save();
-          callback(null, newGroup);
+      groupRepository.create({
+        name: groupName,
+        created_date: (new Date()).getTime() },
+        (err, newGroup) => {
+          userRepository.findById(userId, (err, user) => {
+            newGroup.users.push(user);
+            newGroup.save();
+            callback(null, newGroup);
+          });
         });
-      });
     }
   });
 }
 
 function getUserOwnGroups(userId, callback) {
   groupRepository.find({ users: userId })
+    .select('chats users name created_date')
     .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
     .populate({ path: 'users', model: 'User', select: 'username' })
     .exec((err, groups) => {
@@ -33,11 +37,37 @@ function getUserOwnGroups(userId, callback) {
           status_message: 'Group not found.',
         });
       } else {
-        groups.map((group) => {
-          group.markers = undefined;
-          group.chats = group.chats.slice(-1);
+        const groupsWithModifiedTime = groups.map((g) => {
+          let chatDate;
+          if (g.chats[0] !== undefined) {
+            chatDate = g.chats[0].date;
+          }
+          return {
+            _id: g._id,
+            chats: g.chats.slice(-1),
+            name: g.name,
+            created_date: g.created_date,
+            users: g.users,
+            modified_time: chatDate
+              || g.created_date
+              || -1,
+          };
         });
-        callback(null, { groups });
+
+        groupsWithModifiedTime.sort((a, b) => b.modified_time - a.modified_time);
+
+        const groupsDTO = groupsWithModifiedTime.map((g) => {
+          return {
+            _id: g._id,
+            name: g.name,
+            created_date: g.created_date,
+            chats: g.chats,
+            users: g.users,
+          };
+        });
+        callback(null, {
+          groups: groupsDTO,
+        });
       }
     });
 }
@@ -55,7 +85,6 @@ function getUserOwnGroup(groupId, callback) {
           status_message: 'Group not found.',
         });
       } else {
-        group.markers = undefined;
         callback(null, group);
       }
     });
