@@ -656,6 +656,36 @@ function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
   });
 }
 
+function addRoute(groupId, startLatlng, endLatlng, stopovers, callback) {
+  groupRepository.findById(groupId, (err, group) => {
+    if (err) {
+      callback(err, {
+        status_code: 422,
+        success: false,
+        status_message: err.message,
+      });
+    } if (group == null) {
+      callback(new Error('422'), {
+        status_code: 422,
+        success: false,
+        status_message: 'Group not found.',
+      });
+    } else {
+      group.start_latlng = startLatlng;
+      group.end_latlng = endLatlng;
+      group.stopovers = stopovers;
+      group.save();
+
+      callback(null, {
+        group_id: groupId,
+        start_latlng: startLatlng,
+        end_latlng: endLatlng,
+        stopovers,
+      });
+    }
+  });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -683,4 +713,5 @@ module.exports = {
   addUserIntoStopover,
   getStopovers,
   deleteUserIntoStopover,
+  addRoute,
 };

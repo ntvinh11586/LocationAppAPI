@@ -354,6 +354,53 @@ function groupLocation(io) {
         socket.broadcast.emit('delete_user_into_stopover_callback', data);
       });
     });
+
+    function addRoute(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      const startLatlng = groupInfoJSON.start_latlng;
+      const endLatlng = groupInfoJSON.end_latlng;
+      const stopovers = groupInfoJSON.stopovers;
+      groupModel.addRoute(groupId, startLatlng, endLatlng, stopovers, (err, data) => {
+        callback(err, data);
+      });
+    }
+
+    function getRoute(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      groupModel.getRoute(groupId, (err, data) => {
+        callback(err, data);
+      });
+    }
+
+    function deleteRoute(groupInfo, callback) {
+      const groupInfoJSON = JSON.parse(groupInfo);
+      const groupId = groupInfoJSON.group_id;
+      groupModel.deleteRoute(groupId, (err, data) => {
+        callback(err, data);
+      });
+    }
+
+    socket.on('add_route', (groupInfo) => {
+      addRoute(groupInfo, (err, data) => {
+        socket.emit('add_route_callback', data);
+        socket.broadcast.emit('add_route_callback', data);
+      });
+    });
+
+    socket.on('get_route', (groupInfo) => {
+      getRoute(groupInfo, (err, data) => {
+        socket.emit('get_route_callback', data);
+      });
+    });
+
+    socket.on('delete_route', (groupInfo) => {
+      deleteRoute(groupInfo, (err, data) => {
+        socket.emit('delete_route_callback', data);
+        socket.broadcast.emit('delete_route_callback', data);
+      });
+    });
   });
 }
 
