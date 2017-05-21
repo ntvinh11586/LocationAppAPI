@@ -1,6 +1,7 @@
 const latlngModel = require('../models/latlng');
 const markerModel = require('../models/marker');
 const groupModel = require('../models/group');
+const socketioJwt = require('socketio-jwt');
 
 function updateNewUserLocation(newLocationInfo, callback) {
   const newLocationInfoJSON = JSON.parse(newLocationInfo);
@@ -227,7 +228,13 @@ function deleteRoute(groupInfo, callback) {
 }
 
 function groupLocation(io) {
-  io.of('/maps').on('connection', (socket) => {
+  io.of('/maps')
+  .on('connection', socketioJwt.authorize({
+    secret: 'supersecret',
+    timeout: 60000,
+  }))
+  .on('authenticated', (socket) => {
+    socket.emit('hahaha', 'vinh');
     socket.on('update_latlng', (newLocationInfo) => {
       updateNewUserLocation(newLocationInfo, (err, data) => {
         socket.emit('update_latlng_callback', data);
