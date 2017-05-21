@@ -2,5 +2,5 @@
   "host": "http://localhost:3000",
   "dbURI": "mongodb://luanvantnk13:datvavinh@ds139470.mlab.com:39470/locationappdb",
   "tokenSecretKey": "supersecret",
-  "tokenExpired": 10000
+  "tokenExpired": 5184000
 }
