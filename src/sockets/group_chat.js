@@ -1,4 +1,5 @@
 const messageModel = require('../models/message');
+const socketioJwt = require('socketio-jwt');
 
 function addGroupMessage(chatMessage, callback) {
   const chatMessageJSON = JSON.parse(chatMessage);
@@ -20,7 +21,12 @@ function getAllMessagesInGroup(group, callback) {
 }
 
 function groupMessenger(io) {
-  io.of('/chats/groups').on('connection', (socket) => {
+  io.of('/chats/groups')
+  .on('connection', socketioJwt.authorize({
+    secret: 'supersecret',
+    timeout: 60000,
+  }))
+  .on('authenticated', (socket) => {
     socket.on('add_message', (chatMessage) => {
       addGroupMessage(chatMessage, (err, data) => {
         socket.emit('add_message_callback', data);

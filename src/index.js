@@ -5,9 +5,6 @@ const socket = require('./sockets');
 
 // Create an IO Server instance.
 const ioServer = (app) => {
-  // Set static variables in global.
-  // app.locals.location = ?;
-
   // Configure server with Socket.io
   const server = http.Server(app);
   const io = socketio(server);
