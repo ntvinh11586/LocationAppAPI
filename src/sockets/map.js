@@ -234,11 +234,16 @@ function groupLocation(io) {
     timeout: 60000,
   }))
   .on('authenticated', (socket) => {
-    socket.emit('hahaha', 'vinh');
+    if (socket.handshake.query.group_id !== undefined) {
+      socket.join(socket.handshake.query.group_id);
+    }
+
     socket.on('update_latlng', (newLocationInfo) => {
       updateNewUserLocation(newLocationInfo, (err, data) => {
         socket.emit('update_latlng_callback', data);
-        socket.broadcast.emit('update_latlng_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('update_latlng_callback', data);
       });
     });
 
@@ -251,14 +256,18 @@ function groupLocation(io) {
     socket.on('add_marker', (markerInfo) => {
       addMarker(markerInfo, (err, data) => {
         socket.emit('add_marker_callback', data);
-        socket.broadcast.emit('add_marker_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_marker_callback', data);
       });
     });
 
     socket.on('delete_marker', (markerInfo) => {
       deleteMarker(markerInfo, (err, data) => {
         socket.emit('delete_marker_callback', data);
-        socket.broadcast.emit('delete_marker_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_marker_callback', data);
       });
     });
 
@@ -271,14 +280,18 @@ function groupLocation(io) {
     socket.on('update_starting_point', (startingPointInfo) => {
       updateStartingPoint(startingPointInfo, (err, data) => {
         socket.emit('update_starting_point_callback', data);
-        socket.broadcast.emit('update_starting_point_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('update_starting_point_callback', data);
       });
     });
 
     socket.on('update_ending_point', (endingPointInfo) => {
       updateEndingPoint(endingPointInfo, (err, data) => {
         socket.emit('update_ending_point_callback', data);
-        socket.broadcast.emit('update_ending_point_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('update_ending_point_callback', data);
       });
     });
 
@@ -291,7 +304,9 @@ function groupLocation(io) {
     socket.on('update_ending_point', (endingPointInfo) => {
       updateEndingPoint(endingPointInfo, (err, data) => {
         socket.emit('update_ending_point_callback', data);
-        socket.broadcast.emit('update_ending_point_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('update_ending_point_callback', data);
       });
     });
 
@@ -304,14 +319,18 @@ function groupLocation(io) {
     socket.on('add_arriving_user', (groupInfo) => {
       addArrivingUser(groupInfo, (err, data) => {
         socket.emit('add_arriving_user_callback', data);
-        socket.broadcast.emit('add_arriving_user_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_arriving_user_callback', data);
       });
     });
 
     socket.on('delete_arriving_user', (groupInfo) => {
       deleteArrivingUser(groupInfo, (err, data) => {
         socket.emit('delete_arriving_user_callback', data);
-        socket.broadcast.emit('delete_arriving_user_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_arriving_user_callback', data);
       });
     });
 
@@ -330,35 +349,45 @@ function groupLocation(io) {
     socket.on('add_destination_user', (groupInfo) => {
       addDestinationUser(groupInfo, (err, data) => {
         socket.emit('add_destination_user_callback', data);
-        socket.broadcast.emit('add_destination_user_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_destination_user_callback', data);
       });
     });
 
     socket.on('delete_destination_user', (groupInfo) => {
       deleteDestinationUser(groupInfo, (err, data) => {
         socket.emit('delete_destination_user_callback', data);
-        socket.broadcast.emit('delete_destination_user_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_destination_user_callback', data);
       });
     });
 
     socket.on('delete_starting_point', (groupInfo) => {
       deleteStartingPoint(groupInfo, (err, data) => {
         socket.emit('delete_starting_point_callback', data);
-        socket.broadcast.emit('delete_starting_point_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_starting_point_callback', data);
       });
     });
 
     socket.on('delete_ending_point', (groupInfo) => {
       deleteEndingPoint(groupInfo, (err, data) => {
         socket.emit('delete_ending_point_callback', data);
-        socket.broadcast.emit('delete_ending_point_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_ending_point_callback', data);
       });
     });
 
     socket.on('add_stopover', (groupInfo) => {
       addStopover(groupInfo, (err, data) => {
         socket.emit('add_stopover_callback', data);
-        socket.broadcast.emit('add_stopover_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_stopover_callback', data);
       });
     });
 
@@ -371,28 +400,36 @@ function groupLocation(io) {
     socket.on('delete_stopover', (groupInfo) => {
       deleteStopover(groupInfo, (err, data) => {
         socket.emit('delete_stopover_callback', data);
-        socket.broadcast.emit('delete_stopover_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_stopover_callback', data);
       });
     });
 
     socket.on('add_user_into_stopover', (groupInfo) => {
       addUserIntoStopover(groupInfo, (err, data) => {
         socket.emit('add_user_into_stopover_callback', data);
-        socket.broadcast.emit('add_user_into_stopover_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_user_into_stopover_callback', data);
       });
     });
 
     socket.on('delete_user_into_stopover', (groupInfo) => {
       deleteUserIntoStopover(groupInfo, (err, data) => {
         socket.emit('delete_user_into_stopover_callback', data);
-        socket.broadcast.emit('delete_user_into_stopover_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_user_into_stopover_callback', data);
       });
     });
 
     socket.on('add_route', (groupInfo) => {
       addRoute(groupInfo, (err, data) => {
         socket.emit('add_route_callback', data);
-        socket.broadcast.emit('add_route_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_route_callback', data);
       });
     });
 
@@ -405,8 +442,15 @@ function groupLocation(io) {
     socket.on('delete_route', (groupInfo) => {
       deleteRoute(groupInfo, (err, data) => {
         socket.emit('delete_route_callback', data);
-        socket.broadcast.emit('delete_route_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('delete_route_callback', data);
       });
+    });
+
+    socket.on('disconnect', () => {
+      const room = socket.handshake.query.group_id;
+      socket.leave(room);
     });
   });
 }

@@ -27,10 +27,16 @@ function groupMessenger(io) {
     timeout: 60000,
   }))
   .on('authenticated', (socket) => {
+    if (socket.handshake.query.group_id !== undefined) {
+      socket.join(socket.handshake.query.group_id);
+    }
+
     socket.on('add_message', (chatMessage) => {
       addGroupMessage(chatMessage, (err, data) => {
         socket.emit('add_message_callback', data);
-        socket.broadcast.emit('add_message_callback', data);
+        socket.broadcast
+          .to(socket.handshake.query.group_id)
+          .emit('add_message_callback', data);
       });
     });
 
@@ -38,6 +44,11 @@ function groupMessenger(io) {
       getAllMessagesInGroup(group, (err, data) => {
         socket.emit('get_messages_callback', data);
       });
+    });
+
+    socket.on('disconnect', () => {
+      const room = socket.handshake.query.group_id;
+      socket.leave(room);
     });
   });
 }
