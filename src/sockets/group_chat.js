@@ -29,6 +29,12 @@ function groupMessenger(io) {
   .on('authenticated', (socket) => {
     if (socket.handshake.query.group_id !== undefined) {
       socket.join(socket.handshake.query.group_id);
+    } else {
+      socket.emit('error', {
+        message_code: 422,
+        success: false,
+        status_message: 'Group Id not found',
+      });
     }
 
     socket.on('add_message', (chatMessage) => {
