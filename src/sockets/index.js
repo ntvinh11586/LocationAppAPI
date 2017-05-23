@@ -1,9 +1,12 @@
 const map = require('./map');
-const groupChat = require('./group_chat');
+const chat = require('./chat');
 const demo = require('./demo');
 
 module.exports = (io) => {
-  map(io);
-  groupChat(io);
+  const chatNamespace = io.of('/chats/groups');
+  const mapNamespace = io.of('/maps');
+
+  chat(chatNamespace);
   demo(io);
+  map(mapNamespace);
 };

@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === 'production') {
     dbURI: process.env.dbURI,
     tokenSecretKey: process.env.tokenSecretKey,
     tokenExpired: process.env.tokenExpired,
+    networkTimeout: process.env.networkTimeout,
   };
 } else {
   module.exports = development;
