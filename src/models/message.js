@@ -45,7 +45,9 @@ function getMessages(groupId, callback) {
   groupRepository.findById(groupId)
     .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
     .exec((err, group) => {
+      console.log(groupId);
       if (err) {
+        console.log('err');
         callback(err, {
           status_code: 422,
           success: false,

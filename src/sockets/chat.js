@@ -1,5 +1,20 @@
 const messageModel = require('../models/message');
 const socketioJwt = require('socketio-jwt');
+const config = require('../config');
+
+function joinChat(socket, groupId) {
+  if (groupId === undefined || groupId === null) {
+    socket.emit('error', {
+      message_code: 422,
+      success: true,
+      status_message: 'Group Id not found',
+    });
+  } else {
+    socket.join(groupId);
+  }
+
+  return socket;
+}
 
 function addGroupMessage(chatMessage, callback) {
   const chatMessageJSON = JSON.parse(chatMessage);
@@ -20,43 +35,31 @@ function getAllMessagesInGroup(group, callback) {
   });
 }
 
-function groupMessenger(io) {
-  io.of('/chats/groups')
-  .on('connection', socketioJwt.authorize({
-    secret: 'supersecret',
-    timeout: 60000,
-  }))
-  .on('authenticated', (socket) => {
-    if (socket.handshake.query.group_id !== undefined) {
-      socket.join(socket.handshake.query.group_id);
-    } else {
-      socket.emit('error', {
-        message_code: 422,
-        success: false,
-        status_message: 'Group Id not found',
-      });
-    }
-
-    socket.on('add_message', (chatMessage) => {
-      addGroupMessage(chatMessage, (err, data) => {
-        socket.emit('add_message_callback', data);
-        socket.broadcast
-          .to(socket.handshake.query.group_id)
-          .emit('add_message_callback', data);
-      });
+module.exports = (chatNamespace) => {
+  chatNamespace
+    .on('connection', socketioJwt.authorize({
+      secret: config.tokenSecretKey,
+      timeout: config.networkTimeout,
+    }))
+    .on('authenticated', (socket) => {
+    // .on('connection', (socket) => {
+      joinChat(socket, socket.handshake.query.group_id)
+        .on('add_message', (chatMessage) => {
+          addGroupMessage(chatMessage, (err, data) => {
+            socket.emit('add_message_callback', data);
+            socket.broadcast
+              .to(socket.handshake.query.group_id)
+              .emit('add_message_callback', data);
+          });
+        })
+        .on('get_messages', (requestData) => {
+          getAllMessagesInGroup(requestData, (err, responseData) => {
+            socket.emit('get_messages_callback', responseData);
+          });
+        })
+        .on('disconnect', () => {
+          const room = socket.handshake.query.group_id;
+          socket.leave(room);
+        });
     });
-
-    socket.on('get_messages', (group) => {
-      getAllMessagesInGroup(group, (err, data) => {
-        socket.emit('get_messages_callback', data);
-      });
-    });
-
-    socket.on('disconnect', () => {
-      const room = socket.handshake.query.group_id;
-      socket.leave(room);
-    });
-  });
-}
-
-module.exports = groupMessenger;
+};
