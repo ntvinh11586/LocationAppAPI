@@ -295,7 +295,7 @@ function findFriends(userId, keyword) {
   return new Promise((resolve, reject) => {
     userRepository.find({ username: { $regex: `.*${keyword}.*` } })
       .select('username')
-      .exec((error, data) => {
+      .exec((error, friends) => {
         if (error) {
           reject(new Error(JSON.stringify({
             status_code: 422,
@@ -303,7 +303,7 @@ function findFriends(userId, keyword) {
             status_message: error.message,
           })));
         } else {
-          resolve(data);
+          resolve({ friends });
         }
       });
   });
@@ -337,7 +337,7 @@ function findNearbyFriends(userId) {
                   status_message: error.message,
                 })));
               } else {
-                resolve(friends.filter(f => !f._id.equals(userId)));
+                resolve({ friends: friends.filter(f => !f._id.equals(userId)) });
               }
             });
         }
