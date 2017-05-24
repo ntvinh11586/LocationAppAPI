@@ -10,16 +10,19 @@ router.get('/friends', (req, res) => {
   const { keyword } = req.query;
   friendModel.findFriends(userId, keyword)
     .then(data => res.json(data))
-    .catch(error => res.status(error.status_code).send(error));
+    .catch((error) => {
+      const message = JSON.parse(error.message);
+      res.status(message.status_code || 501).send(message);
+    });
 });
 
 router.get('/nearby_friends', (req, res) => {
   const { user_id: userId } = res.locals;
   friendModel.findNearbyFriends(userId)
     .then(data => res.json(data))
-    .catch(() => {
-      // TODO: need to process
-      res.send('lol');
+    .catch((error) => {
+      const message = JSON.parse(error.message);
+      res.status(message.status_code || 501).send(message);
     });
 });
 

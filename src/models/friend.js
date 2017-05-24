@@ -310,17 +310,19 @@ function findFriends(userId, keyword) {
 }
 
 function findNearbyFriends(userId) {
-  console.log(userId);
-  console.log('hahaha');
   return new Promise((resolve, reject) => {
-    userRepository.findOne(userId)
+    userRepository.findById(userId)
       .select('latlng')
       .exec((error, user) => {
         if (error) {
-          reject(error);
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
         } else {
           userRepository.find({})
-            .select('username latlng')
+            .select('username')
             .where('latlng.lat')
             .gt(user.latlng.lat - 100)
             .lt(user.latlng.lat + 100)
@@ -329,9 +331,13 @@ function findNearbyFriends(userId) {
             .lt(user.latlng.lng + 100)
             .exec((error, friends) => {
               if (error) {
-                reject(error);
+                reject(new Error(JSON.stringify({
+                  status_code: 422,
+                  success: false,
+                  status_message: error.message,
+                })));
               } else {
-                resolve(friends);
+                resolve(friends.filter(f => !f._id.equals(userId)));
               }
             });
         }
