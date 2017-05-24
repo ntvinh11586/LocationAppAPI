@@ -291,6 +291,60 @@ function deleteFriendRequest(userId, friendId, callback) {
   });
 }
 
+function findFriends(userId, keyword) {
+  return new Promise((resolve, reject) => {
+    userRepository.find({ username: { $regex: `.*${keyword}.*` } })
+      .select('username')
+      .exec((error, data) => {
+        if (error) {
+          reject({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          });
+        } else {
+          resolve(data);
+        }
+      });
+  });
+}
+
+function findNearbyFriends(userId) {
+  return new Promise((resolve, reject) => {
+    userRepository.findById(userId)
+      .select('latlng')
+      .exec((error, user) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          userRepository.find({})
+            .select('username')
+            .where('latlng.lat')
+            .gt(user.latlng.lat - 100)
+            .lt(user.latlng.lat + 100)
+            .where('latlng.lng')
+            .gt(user.latlng.lng - 100)
+            .lt(user.latlng.lng + 100)
+            .exec((error, friends) => {
+              if (error) {
+                reject(new Error(JSON.stringify({
+                  status_code: 422,
+                  success: false,
+                  status_message: error.message,
+                })));
+              } else {
+                resolve(friends.filter(f => !f._id.equals(userId)));
+              }
+            });
+        }
+      });
+  });
+}
+
 module.exports = {
   acceptFriend,
   addFriend,
@@ -300,4 +354,6 @@ module.exports = {
   getFriend,
   getFriendPendings,
   deleteFriendRequest,
+  findFriends,
+  findNearbyFriends,
 };
