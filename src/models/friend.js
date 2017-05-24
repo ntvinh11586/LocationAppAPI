@@ -309,6 +309,36 @@ function findFriends(userId, keyword) {
   });
 }
 
+function findNearbyFriends(userId) {
+  console.log(userId);
+  console.log('hahaha');
+  return new Promise((resolve, reject) => {
+    userRepository.findOne(userId)
+      .select('latlng')
+      .exec((error, user) => {
+        if (error) {
+          reject(error);
+        } else {
+          userRepository.find({})
+            .select('username latlng')
+            .where('latlng.lat')
+            .gt(user.latlng.lat - 100)
+            .lt(user.latlng.lat + 100)
+            .where('latlng.lng')
+            .gt(user.latlng.lng - 100)
+            .lt(user.latlng.lng + 100)
+            .exec((error, friends) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(friends);
+              }
+            });
+        }
+      });
+  });
+}
+
 module.exports = {
   acceptFriend,
   addFriend,
@@ -319,4 +349,5 @@ module.exports = {
   getFriendPendings,
   deleteFriendRequest,
   findFriends,
+  findNearbyFriends,
 };
