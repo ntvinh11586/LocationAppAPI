@@ -9,6 +9,7 @@ const groupRouter = require('./group');
 const tripPlanRouter = require('./trip_plan');
 const chatRouter = require('./chat');
 const gpsRouter = require('./gps');
+const searchRouter = require('./search');
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use('/friends', friendRouter);
 router.use('/groups', groupRouter);
 router.use('/groups/:group_id/trip_plan', tripPlanRouter);
 router.use('/gps', gpsRouter);
+router.use('/search', searchRouter);
 
 module.exports = router;
