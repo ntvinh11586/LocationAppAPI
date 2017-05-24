@@ -297,11 +297,11 @@ function findFriends(userId, keyword) {
       .select('username')
       .exec((error, data) => {
         if (error) {
-          reject({
+          reject(new Error(JSON.stringify({
             status_code: 422,
             success: false,
             status_message: error.message,
-          });
+          })));
         } else {
           resolve(data);
         }
