@@ -6,7 +6,7 @@ const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('/', (req, res) => {
-  const userId = res.locals.user_id;
+  const { user_id: userId } = res.locals;
   gpsModel.getPreviousLatlng(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
@@ -17,9 +17,8 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const userId = res.locals.user_id;
-  const lng = req.body.lng;
-  const lat = req.body.lat;
+  const { user_id: userId } = res.locals;
+  const { lat, lng } = req.body;
   gpsModel.createCurrentLatlng(userId, lat, lng, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
@@ -30,9 +29,8 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-  const userId = res.locals.user_id;
-  const lat = req.body.lat;
-  const lng = req.body.lng;
+  const { user_id: userId } = res.locals;
+  const { lat, lng } = req.body;
   gpsModel.updateLatlng(userId, lat, lng, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
@@ -43,7 +41,7 @@ router.put('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-  const userId = res.locals.user_id;
+  const { user_id: userId } = res.locals;
   gpsModel.deleteLatlng(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);

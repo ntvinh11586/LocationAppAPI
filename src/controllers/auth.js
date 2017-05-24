@@ -5,8 +5,7 @@ const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 
 router.post('/register', (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const { username, password } = req.body;
   authModel.register(username, password, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
@@ -17,8 +16,7 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const { username, password } = req.body;
   authModel.login(username, password, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);
@@ -31,9 +29,8 @@ router.post('/login', (req, res) => {
 router.post('/login_with_token',
   authMiddleware.isUserAuthenticated,
   (req, res) => {
-    const username = res.locals.username;
-    const userId = res.locals.user_id;
-    const token = req.headers.token;
+    const { username, user_id: userId } = res.locals;
+    const { token } = req.headers;
     res.json({
       token,
       username,
@@ -46,7 +43,6 @@ router.get('/logout',
   (req, res) => {
     authModel.logout((err, data) => {
       if (err) {
-        console.log('abc');
         res.status(data.status_code).send(data);
       } else {
         res.json(data);
