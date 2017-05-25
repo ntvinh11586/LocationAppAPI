@@ -23,6 +23,7 @@
     "deprecate": "1.0.0",
     "ejs": "2.5.6",
     "express": "4.15.2",
+    "firebase-admin": "5.0.0",
     "jsonwebtoken": "7.3.0",
     "mongoose": "4.8.5",
     "morgan": "1.8.1",
