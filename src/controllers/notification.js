@@ -2,7 +2,7 @@ const express = require('express');
 const authMiddleware = require('../middlewares/auth');
 const subscriptionDomain = require('../domains/subscription');
 const notificationDomain = require('../domains/notification');
-const admin = require('firebase-admin');
+const fcmDomain = require('../domains/fcm');
 
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
@@ -18,8 +18,7 @@ const payload = {
 router.get('/', (req, res) => {
   const { group_id: groupId } = req.query;
   notificationDomain.notifyNewMessage(groupId, (err, data) => {
-    console.log(data.tokens);
-    admin.messaging().sendToDevice(data.tokens, payload)
+    fcmDomain.sendMessageToDeviceWithTokens(data.tokens, payload)
       .then((response) => {
         console.log(response);
       })
