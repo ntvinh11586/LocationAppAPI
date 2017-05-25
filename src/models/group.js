@@ -387,7 +387,9 @@ function addDestinationUser(groupId, userId, callback) {
         group.save();
         callback(null, {
           group_id: groupId,
+          name: group.name,
           user_id: userId,
+          username: user.username,
         });
       });
     }
@@ -493,9 +495,13 @@ function deleteDestinationUser(groupId, userId, callback) {
     } else if (group.destination_users.some(u => u.equals(userId))) {
       group.destination_users.pull(userId);
       group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
+      userRepository.findById(userId, (err, user) => {
+        callback(null, {
+          group_id: groupId,
+          name: group.name,
+          user_id: userId,
+          username: user.username,
+        });
       });
     }
   });

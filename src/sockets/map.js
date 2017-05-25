@@ -375,6 +375,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_destination_user_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} is at Ending Point now!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_destination_user', (groupInfo) => {
@@ -383,6 +394,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_destination_user_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} left Ending Point now!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_starting_point', (groupInfo) => {
