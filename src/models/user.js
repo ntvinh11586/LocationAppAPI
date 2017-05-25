@@ -24,6 +24,50 @@ function getUserInfo(userId, callback) {
     });
 }
 
+function addDevice(userId, device) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId, { $push: { devices: device } })
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Add device Successfully!',
+          });
+        }
+      });
+  });
+}
+
+function removeDevice(userId, device) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId, { $pullAll: { devices: device } })
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Remove device Successfully!',
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
+  addDevice,
+  removeDevice,
 };
