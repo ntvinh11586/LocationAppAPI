@@ -10,17 +10,7 @@ const QUERY = '590bef9b8826232ed8f07aa9';
 const EMIT = process.argv[2] || 'MISSING_EMIT';
 const EMIT_CALLBACK = `${EMIT}_callback`;
 
-// const requestData = {
-//   group_id: '59149edb660d711ed0804652',
-// };
-
-const requestData = {
-  group_id: "590bef9b8826232ed8f07aa9",
-  user_id: "5926bfbcf9763736a08fd44e",
-  chatter_id: "5926bfbcf9763736a08fd44e",
-  content: "Message B",
-  date: 1495720371389
-};
+const requestData = require('./request_data.json');
 
 const socket = io.connect(URL, {
   query: `group_id=${QUERY}`,
@@ -34,7 +24,6 @@ socket.on('connect', () => {
   .emit('authenticate', { token: USER_TOKEN })
   .on('authenticated', () => {
     console.log('authenticated!');
-    console.log('why ooafsa');
     console.log(requestData);
     socket
       .emit(EMIT, JSON.stringify((requestData)))
