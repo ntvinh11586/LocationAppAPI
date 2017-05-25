@@ -27,6 +27,7 @@ function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
           group.save();
           callback(null, {
             group_id: groupId,
+            name: group.name,
             _id: group.chats.slice(-1)[0]._id,
             content,
             date,

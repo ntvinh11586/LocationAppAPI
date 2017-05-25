@@ -1,6 +1,8 @@
 const messageModel = require('../models/message');
 const socketioJwt = require('socketio-jwt');
 const config = require('../config');
+const notificationDomain = require('../domains/notification');
+const fcmDomain = require('../domains/fcm');
 
 function joinChat(socket, groupId) {
   if (groupId === undefined || groupId === null) {
@@ -50,6 +52,17 @@ module.exports = (chatNamespace) => {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_message_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.chatter.username}: ${data.content}`,
+                  },
+                });
+              });
           });
         })
         .on('get_messages', (requestData) => {

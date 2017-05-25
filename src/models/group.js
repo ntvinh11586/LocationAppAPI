@@ -775,6 +775,21 @@ function deleteRoute(groupId, callback) {
   });
 }
 
+function getUserFCMTokenSameGroup(groupId, callback) {
+  groupRepository.findById(groupId)
+    .select('users -_id')
+    .populate({ path: 'users', model: 'User', select: 'devices.token -_id' })
+    .exec((err, group) => {
+      const tokens = [];
+      group.users.forEach((user) => {
+        user.devices.forEach((device) => {
+          tokens.push(device.token || null);
+        });
+      });
+      callback(null, { tokens });
+    });
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -805,4 +820,5 @@ module.exports = {
   addRoute,
   getRoute,
   deleteRoute,
+  getUserFCMTokenSameGroup,
 };

@@ -7,6 +7,12 @@ const userSchema = new mongoose.Schema({
     lng: Number,
     lat: Number,
   },
+  devices: [
+    {
+      token: String,
+      date: Number,
+    },
+  ],
   friend_requests: [
     {
       type: mongoose.Schema.Types.ObjectId,
