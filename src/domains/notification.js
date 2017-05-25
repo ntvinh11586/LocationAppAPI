@@ -1,14 +1,10 @@
-const userModel = require('../models/user');
+const groupModel = require('../models/group');
 
+// groupId -> [userId] -> token -> notify
 module.exports = {
-  subscribeDevice: (userId, registrationToken) =>
-    userModel.addDevice(userId, {
-      token: registrationToken,
-      date: (new Date()).getTime(),
-    }),
-
-  unsubscribeDevice: (userId, registrationToken) =>
-    userModel.removeDevice(userId, {
-      token: registrationToken,
-    }),
+  notifyNewMessage: (groupId, callback) => {
+    groupModel.getUserFCMTokenSameGroup(groupId, (err, data) => {
+      callback(err, data);
+    });
+  },
 };

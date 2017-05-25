@@ -6,6 +6,8 @@ const locationAppAPI = require('./src');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const logger = require('morgan');
+const admin = require('firebase-admin');
+const serviceAccount = require('./src/config/serviceAccountKey.json');
 
 const app = express();
 
@@ -58,6 +60,13 @@ mongoose.connect(config.dbURI);
 // Log an error if the connection fails
 mongoose.connection.on('error', (error) => {
   console.log(error);
+});
+
+// Firebase configuration
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://friendlychat-99439.firebaseio.com/',
 });
 
 locationAppAPI.ioServer(app).listen(app.get('port'), () => {
