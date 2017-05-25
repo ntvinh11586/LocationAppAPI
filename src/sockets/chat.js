@@ -56,7 +56,6 @@ module.exports = (chatNamespace) => {
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
-                console.log(dTokens);
                 fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                   notification: {
                     title: data.name,
