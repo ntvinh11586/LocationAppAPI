@@ -66,8 +66,30 @@ function removeDevice(userId, device) {
   });
 }
 
+function updateAvatar(userId, avatarUrl) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId, { avatar_url: avatarUrl })
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Update avatar successfully.',
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
   addDevice,
   removeDevice,
+  updateAvatar,
 };
