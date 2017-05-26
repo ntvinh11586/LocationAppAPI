@@ -450,6 +450,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_user_into_stopover_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} is at Stopover ${data.stopover_position}!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_user_into_stopover', (groupInfo) => {
@@ -458,6 +469,18 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_user_into_stopover_callback', data);
+
+            console.log(data);
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} left Stopover ${data.stopover_position} now!`,
+                  },
+                });
+              });
           });
         })
         .on('add_route', (groupInfo) => {

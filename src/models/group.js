@@ -637,12 +637,19 @@ function addUserIntoStopover(groupId, userId, stopoverId, callback) {
       });
     } else {
       const stopover = group.stopovers.find(so => so._id.equals(stopoverId));
+      const stopoverIndex = group.stopovers.findIndex(so => so._id.equals(stopoverId));
       stopover.users.push(userId);
       group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
-        stopover_id: stopoverId,
+
+      userRepository.findById(userId, (err, user) => {
+        callback(null, {
+          group_id: groupId,
+          name: group.name,
+          user_id: userId,
+          username: user.username,
+          stopover_id: stopoverId,
+          stopover_position: stopoverIndex,
+        });
       });
     }
   });
@@ -689,12 +696,19 @@ function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
       });
     } else {
       const stopover = group.stopovers.find(so => so._id.equals(stopoverId));
+      const stopoverIndex = group.stopovers.findIndex(so => so._id.equals(stopoverId));
       stopover.users.pull(userId);
       group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
-        stopover_id: stopoverId,
+
+      userRepository.findById(userId, (err, user) => {
+        callback(null, {
+          group_id: groupId,
+          name: group.name,
+          user_id: userId,
+          username: user.username,
+          stopover_position: stopoverIndex,
+          stopover_id: stopoverId,
+        });
       });
     }
   });
