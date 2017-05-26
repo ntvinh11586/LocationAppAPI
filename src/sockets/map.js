@@ -470,7 +470,6 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('delete_user_into_stopover_callback', data);
 
-            console.log(data);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
