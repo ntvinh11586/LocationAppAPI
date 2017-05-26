@@ -3,6 +3,8 @@ const markerModel = require('../models/marker');
 const groupModel = require('../models/group');
 const socketioJwt = require('socketio-jwt');
 const config = require('../config');
+const notificationDomain = require('../domains/notification');
+const fcmDomain = require('../domains/fcm');
 
 function joinChat(socket, groupId) {
   if (groupId === undefined || groupId === null) {
@@ -325,6 +327,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_arriving_user_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} is at Starting Point now!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_arriving_user', (groupInfo) => {
@@ -333,6 +346,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_arriving_user_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} left Starting Point now!`,
+                  },
+                });
+              });
           });
         })
         .on('get_arriving_users', (groupInfo) => {
@@ -351,6 +375,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_destination_user_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} is at Ending Point now!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_destination_user', (groupInfo) => {
@@ -359,6 +394,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_destination_user_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} left Ending Point now!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_starting_point', (groupInfo) => {
@@ -404,6 +450,17 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_user_into_stopover_callback', data);
+
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} is at Stopover ${data.stopover_position}!`,
+                  },
+                });
+              });
           });
         })
         .on('delete_user_into_stopover', (groupInfo) => {
@@ -412,6 +469,18 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_user_into_stopover_callback', data);
+
+            console.log(data);
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name,
+                    body: `${data.username} left Stopover ${data.stopover_position} now!`,
+                  },
+                });
+              });
           });
         })
         .on('add_route', (groupInfo) => {

@@ -358,7 +358,9 @@ function addArrivingUser(groupId, userId, callback) {
         group.save();
         callback(null, {
           group_id: groupId,
+          name: group.name,
           user_id: userId,
+          username: user.username,
         });
       });
     }
@@ -385,7 +387,9 @@ function addDestinationUser(groupId, userId, callback) {
         group.save();
         callback(null, {
           group_id: groupId,
+          name: group.name,
           user_id: userId,
+          username: user.username,
         });
       });
     }
@@ -443,28 +447,35 @@ function getDestinationUsers(groupId, callback) {
 }
 
 function deleteArrivingUser(groupId, userId, callback) {
-  groupRepository.findById(groupId, (err, group) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } if (group == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Group not found.',
-      });
-    } else if (group.arriving_users.some(u => u.equals(userId))) {
-      group.arriving_users.pull(userId);
-      group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
-      });
-    }
-  });
+  groupRepository.findById(groupId)
+    .populate({ path: 'arriving_users', model: 'User', select: 'username' })
+    .exec((err, group) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } if (group == null) {
+        callback(new Error('422'), {
+          status_code: 422,
+          success: false,
+          status_message: 'Group not found.',
+        });
+      } else if (group.arriving_users.some(u => u.equals(userId))) {
+        group.arriving_users.pull(userId);
+        group.save();
+
+        userRepository.findById(userId, (err, user) => {
+          callback(null, {
+            group_id: groupId,
+            name: group.name,
+            user_id: userId,
+            username: user.username,
+          });
+        });
+      }
+    });
 }
 
 function deleteDestinationUser(groupId, userId, callback) {
@@ -484,9 +495,13 @@ function deleteDestinationUser(groupId, userId, callback) {
     } else if (group.destination_users.some(u => u.equals(userId))) {
       group.destination_users.pull(userId);
       group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
+      userRepository.findById(userId, (err, user) => {
+        callback(null, {
+          group_id: groupId,
+          name: group.name,
+          user_id: userId,
+          username: user.username,
+        });
       });
     }
   });
@@ -622,12 +637,19 @@ function addUserIntoStopover(groupId, userId, stopoverId, callback) {
       });
     } else {
       const stopover = group.stopovers.find(so => so._id.equals(stopoverId));
+      const stopoverIndex = group.stopovers.findIndex(so => so._id.equals(stopoverId));
       stopover.users.push(userId);
       group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
-        stopover_id: stopoverId,
+
+      userRepository.findById(userId, (err, user) => {
+        callback(null, {
+          group_id: groupId,
+          name: group.name,
+          user_id: userId,
+          username: user.username,
+          stopover_id: stopoverId,
+          stopover_position: stopoverIndex,
+        });
       });
     }
   });
@@ -674,12 +696,19 @@ function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
       });
     } else {
       const stopover = group.stopovers.find(so => so._id.equals(stopoverId));
+      const stopoverIndex = group.stopovers.findIndex(so => so._id.equals(stopoverId));
       stopover.users.pull(userId);
       group.save();
-      callback(null, {
-        group_id: groupId,
-        user_id: userId,
-        stopover_id: stopoverId,
+
+      userRepository.findById(userId, (err, user) => {
+        callback(null, {
+          group_id: groupId,
+          name: group.name,
+          user_id: userId,
+          username: user.username,
+          stopover_position: stopoverIndex,
+          stopover_id: stopoverId,
+        });
       });
     }
   });
