@@ -66,7 +66,7 @@ mongoose.connection.on('error', (error) => {
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://friendlychat-99439.firebaseio.com/',
+  databaseURL: 'https://locationapp-f02ac.firebaseio.com/',
 });
 
 locationAppAPI.ioServer(app).listen(app.get('port'), () => {
