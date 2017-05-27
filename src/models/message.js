@@ -1,5 +1,4 @@
 const messageRepository = require('../repositories/message');
-const groupRepository = require('../repositories/group');
 
 function createMessage(data) {
   return new Promise((resolve, reject) => {
@@ -60,36 +59,41 @@ function composeAddMessageResponseData(message) {
   };
 }
 
-function getMessages(groupId, callback) {
-  groupRepository.findById(groupId)
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .exec((err, group) => {
-      console.log(groupId);
-      if (err) {
-        console.log('err');
-        callback(err, {
-          status_code: 422,
-          success: false,
-          status_message: err.message,
-        });
-      } else if (group == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
-      } else {
-        const chats = group.chats;
-        callback(err, {
-          group_id: groupId,
-          chats,
-        });
-      }
-    });
+function composeGetMessagesRequestData(groupId, userId) {
+  return new Promise(resolve => resolve({ groupId, userId }));
+}
+
+function composeGetMessagesResponseData(messages, options) {
+  return {
+    group_id: options.groupId,
+    messages,
+  };
+}
+
+function readMessages(options) {
+  return new Promise((resolve, reject) => {
+    messageRepository.find({ group: options.groupId, chatter: options.userId })
+      .select('chatter content type date')
+      .populate({ path: 'chatter', model: 'User', select: 'username' })
+      .exec((error, message) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        }
+        resolve(message);
+      });
+  });
 }
 
 module.exports = {
-  getMessages,
+  getMessages: (groupId, userId) =>
+    composeGetMessagesRequestData(groupId, userId)
+      .then(data => readMessages(data))
+      .then(data => composeGetMessagesResponseData(data, { groupId })),
+
   addMessage: (groupId, userId, content, type) =>
     composeAddMessageRequestData(groupId, userId, content, type)
     .then(data => createMessage(data))

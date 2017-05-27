@@ -31,7 +31,6 @@ function notification(socket, data) {
   notificationDomain.notifyNewMessage(
       socket.handshake.query.group_id,
       (err, dTokens) => {
-        console.log('data', data);
         fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
           notification: {
             title: data.group.name,
@@ -65,9 +64,14 @@ module.exports = (chatNamespace) => {
             });
         })
         .on('get_messages', (requestData) => {
-          getAllMessagesInGroup(requestData, (err, responseData) => {
-            socket.emit('get_messages_callback', responseData);
-          });
+          messageDomain.getMessages(JSON.parse(requestData))
+            .then((responseData) => {
+              socket.emit('get_messages_callback', responseData);
+            })
+            .catch((error) => {
+              const message = JSON.parse(error.message);
+              socket.emit('error', message);
+            });
         })
         .on('disconnect', () => {
           const room = socket.handshake.query.group_id;
