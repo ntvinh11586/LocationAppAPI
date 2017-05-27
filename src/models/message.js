@@ -1,38 +1,5 @@
 const messageRepository = require('../repositories/message');
 
-function createMessage(data) {
-  return new Promise((resolve, reject) => {
-    messageRepository.create(data, (error, message) => {
-      if (error) {
-        reject(new Error(JSON.stringify({
-          status_code: 422,
-          success: false,
-          status_message: error.message,
-        })));
-      }
-      resolve(message);
-    });
-  });
-}
-
-function readMessage(messageId) {
-  return new Promise((resolve, reject) => {
-    messageRepository.findById(messageId)
-      .populate({ path: 'chatter', model: 'User', select: 'username' })
-      .populate({ path: 'group', model: 'Group', select: 'name' })
-      .exec((error, message) => {
-        if (error) {
-          reject(new Error(JSON.stringify({
-            status_code: 422,
-            success: false,
-            status_message: error.message,
-          })));
-        }
-        resolve(message);
-      });
-  });
-}
-
 function composeAddMessageRequestData(groupId, userId, content, type) {
   return new Promise((resolve) => {
     resolve({
@@ -68,6 +35,39 @@ function composeGetMessagesResponseData(messages, options) {
     group_id: options.groupId,
     messages,
   };
+}
+
+function createMessage(data) {
+  return new Promise((resolve, reject) => {
+    messageRepository.create(data, (error, message) => {
+      if (error) {
+        reject(new Error(JSON.stringify({
+          status_code: 422,
+          success: false,
+          status_message: error.message,
+        })));
+      }
+      resolve(message);
+    });
+  });
+}
+
+function readMessage(messageId) {
+  return new Promise((resolve, reject) => {
+    messageRepository.findById(messageId)
+      .populate({ path: 'chatter', model: 'User', select: 'username' })
+      .populate({ path: 'group', model: 'Group', select: 'name' })
+      .exec((error, message) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        }
+        resolve(message);
+      });
+  });
 }
 
 function readMessages(options) {
