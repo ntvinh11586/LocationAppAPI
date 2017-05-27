@@ -1,4 +1,3 @@
-const messageModel = require('../models/message');
 const socketioJwt = require('socketio-jwt');
 const config = require('../config');
 const notificationDomain = require('../domains/notification');
@@ -17,14 +16,6 @@ function joinChat(socket, groupId) {
   }
 
   return socket;
-}
-
-function getAllMessagesInGroup(group, callback) {
-  const groupJSON = JSON.parse(group);
-  const groupId = groupJSON.group_id;
-  messageModel.getMessages(groupId, (err, data) => {
-    callback(err, data);
-  });
 }
 
 function notification(socket, data) {
