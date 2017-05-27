@@ -29,6 +29,8 @@ module.exports = {
           end_time: data[i].end_time,
           users: data[i].users,
           messages: data[i + 1].messages,
+          // Support leggacy field
+          chats: data[i + 1].messages,
         });
       }
       return { groups };

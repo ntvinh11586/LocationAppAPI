@@ -124,6 +124,6 @@ module.exports = {
       .then(data => composeAddMessageResponseData(data)),
 
   findTheLastestMessage: requestData =>
-    composeFindTheLastestMessageQuery(requestData, 'content date type chatter group')
+    composeFindTheLastestMessageQuery(requestData, 'content date type chatter')
       .then(data => readTheLastestMessage(data)),
 };
