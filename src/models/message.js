@@ -14,13 +14,14 @@ function composeAddMessageRequestData(groupId, userId, content, type) {
 
 function composeAddMessageResponseData(message) {
   return {
-    _id: message._id,
+    chat_id: message._id,
     group: message.group,
     chatter: message.chatter,
     content: message.content,
     type: message.type,
     date: message.date,
     // Support legacy fields
+    _id: message._id,
     group_id: message.group._id,
     name: message.group.name,
   };
