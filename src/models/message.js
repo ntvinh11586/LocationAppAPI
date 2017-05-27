@@ -55,7 +55,7 @@ function createMessage(data) {
   });
 }
 
-function readMessage(messageId) {
+function readMessageById(messageId) {
   return new Promise((resolve, reject) => {
     messageRepository.findById(messageId)
       .populate({ path: 'chatter', model: 'User', select: 'username' })
@@ -100,6 +100,6 @@ module.exports = {
   addMessage: (groupId, userId, content, type) =>
     composeAddMessageRequestData(groupId, userId, content, type)
     .then(data => createMessage(data))
-    .then(data => readMessage(data._id))
+    .then(({ _id: id }) => readMessageById(id))
     .then(data => composeAddMessageResponseData(data)),
 };
