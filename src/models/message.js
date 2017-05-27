@@ -34,6 +34,8 @@ function composeGetMessagesResponseData(messages, options) {
   return {
     group_id: options.groupId,
     messages,
+    // Support legacy field
+    chats: messages,
   };
 }
 
