@@ -892,7 +892,7 @@ module.exports = {
     composeReadGroupsQuery(requestData, 'name start_time end_time users')
       .then(data => readGroupById(data)),
 
-  readGroupIds: requestData =>
+  getGroupIds: requestData =>
     composeReadGroupsQuery(requestData, '_id')
       .then(data => readGroups(data))
       .then(data => composeReadGroupIdsDataResponse(data)),
