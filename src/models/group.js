@@ -819,6 +819,43 @@ function getUserFCMTokenSameGroup(groupId, callback) {
     });
 }
 
+
+function composeReadGroupsQuery(data, select) {
+  return new Promise((reslove) => {
+    reslove({ data, select });
+  });
+}
+
+function readGroups({ data, select }) {
+  return new Promise((reslove) => {
+    groupRepository.find({ users: data.userId, groups: data.groupId })
+      .select(select)
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error, groupIds) => {
+        reslove(groupIds);
+      });
+  });
+}
+
+function readGroupById({ data, select }) {
+  return new Promise((reslove) => {
+    groupRepository.findById(data.groupId)
+      .select(select)
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error, groupIds) => {
+        reslove(groupIds);
+      });
+  });
+}
+
+function composeReadGroupIdsDataResponse(groupIds) {
+  const ids = [];
+  groupIds.forEach((group) => {
+    ids.push(group._id);
+  });
+  return { groups: ids };
+}
+
 module.exports = {
   createGroup,
   getUserOwnGroups,
@@ -850,4 +887,13 @@ module.exports = {
   getRoute,
   deleteRoute,
   getUserFCMTokenSameGroup,
+
+  getGroups: requestData =>
+    composeReadGroupsQuery(requestData, 'name start_time end_time users')
+      .then(data => readGroupById(data)),
+
+  readGroupIds: requestData =>
+    composeReadGroupsQuery(requestData, '_id')
+      .then(data => readGroups(data))
+      .then(data => composeReadGroupIdsDataResponse(data)),
 };

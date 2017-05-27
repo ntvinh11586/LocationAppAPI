@@ -91,6 +91,26 @@ function readMessages(options) {
   });
 }
 
+function composeFindTheLastestMessageQuery(data, select) {
+  return new Promise((reslove) => {
+    console.log(data);
+    reslove({ data, select });
+  });
+}
+
+function readTheLastestMessage({ data, select }) {
+  return new Promise((resolve) => {
+    messageRepository.find({ group: data.groupId })
+      .select(select)
+      .sort({ date: -1 })
+      .limit(1)
+      .populate({ path: 'chatter', model: 'User', select: 'username' })
+      .exec((error, messages) => {
+        resolve({ messages });
+      });
+  });
+}
+
 module.exports = {
   getMessages: (groupId, userId) =>
     composeGetMessagesRequestData(groupId, userId)
@@ -99,7 +119,11 @@ module.exports = {
 
   addMessage: (groupId, userId, content, type) =>
     composeAddMessageRequestData(groupId, userId, content, type)
-    .then(data => createMessage(data))
-    .then(({ _id: id }) => readMessageById(id))
-    .then(data => composeAddMessageResponseData(data)),
+      .then(data => createMessage(data))
+      .then(({ _id: id }) => readMessageById(id))
+      .then(data => composeAddMessageResponseData(data)),
+
+  findTheLastestMessage: requestData =>
+    composeFindTheLastestMessageQuery(requestData, 'content date type chatter group')
+      .then(data => readTheLastestMessage(data)),
 };
