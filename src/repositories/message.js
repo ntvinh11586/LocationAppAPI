@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const messageSchema = new mongoose.Schema({
   content: String,
   date: Number,
-  type: Number,
+  type: String,
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group',

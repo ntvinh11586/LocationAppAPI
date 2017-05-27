@@ -3,6 +3,7 @@ const socketioJwt = require('socketio-jwt');
 const config = require('../config');
 const notificationDomain = require('../domains/notification');
 const fcmDomain = require('../domains/fcm');
+const messageDomain = require('../domains/message');
 
 function joinChat(socket, groupId) {
   if (groupId === undefined || groupId === null) {
@@ -18,23 +19,26 @@ function joinChat(socket, groupId) {
   return socket;
 }
 
-function addGroupMessage(chatMessage, callback) {
-  const chatMessageJSON = JSON.parse(chatMessage);
-  const groupId = chatMessageJSON.group_id;
-  const chatterId = chatMessageJSON.chatter_id;
-  const content = chatMessageJSON.content;
-  const date = chatMessageJSON.date;
-  messageModel.addMessageIntoGroup(groupId, chatterId, content, date, (err, data) => {
-    callback(err, data);
-  });
-}
-
 function getAllMessagesInGroup(group, callback) {
   const groupJSON = JSON.parse(group);
   const groupId = groupJSON.group_id;
   messageModel.getMessages(groupId, (err, data) => {
     callback(err, data);
   });
+}
+
+function notification(socket, data) {
+  notificationDomain.notifyNewMessage(
+      socket.handshake.query.group_id,
+      (err, dTokens) => {
+        console.log('data', data);
+        fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+          notification: {
+            title: data.group.name,
+            body: `${data.chatter.username}: ${data.content}`,
+          },
+        });
+      });
 }
 
 module.exports = (chatNamespace) => {
@@ -44,26 +48,21 @@ module.exports = (chatNamespace) => {
       timeout: config.networkTimeout,
     }))
     .on('authenticated', (socket) => {
-    // .on('connection', (socket) => {
       joinChat(socket, socket.handshake.query.group_id)
-        .on('add_message', (chatMessage) => {
-          addGroupMessage(chatMessage, (err, data) => {
-            socket.emit('add_message_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('add_message_callback', data);
+        .on('add_message', (data) => {
+          messageDomain.addMessage(JSON.parse(data))
+            .then((dataResponse) => {
+              socket.emit('add_message_callback', dataResponse);
+              socket.broadcast
+                .to(socket.handshake.query.group_id)
+                .emit('add_message_callback', dataResponse);
 
-            notificationDomain.notifyNewMessage(
-              socket.handshake.query.group_id,
-              (err, dTokens) => {
-                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                  notification: {
-                    title: data.name,
-                    body: `${data.chatter.username}: ${data.content}`,
-                  },
-                });
-              });
-          });
+              notification(socket, dataResponse);
+            })
+            .catch((error) => {
+              const message = JSON.parse(error.message);
+              socket.emit('error', message);
+            });
         })
         .on('get_messages', (requestData) => {
           getAllMessagesInGroup(requestData, (err, responseData) => {
