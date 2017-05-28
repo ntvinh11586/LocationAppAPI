@@ -4,7 +4,7 @@ function getUserInfo(userId, callback) {
   userRepository.findById(userId)
     .populate({ path: 'friends', model: 'User', select: 'username' })
     .populate({ path: 'friend_requests', model: 'User', select: 'username' })
-    .populate({ path: 'friends_pending', model: 'User', select: 'username' })
+    .populate({ path: 'friend_pendings', model: 'User', select: 'username' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -17,7 +17,7 @@ function getUserInfo(userId, callback) {
           user_id: user._id,
           username: user.username,
           friends: user.friends,
-          friend_pendings: user.friends_pending,
+          friend_pendings: user.friend_pendings,
           friend_requests: user.friend_requests,
         });
       }
