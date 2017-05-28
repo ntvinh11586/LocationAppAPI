@@ -7,6 +7,7 @@ module.exports = {
   },
 
   getMessages: (data) => {
+    console.log(data);
     const { group_id: groupId, user_id: userId } = data;
     return messageModel.getMessages(groupId, userId);
   },

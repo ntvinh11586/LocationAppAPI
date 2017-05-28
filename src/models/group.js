@@ -888,7 +888,7 @@ module.exports = {
   deleteRoute,
   getUserFCMTokenSameGroup,
 
-  getGroups: requestData =>
+  getGroup: requestData =>
     composeReadGroupsQuery(requestData, 'name start_time end_time users')
       .then(data => readGroupById(data)),
 

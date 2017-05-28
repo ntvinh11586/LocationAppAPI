@@ -75,7 +75,8 @@ function readMessageById(messageId) {
 
 function readMessages(options) {
   return new Promise((resolve, reject) => {
-    messageRepository.find({ group: options.groupId, chatter: options.userId })
+    console.log(options);
+    messageRepository.find({ group: options.groupId })
       .select('chatter content type date')
       .populate({ path: 'chatter', model: 'User', select: 'username' })
       .exec((error, message) => {
@@ -93,7 +94,6 @@ function readMessages(options) {
 
 function composeFindTheLastestMessageQuery(data, select) {
   return new Promise((reslove) => {
-    console.log(data);
     reslove({ data, select });
   });
 }
