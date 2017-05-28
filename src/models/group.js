@@ -1,5 +1,6 @@
 const userRepository = require('../repositories/user');
 const groupRepository = require('../repositories/group');
+const routeRepository = require('../repositories/route');
 
 function createGroup(userId, groupName, callback) {
   groupRepository.findOne({ name: groupName }, (err, group) => {
@@ -806,6 +807,56 @@ function composeReadGroupIdsDataResponse(groupIds) {
   return { groups: ids };
 }
 
+function migrateFromGroupToRouteModel(groupId) {
+  groupRepository.findById(groupId)
+    .exec((err, group) => {
+      routeRepository.findOne({ group: groupId })
+        .exec((err, route) => {
+          const data = {
+            group: groupId,
+            start_time: group.start_time,
+            start_latlng: group.start_latlng,
+            start_users: group.arriving_users,
+            end_time: group.end_time,
+            end_latlng: group.end_latlng,
+            end_users: group.destination_users,
+            stopovers: group.stopovers,
+          };
+
+          if (route === null) {
+            routeRepository.create(data, (err, route1) => {  });
+          } else {
+            route.group = data.group;
+            route.start_time = data.start_time;
+            route.start_latlng = data.start_latlng;
+            route.start_users = data.start_users;
+            route.end_time = data.end_time;
+            route.end_latlng = data.end_latlng;
+            route.end_users = data.end_users;
+            route.stopovers = data.stopovers;
+            route.save();
+          }
+        });
+    });
+}
+
+function migrateFromRouteToGroupModel(groupId) {
+  routeRepository.findOne({ group: groupId })
+    .exec((error, route) => {
+      groupRepository.findById(groupId)
+        .exec((error, group) => {
+          group.start_time = route.start_time;
+          group.start_latlng = route.start_lalng;
+          group.arriving_users = route.start_users;
+          group.end_time = route.end_time;
+          group.end_latlng = route.end_latlng;
+          group.destination_users = route.end_users;
+          group.stopovers = route.stopovers;
+          group.save();
+        });
+    });
+}
+
 module.exports = {
   createGroup,
   addFriendIntoGroup,
@@ -835,6 +886,8 @@ module.exports = {
   getRoute,
   deleteRoute,
   getUserFCMTokenSameGroup,
+  migrateFromGroupToRouteModel,
+  migrateFromRouteToGroupModel,
 
   getGroup: requestData =>
     composeReadGroupsQuery(requestData, 'name start_time end_time users')
