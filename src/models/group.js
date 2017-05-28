@@ -812,7 +812,6 @@ function migrateFromGroupToRouteModel(groupId) {
     .exec((err, group) => {
       routeRepository.findOne({ group: groupId })
         .exec((err, route) => {
-          console.log('gogogo');
           const data = {
             group: groupId,
             start_time: group.start_time,
@@ -823,9 +822,6 @@ function migrateFromGroupToRouteModel(groupId) {
             end_users: group.destination_users,
             stopovers: group.stopovers,
           };
-
-          console.log(route);
-
 
           if (route === null) {
             routeRepository.create(data, (err, route1) => {  });
@@ -840,6 +836,23 @@ function migrateFromGroupToRouteModel(groupId) {
             route.stopovers = data.stopovers;
             route.save();
           }
+        });
+    });
+}
+
+function migrateFromRouteToGroupModel(groupId) {
+  routeRepository.findOne({ group: groupId })
+    .exec((error, route) => {
+      groupRepository.findById(groupId)
+        .exec((error, group) => {
+          group.start_time = route.start_time;
+          group.start_latlng = route.start_lalng;
+          group.arriving_users = route.start_users;
+          group.end_time = route.end_time;
+          group.end_latlng = route.end_latlng;
+          group.destination_users = route.end_users;
+          group.stopovers = route.stopovers;
+          group.save();
         });
     });
 }
@@ -874,7 +887,7 @@ module.exports = {
   deleteRoute,
   getUserFCMTokenSameGroup,
   migrateFromGroupToRouteModel,
-  // migrateFromRouteToGroupModel,
+  migrateFromRouteToGroupModel,
 
   getGroup: requestData =>
     composeReadGroupsQuery(requestData, 'name start_time end_time users')

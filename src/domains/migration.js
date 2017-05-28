@@ -5,7 +5,7 @@ module.exports = {
     groupModel.migrateFromGroupToRouteModel(groupId);
   },
 
-  // migrateFromRouteToGroupModel(groupId) {
-  //   groupModel.migrateFromRouteToGroupModel(groupId);
-  // },
+  migrateFromRouteToGroupModel(groupId) {
+    groupModel.migrateFromRouteToGroupModel(groupId);
+  },
 };
