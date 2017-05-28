@@ -24,7 +24,7 @@ function acceptFriend(userId, acceptedFriendId, callback) {
         // remove friend request
         user.friend_requests.pull(friend._id);
         // remove friend pending
-        friend.friends_pending.pull(user._id);
+        friend.friend_pendings.pull(user._id);
         // save change
         user.save();
         friend.save();
@@ -67,7 +67,7 @@ function addFriend(userId, acceptedFriendId, callback) {
             status_message: err.message,
           });
         }
-        user.friends_pending.push(requestedFriend);
+        user.friend_pendings.push(requestedFriend);
         requestedFriend.friend_requests.push(user);
         user.save();
         requestedFriend.save();
@@ -119,7 +119,7 @@ function getFriendRequests(userId, callback) {
 
 function getFriendPendings(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friends_pending', model: 'User', select: 'username' })
+    .populate({ path: 'friend_pendings', model: 'User', select: 'username' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -135,7 +135,7 @@ function getFriendPendings(userId, callback) {
         });
       } else {
         callback(err, {
-          friend_pendings: user.friends_pending,
+          friend_pendings: user.friend_pendings,
         });
       }
     });
@@ -273,7 +273,7 @@ function deleteFriendRequest(userId, friendId, callback) {
           });
         } else if (user.friend_requests.some(u => u.equals(friendId))) {
           user.friend_requests.pull(friendId); user.save();
-          friend.friends_pending.pull(userId); friend.save();
+          friend.friend_pendings.pull(userId); friend.save();
           callback(null, {
             status_code: 200,
             success: true,

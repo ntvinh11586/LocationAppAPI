@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  friends_pending: [
+  friend_pendings: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

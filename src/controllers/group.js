@@ -1,7 +1,6 @@
 const express = require('express');
 const groupModel = require('../models/group');
 const groupDomain = require('../domains/group');
-
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
