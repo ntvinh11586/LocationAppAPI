@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const routeSchema = new mongoose.Schema({
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+  },
   start_time: Number,
   start_latlng: {
     lat: Number,
