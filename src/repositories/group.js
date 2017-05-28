@@ -45,16 +45,6 @@ const groupSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  chats: [
-    {
-      content: String,
-      date: Number,
-      chatter: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    },
-  ],
   markers: [
     {
       latlng: {
