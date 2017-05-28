@@ -1,5 +1,6 @@
 const userRepository = require('../repositories/user');
 const groupRepository = require('../repositories/group');
+const routeRepository = require('../repositories/route');
 
 function createGroup(userId, groupName, callback) {
   groupRepository.findOne({ name: groupName }, (err, group) => {
@@ -22,72 +23,6 @@ function createGroup(userId, groupName, callback) {
         });
     }
   });
-}
-
-function getUserOwnGroups(userId, callback) {
-  groupRepository.find({ users: userId })
-    .select('chats users name created_date')
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .populate({ path: 'users', model: 'User', select: 'username' })
-    .exec((err, groups) => {
-      if (groups == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
-      } else {
-        const groupsWithModifiedTime = groups.map((g) => {
-          let chatDate;
-          if (g.chats[0] !== undefined) {
-            chatDate = g.chats[0].date;
-          }
-          return {
-            _id: g._id,
-            chats: g.chats.slice(-1),
-            name: g.name,
-            created_date: g.created_date,
-            users: g.users,
-            modified_time: chatDate
-              || g.created_date
-              || -1,
-          };
-        });
-
-        groupsWithModifiedTime.sort((a, b) => b.modified_time - a.modified_time);
-
-        const groupsDTO = groupsWithModifiedTime.map((g) => {
-          return {
-            _id: g._id,
-            name: g.name,
-            created_date: g.created_date,
-            chats: g.chats,
-            users: g.users,
-          };
-        });
-        callback(null, {
-          groups: groupsDTO,
-        });
-      }
-    });
-}
-
-function getUserOwnGroup(groupId, callback) {
-  groupRepository
-    .findOne({ _id: groupId })
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .populate({ path: 'users', model: 'User', select: 'username' })
-    .exec((err, group) => {
-      if (group == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
-      } else {
-        callback(null, group);
-      }
-    });
 }
 
 function addFriendIntoGroup(groupId, userId, friendId, callback) {
@@ -819,10 +754,111 @@ function getUserFCMTokenSameGroup(groupId, callback) {
     });
 }
 
+
+function composeReadGroupsQuery(data, select) {
+  return new Promise((reslove) => {
+    reslove({ data, select });
+  });
+}
+
+function readGroups({ data, select }) {
+  return new Promise((reslove, reject) => {
+    groupRepository.find({ users: data.userId, groups: data.groupId })
+      .select(select)
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error, groupIds) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          reslove(groupIds);
+        }
+      });
+  });
+}
+
+function readGroupById({ data, select }) {
+  return new Promise((resolve, reject) => {
+    groupRepository.findById(data.groupId)
+      .select(select)
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error, groupIds) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(groupIds);
+        }
+      });
+  });
+}
+
+function composeReadGroupIdsDataResponse(groupIds) {
+  const ids = [];
+  groupIds.forEach((group) => {
+    ids.push(group._id);
+  });
+  return { groups: ids };
+}
+
+function migrateFromGroupToRouteModel(groupId) {
+  groupRepository.findById(groupId)
+    .exec((err, group) => {
+      routeRepository.findOne({ group: groupId })
+        .exec((err, route) => {
+          const data = {
+            group: groupId,
+            start_time: group.start_time,
+            start_latlng: group.start_latlng,
+            start_users: group.arriving_users,
+            end_time: group.end_time,
+            end_latlng: group.end_latlng,
+            end_users: group.destination_users,
+            stopovers: group.stopovers,
+          };
+
+          if (route === null) {
+            routeRepository.create(data, (err, route1) => {  });
+          } else {
+            route.group = data.group;
+            route.start_time = data.start_time;
+            route.start_latlng = data.start_latlng;
+            route.start_users = data.start_users;
+            route.end_time = data.end_time;
+            route.end_latlng = data.end_latlng;
+            route.end_users = data.end_users;
+            route.stopovers = data.stopovers;
+            route.save();
+          }
+        });
+    });
+}
+
+function migrateFromRouteToGroupModel(groupId) {
+  routeRepository.findOne({ group: groupId })
+    .exec((error, route) => {
+      groupRepository.findById(groupId)
+        .exec((error, group) => {
+          group.start_time = route.start_time;
+          group.start_latlng = route.start_lalng;
+          group.arriving_users = route.start_users;
+          group.end_time = route.end_time;
+          group.end_latlng = route.end_latlng;
+          group.destination_users = route.end_users;
+          group.stopovers = route.stopovers;
+          group.save();
+        });
+    });
+}
+
 module.exports = {
   createGroup,
-  getUserOwnGroups,
-  getUserOwnGroup,
   addFriendIntoGroup,
   setTripPlan,
   updateTripPlan,
@@ -850,4 +886,15 @@ module.exports = {
   getRoute,
   deleteRoute,
   getUserFCMTokenSameGroup,
+  migrateFromGroupToRouteModel,
+  migrateFromRouteToGroupModel,
+
+  getGroup: requestData =>
+    composeReadGroupsQuery(requestData, 'name start_time end_time users')
+      .then(data => readGroupById(data)),
+
+  getGroupIds: requestData =>
+    composeReadGroupsQuery(requestData, '_id')
+      .then(data => readGroups(data))
+      .then(data => composeReadGroupIdsDataResponse(data)),
 };

@@ -1,6 +1,7 @@
 const express = require('express');
 const groupModel = require('../models/group');
 const authMiddleware = require('../middlewares/auth');
+const migrationDomain = require('../domains/migration');
 
 // Merge parent params with their child
 // https://expressjs.com/en/api.html
@@ -16,6 +17,7 @@ router.post('/', (req, res) => {
       res.status(data.status_code).send(data);
     } else {
       res.json(data);
+      migrationDomain.migrateFromGroupToRouteModel(groupId);
     }
   });
 });

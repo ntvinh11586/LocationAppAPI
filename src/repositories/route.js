@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
 
-const groupSchema = new mongoose.Schema({
-  name: String,
-  created_date: Number,
+const routeSchema = new mongoose.Schema({
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+  },
   start_time: Number,
   start_latlng: {
     lat: Number,
     lng: Number,
   },
-  arriving_users: [
+  start_users: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -19,7 +21,7 @@ const groupSchema = new mongoose.Schema({
     lat: Number,
     lng: Number,
   },
-  destination_users: [
+  end_users: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -39,24 +41,6 @@ const groupSchema = new mongoose.Schema({
       ],
     },
   ],
-  users: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
-  markers: [
-    {
-      latlng: {
-        lat: Number,
-        lng: Number,
-      },
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    },
-  ],
 });
 
-module.exports = mongoose.model('Group', groupSchema);
+module.exports = mongoose.model('Route', routeSchema);
