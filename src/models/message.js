@@ -1,76 +1,130 @@
-const userRepository = require('../repositories/user');
-const groupRepository = require('../repositories/group');
+const messageRepository = require('../repositories/message');
 
-function addMessageIntoGroup(groupId, chatterId, content, date, callback) {
-  groupRepository.findById(groupId, (err, group) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (group == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Group not found.',
-      });
-    } else {
-      userRepository.findById(chatterId, (err, chatter) => {
-        if (err) {
-          callback(err, { err: 'err' });
-        } else if (chatter == null) {
-          callback(null, { err: 'no user' });
-        } else {
-          const chat = { content, date, chatter: chatterId };
-          group.chats.push(chat);
-          group.save();
-          callback(null, {
-            group_id: groupId,
-            name: group.name,
-            _id: group.chats.slice(-1)[0]._id,
-            content,
-            date,
-            chatter: {
-              _id: chatter._id,
-              username: chatter.username,
-            },
-          });
-        }
-      });
-    }
+function composeAddMessageRequestData(groupId, userId, content, type) {
+  return new Promise((resolve) => {
+    resolve({
+      group: groupId,
+      chatter: userId,
+      content,
+      type,
+      date: (new Date()).getTime(),
+    });
   });
 }
 
-function getMessages(groupId, callback) {
-  groupRepository.findById(groupId)
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .exec((err, group) => {
-      console.log(groupId);
-      if (err) {
-        console.log('err');
-        callback(err, {
+function composeAddMessageResponseData(message) {
+  return {
+    chat_id: message._id,
+    group: message.group,
+    chatter: message.chatter,
+    content: message.content,
+    type: message.type,
+    date: message.date,
+    // Support legacy fields
+    _id: message._id,
+    group_id: message.group._id,
+    name: message.group.name,
+  };
+}
+
+function composeGetMessagesRequestData(groupId, userId) {
+  return new Promise(resolve => resolve({ groupId, userId }));
+}
+
+function composeGetMessagesResponseData(messages, options) {
+  return {
+    group_id: options.groupId,
+    messages,
+    // Support legacy field
+    chats: messages,
+  };
+}
+
+function createMessage(data) {
+  return new Promise((resolve, reject) => {
+    messageRepository.create(data, (error, message) => {
+      if (error) {
+        reject(new Error(JSON.stringify({
           status_code: 422,
           success: false,
-          status_message: err.message,
-        });
-      } else if (group == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
+          status_message: error.message,
+        })));
       } else {
-        const chats = group.chats;
-        callback(err, {
-          group_id: groupId,
-          chats,
-        });
+        resolve(message);
       }
     });
+  });
+}
+
+function readMessageById(messageId) {
+  return new Promise((resolve, reject) => {
+    messageRepository.findById(messageId)
+      .populate({ path: 'chatter', model: 'User', select: 'username' })
+      .populate({ path: 'group', model: 'Group', select: 'name' })
+      .exec((error, message) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(message);
+        }
+      });
+  });
+}
+
+function readMessages(options) {
+  return new Promise((resolve, reject) => {
+    messageRepository.find({ group: options.groupId })
+      .select('chatter content type date')
+      .populate({ path: 'chatter', model: 'User', select: 'username' })
+      .exec((error, message) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        }
+        resolve(message);
+      });
+  });
+}
+
+function composeFindTheLastestMessageQuery(data, select) {
+  return new Promise((reslove) => {
+    reslove({ data, select });
+  });
+}
+
+function readTheLastestMessage({ data, select }) {
+  return new Promise((resolve) => {
+    messageRepository.find({ group: data.groupId })
+      .select(select)
+      .sort({ date: -1 })
+      .limit(1)
+      .populate({ path: 'chatter', model: 'User', select: 'username' })
+      .exec((error, messages) => {
+        resolve({ messages });
+      });
+  });
 }
 
 module.exports = {
-  addMessageIntoGroup,
-  getMessages,
+  getMessages: (groupId, userId) =>
+    composeGetMessagesRequestData(groupId, userId)
+      .then(data => readMessages(data))
+      .then(data => composeGetMessagesResponseData(data, { groupId })),
+
+  addMessage: (groupId, userId, content, type) =>
+    composeAddMessageRequestData(groupId, userId, content, type)
+      .then(data => createMessage(data))
+      .then(({ _id: id }) => readMessageById(id))
+      .then(data => composeAddMessageResponseData(data)),
+
+  findTheLastestMessage: requestData =>
+    composeFindTheLastestMessageQuery(requestData, 'content date type chatter')
+      .then(data => readTheLastestMessage(data)),
 };
