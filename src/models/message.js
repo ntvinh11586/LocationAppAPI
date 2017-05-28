@@ -49,8 +49,9 @@ function createMessage(data) {
           success: false,
           status_message: error.message,
         })));
+      } else {
+        resolve(message);
       }
-      resolve(message);
     });
   });
 }
@@ -67,15 +68,15 @@ function readMessageById(messageId) {
             success: false,
             status_message: error.message,
           })));
+        } else {
+          resolve(message);
         }
-        resolve(message);
       });
   });
 }
 
 function readMessages(options) {
   return new Promise((resolve, reject) => {
-    console.log(options);
     messageRepository.find({ group: options.groupId })
       .select('chatter content type date')
       .populate({ path: 'chatter', model: 'User', select: 'username' })

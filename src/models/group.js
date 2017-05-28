@@ -24,72 +24,6 @@ function createGroup(userId, groupName, callback) {
   });
 }
 
-function getUserOwnGroups(userId, callback) {
-  groupRepository.find({ users: userId })
-    .select('chats users name created_date')
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .populate({ path: 'users', model: 'User', select: 'username' })
-    .exec((err, groups) => {
-      if (groups == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
-      } else {
-        const groupsWithModifiedTime = groups.map((g) => {
-          let chatDate;
-          if (g.chats[0] !== undefined) {
-            chatDate = g.chats[0].date;
-          }
-          return {
-            _id: g._id,
-            chats: g.chats.slice(-1),
-            name: g.name,
-            created_date: g.created_date,
-            users: g.users,
-            modified_time: chatDate
-              || g.created_date
-              || -1,
-          };
-        });
-
-        groupsWithModifiedTime.sort((a, b) => b.modified_time - a.modified_time);
-
-        const groupsDTO = groupsWithModifiedTime.map((g) => {
-          return {
-            _id: g._id,
-            name: g.name,
-            created_date: g.created_date,
-            chats: g.chats,
-            users: g.users,
-          };
-        });
-        callback(null, {
-          groups: groupsDTO,
-        });
-      }
-    });
-}
-
-function getUserOwnGroup(groupId, callback) {
-  groupRepository
-    .findOne({ _id: groupId })
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .populate({ path: 'users', model: 'User', select: 'username' })
-    .exec((err, group) => {
-      if (group == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
-      } else {
-        callback(null, group);
-      }
-    });
-}
-
 function addFriendIntoGroup(groupId, userId, friendId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
@@ -827,23 +761,39 @@ function composeReadGroupsQuery(data, select) {
 }
 
 function readGroups({ data, select }) {
-  return new Promise((reslove) => {
+  return new Promise((reslove, reject) => {
     groupRepository.find({ users: data.userId, groups: data.groupId })
       .select(select)
       .populate({ path: 'users', model: 'User', select: 'username' })
       .exec((error, groupIds) => {
-        reslove(groupIds);
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          reslove(groupIds);
+        }
       });
   });
 }
 
 function readGroupById({ data, select }) {
-  return new Promise((reslove) => {
+  return new Promise((resolve, reject) => {
     groupRepository.findById(data.groupId)
       .select(select)
       .populate({ path: 'users', model: 'User', select: 'username' })
       .exec((error, groupIds) => {
-        reslove(groupIds);
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(groupIds);
+        }
       });
   });
 }
@@ -858,8 +808,6 @@ function composeReadGroupIdsDataResponse(groupIds) {
 
 module.exports = {
   createGroup,
-  getUserOwnGroups,
-  getUserOwnGroup,
   addFriendIntoGroup,
   setTripPlan,
   updateTripPlan,
