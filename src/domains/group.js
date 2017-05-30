@@ -58,4 +58,7 @@ module.exports = {
       };
       return response;
     }),
+
+  createNewGroup: (name, type = 'group', userId) =>
+    groupModel.createNewGroup({ name, type }),
 };

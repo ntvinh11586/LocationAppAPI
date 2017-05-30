@@ -2,26 +2,19 @@ const userRepository = require('../repositories/user');
 const groupRepository = require('../repositories/group');
 const routeRepository = require('../repositories/route');
 
-function createGroup(userId, groupName, callback) {
-  groupRepository.findOne({ name: groupName }, (err, group) => {
-    if (group != null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Already have groups',
-      });
-    } else {
-      groupRepository.create({
-        name: groupName,
-        created_date: (new Date()).getTime() },
-        (err, newGroup) => {
-          userRepository.findById(userId, (err, user) => {
-            newGroup.users.push(user);
-            newGroup.save();
-            callback(null, newGroup);
-          });
-        });
-    }
+function createGroup(data) {
+  return new Promise((resolve, reject) => {
+    groupRepository.create(data, (error, group) => {
+      if (error) {
+        reject(new Error(JSON.stringify({
+          status_code: 422,
+          success: false,
+          status_message: error.message,
+        })));
+      } else {
+        resolve(group);
+      }
+    });
   });
 }
 
@@ -858,7 +851,6 @@ function migrateFromRouteToGroupModel(groupId) {
 }
 
 module.exports = {
-  createGroup,
   addFriendIntoGroup,
   setTripPlan,
   updateTripPlan,
@@ -897,4 +889,7 @@ module.exports = {
     composeReadGroupsQuery(requestData, '_id')
       .then(data => readGroups(data))
       .then(data => composeReadGroupIdsDataResponse(data)),
+
+  createNewGroup: requestData =>
+    createGroup(requestData),
 };
