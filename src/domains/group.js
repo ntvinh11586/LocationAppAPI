@@ -60,5 +60,9 @@ module.exports = {
     }),
 
   createNewGroup: (name, type = 'group', userId) =>
-    groupModel.createNewGroup({ name, type }),
+    groupModel.createNewGroup({ name, type })
+      .then((group) => {
+        const { _id: groupId } = group;
+        return groupModel.addMember({ groupId, userId });
+      }),
 };

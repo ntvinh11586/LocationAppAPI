@@ -28,18 +28,6 @@ router.post('/', (req, res) => {
     });
 });
 
-// router.post('/', (req, res) => {
-//   const userId = res.locals.user_id;
-//   const groupName = req.body.group_name;
-//   groupModel.createGroup(userId, groupName, (err, data) => {
-//     if (err) {
-//       res.status(data.status_code).send(data);
-//     } else {
-//       res.json(data);
-//     }
-//   });
-// });
-
 router.get('/:group_id', (req, res) => {
   const { group_id: groupId } = req.params;
   groupDomain.getGroup(groupId)

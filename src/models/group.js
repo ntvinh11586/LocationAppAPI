@@ -18,6 +18,35 @@ function createGroup(data) {
   });
 }
 
+function updateUser(data) {
+  return new Promise((reslove, reject) => {
+    groupRepository.findByIdAndUpdate(data.groupId,
+      { $push: { users: data.userId } },
+      { new: true })
+      .select('name type users')
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error, group) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          reslove({
+            name: group.name,
+            type: group.type,
+            users: group.users,
+            // Support leggacy fields
+            status_code: 200,
+            success: true,
+            status_message: 'Add friend successfully',
+          });
+        }
+      });
+  });
+}
+
 function addFriendIntoGroup(groupId, userId, friendId, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
@@ -892,4 +921,7 @@ module.exports = {
 
   createNewGroup: requestData =>
     createGroup(requestData),
+
+  addMember: requestData =>
+    updateUser(requestData),
 };
