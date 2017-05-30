@@ -58,6 +58,8 @@ module.exports = {
         name: data[0].name,
         start_time: data[0].start_time,
         end_time: data[0].end_time,
+        created_date: data[0].created_date || -1,
+        type: data[0].type || 'group',
         users: data[0].users,
         messages: data[1].messages,
         // Support legacy field
