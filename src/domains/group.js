@@ -15,7 +15,9 @@ module.exports = {
     .then((data) => {
       const promises = [];
       for (let i = 0; i < data.length; i += 2) {
+        // Group Models
         promises.push(groupModel.getGroup({ groupId: data[i] }));
+        // Lastest message Models
         promises.push(data[i + 1]);
       }
       return Promise.all(promises);
@@ -26,6 +28,8 @@ module.exports = {
         groups.push({
           _id: data[i]._id,
           name: data[i].name,
+          created_date: data[i].created_date || -1,
+          type: data[i].type || 'group',
           start_time: data[i].start_time,
           end_time: data[i].end_time,
           users: data[i].users,
@@ -35,6 +39,10 @@ module.exports = {
         });
       }
       return { groups };
+    })
+    .then((data) => {
+      data.groups.sort((p1, p2) => p2.created_date - p1.created_date);
+      return data;
     }),
 
   getGroup: groupId => groupModel.getGroup({ groupId })

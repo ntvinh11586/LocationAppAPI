@@ -913,7 +913,7 @@ module.exports = {
   migrateFromRouteToGroupModel,
 
   getGroup: requestData =>
-    composeReadGroupsQuery(requestData, 'name start_time end_time users')
+    composeReadGroupsQuery(requestData, 'name start_time end_time users created_date type')
       .then(data => readGroupById(data)),
 
   getGroupIds: requestData =>
