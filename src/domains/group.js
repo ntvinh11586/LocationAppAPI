@@ -59,10 +59,12 @@ module.exports = {
       return response;
     }),
 
-  createNewGroup: (name, type = 'group', userId) =>
-    groupModel.createNewGroup({ name, type })
+  createNewGroup: (name, type = 'group', userId) => {
+    const createdDate = (new Date()).getTime();
+    return groupModel.createNewGroup({ name, type, createdDate })
       .then((group) => {
         const { _id: groupId } = group;
         return groupModel.addMember({ groupId, userId });
-      }),
+      })
+    },
 };

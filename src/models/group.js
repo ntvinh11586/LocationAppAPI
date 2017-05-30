@@ -2,9 +2,10 @@ const userRepository = require('../repositories/user');
 const groupRepository = require('../repositories/group');
 const routeRepository = require('../repositories/route');
 
-function createGroup(data) {
+function createGroup({ name, type, createdDate: created_date }) {
   return new Promise((resolve, reject) => {
-    groupRepository.create(data, (error, group) => {
+    console.log(created_date);
+    groupRepository.create({ name, type, created_date }, (error, group) => {
       if (error) {
         reject(new Error(JSON.stringify({
           status_code: 422,
@@ -23,7 +24,7 @@ function updateUser(data) {
     groupRepository.findByIdAndUpdate(data.groupId,
       { $push: { users: data.userId } },
       { new: true })
-      .select('name type users')
+      .select('name type created_date users')
       .populate({ path: 'users', model: 'User', select: 'username' })
       .exec((error, group) => {
         if (error) {
@@ -36,6 +37,7 @@ function updateUser(data) {
           reslove({
             name: group.name,
             type: group.type,
+            created_date: group.created_date,
             users: group.users,
             // Support leggacy fields
             status_code: 200,
