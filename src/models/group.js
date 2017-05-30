@@ -21,7 +21,7 @@ function createGroup({ name, type, createdDate: created_date }) {
 function updateUser(data) {
   return new Promise((reslove, reject) => {
     groupRepository.findByIdAndUpdate(data.groupId,
-      { $push: { users: data.userId } },
+      { $push: { users: data.userId || data.friendId } },
       { new: true })
       .select('name type created_date users')
       .populate({ path: 'users', model: 'User', select: 'username' })

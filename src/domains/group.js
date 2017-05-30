@@ -86,7 +86,18 @@ module.exports = {
     })
     .then((group) => {
       const { group_id: groupId } = group;
-      return groupModel.addMember({ groupId, userId });
+      return groupModel.addMember({ groupId, friendId });
     });
   },
+
+  addUserIntoGroup: (groupId, userId) =>
+    groupModel.addMember({ groupId, userId })
+      .then((data) => {
+        // Respest the current API response.
+        return {
+          status_code: 200,
+          success: true,
+          status_message: 'Add friend successfully.',
+        };
+      }),
 };
