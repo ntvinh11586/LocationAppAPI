@@ -2,9 +2,21 @@ const express = require('express');
 const userModel = require('../models/user');
 const authMiddleware = require('../middlewares/auth');
 const userDomain = require('../domains/user');
+const groupDomain = require('../domains/group');
 
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
+
+router.post('/avatar', (req, res) => {
+  const { user_id: userId } = res.locals;
+  const { avatar_url: avatarUrl } = req.body;
+  userDomain.updateAvatar(userId, avatarUrl)
+  .then(data => res.json(data))
+  .catch((error) => {
+    const message = JSON.parse(error.message);
+    res.status(message.status_code || 501).send(message);
+  });
+});
 
 router.get('/:user_id', (req, res) => {
   const userId = res.locals.user_id;
@@ -17,12 +29,12 @@ router.get('/:user_id', (req, res) => {
   });
 });
 
-router.post('/avatar', (req, res) => {
+router.post('/:user_id/chat', (req, res) => {
+  const { user_id: friendId } = req.params;
   const { user_id: userId } = res.locals;
-  const { avatar_url: avatarUrl } = req.body;
-  userDomain.updateAvatar(userId, avatarUrl)
+  groupDomain.createNewTwoPersonsGroup(userId, friendId)
     .then(data => res.json(data))
-    .then((error) => {
+    .catch((error) => {
       const message = JSON.parse(error.message);
       res.status(message.status_code || 501).send(message);
     });

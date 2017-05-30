@@ -2,26 +2,48 @@ const userRepository = require('../repositories/user');
 const groupRepository = require('../repositories/group');
 const routeRepository = require('../repositories/route');
 
-function createGroup(userId, groupName, callback) {
-  groupRepository.findOne({ name: groupName }, (err, group) => {
-    if (group != null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Already have groups',
-      });
-    } else {
-      groupRepository.create({
-        name: groupName,
-        created_date: (new Date()).getTime() },
-        (err, newGroup) => {
-          userRepository.findById(userId, (err, user) => {
-            newGroup.users.push(user);
-            newGroup.save();
-            callback(null, newGroup);
+function createGroup({ name, type, createdDate: created_date }) {
+  return new Promise((resolve, reject) => {
+    groupRepository.create({ name, type, created_date }, (error, group) => {
+      if (error) {
+        reject(new Error(JSON.stringify({
+          status_code: 422,
+          success: false,
+          status_message: error.message,
+        })));
+      } else {
+        resolve(group);
+      }
+    });
+  });
+}
+
+function updateUser(data) {
+  return new Promise((reslove, reject) => {
+    groupRepository.findByIdAndUpdate(data.groupId,
+      { $push: { users: data.userId || data.friendId } },
+      { new: true })
+      .select('name type created_date users')
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error, group) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          reslove({
+            group_id: group._id,
+            name: group.name,
+            type: group.type,
+            created_date: group.created_date,
+            users: group.users,
+            // Support legacy fields
+            _id: group._id,
           });
-        });
-    }
+        }
+      });
   });
 }
 
@@ -858,7 +880,6 @@ function migrateFromRouteToGroupModel(groupId) {
 }
 
 module.exports = {
-  createGroup,
   addFriendIntoGroup,
   setTripPlan,
   updateTripPlan,
@@ -890,11 +911,17 @@ module.exports = {
   migrateFromRouteToGroupModel,
 
   getGroup: requestData =>
-    composeReadGroupsQuery(requestData, 'name start_time end_time users')
+    composeReadGroupsQuery(requestData, 'name start_time end_time users created_date type')
       .then(data => readGroupById(data)),
 
   getGroupIds: requestData =>
     composeReadGroupsQuery(requestData, '_id')
       .then(data => readGroups(data))
       .then(data => composeReadGroupIdsDataResponse(data)),
+
+  createNewGroup: requestData =>
+    createGroup(requestData),
+
+  addMember: requestData =>
+    updateUser(requestData),
 };

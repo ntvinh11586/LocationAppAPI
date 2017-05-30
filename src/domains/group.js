@@ -15,7 +15,9 @@ module.exports = {
     .then((data) => {
       const promises = [];
       for (let i = 0; i < data.length; i += 2) {
+        // Group Models
         promises.push(groupModel.getGroup({ groupId: data[i] }));
+        // Lastest message Models
         promises.push(data[i + 1]);
       }
       return Promise.all(promises);
@@ -26,6 +28,8 @@ module.exports = {
         groups.push({
           _id: data[i]._id,
           name: data[i].name,
+          created_date: data[i].created_date || -1,
+          type: data[i].type || 'group',
           start_time: data[i].start_time,
           end_time: data[i].end_time,
           users: data[i].users,
@@ -35,6 +39,10 @@ module.exports = {
         });
       }
       return { groups };
+    })
+    .then((data) => {
+      data.groups.sort((p1, p2) => p2.created_date - p1.created_date);
+      return data;
     }),
 
   getGroup: groupId => groupModel.getGroup({ groupId })
@@ -50,6 +58,8 @@ module.exports = {
         name: data[0].name,
         start_time: data[0].start_time,
         end_time: data[0].end_time,
+        created_date: data[0].created_date || -1,
+        type: data[0].type || 'group',
         users: data[0].users,
         messages: data[1].messages,
         // Support legacy field
@@ -58,4 +68,38 @@ module.exports = {
       };
       return response;
     }),
+
+  createNewGroup: (name, userId, type = 'group') => {
+    const createdDate = (new Date()).getTime();
+    return groupModel.createNewGroup({ name, type, createdDate })
+      .then((group) => {
+        const { _id: groupId } = group;
+        return groupModel.addMember({ groupId, userId });
+      });
+  },
+
+  createNewTwoPersonsGroup: (userId, friendId, type = 'friend') => {
+    const createdDate = (new Date()).getTime();
+    const name = `${userId}${friendId}`;
+    return groupModel.createNewGroup({ name, type, createdDate })
+    .then((group) => {
+      const { _id: groupId } = group;
+      return groupModel.addMember({ groupId, userId });
+    })
+    .then((group) => {
+      const { group_id: groupId } = group;
+      return groupModel.addMember({ groupId, friendId });
+    });
+  },
+
+  addUserIntoGroup: (groupId, userId) =>
+    groupModel.addMember({ groupId, userId })
+      .then((data) => {
+        // Respest the current API response.
+        return {
+          status_code: 200,
+          success: true,
+          status_message: 'Add friend successfully.',
+        };
+      }),
 };
