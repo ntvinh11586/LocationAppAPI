@@ -47,39 +47,6 @@ function updateUser(data) {
   });
 }
 
-function addFriendIntoGroup(groupId, userId, friendId, callback) {
-  groupRepository.findById(groupId, (err, group) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (group == null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Group not found.',
-      });
-    } else if (group.users.some(x => x.equals(friendId))) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Already have this friend.',
-      });
-    } else {
-      group.users.push(friendId);
-      group.save();
-
-      callback(null, {
-        status_code: 200,
-        success: true,
-        status_message: 'Add friend successfully.',
-      });
-    }
-  });
-}
-
 function setTripPlan(groupId, startTime, endTime, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
@@ -115,64 +82,6 @@ function updateTripPlan(groupId, startTime, endTime, callback) {
 
 function deleteTripPlan(groupId, callback) {
   setTripPlan(groupId, undefined, undefined, callback);
-}
-
-function createPersonalChat(userId, friendId, callback) {
-  groupRepository.findOne({ users: [userId, friendId] }, (err, group) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (group != null) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Group already exists.',
-      });
-    } else {
-      groupRepository.create({ name: `${userId}${friendId}` }, (err, newGroup) => {
-        if (err) {
-          callback(err, {
-            status_code: 422,
-            success: false,
-            status_message: err.message,
-          });
-        } else {
-          newGroup.users.push(userId);
-          newGroup.users.push(friendId);
-          newGroup.save();
-          callback(null, newGroup);
-        }
-      });
-    }
-  });
-}
-
-function getPersonalChat(userId, friendId, callback) {
-  groupRepository
-    .findOne({ users: [userId, friendId] })
-    .populate({ path: 'chats.chatter', model: 'User', select: 'username' })
-    .populate({ path: 'users', model: 'User', select: 'username' })
-    .exec((err, group) => {
-      if (err) {
-        callback(err, {
-          status_code: 422,
-          success: false,
-          status_message: err.message,
-        });
-      } if (group == null) {
-        callback(new Error('422'), {
-          status_code: 422,
-          success: false,
-          status_message: 'Group not found.',
-        });
-      } else {
-        group.markers = undefined;
-        callback(null, group);
-      }
-    });
 }
 
 function updateStartingPoint(groupId, startTime, startLatlng, callback) {
@@ -880,12 +789,9 @@ function migrateFromRouteToGroupModel(groupId) {
 }
 
 module.exports = {
-  addFriendIntoGroup,
   setTripPlan,
   updateTripPlan,
   deleteTripPlan,
-  createPersonalChat,
-  getPersonalChat,
   updateStartingPoint,
   getStartingPoint,
   getEndingPoint,
