@@ -4,7 +4,6 @@ const routeRepository = require('../repositories/route');
 
 function createGroup({ name, type, createdDate: created_date }) {
   return new Promise((resolve, reject) => {
-    console.log(created_date);
     groupRepository.create({ name, type, created_date }, (error, group) => {
       if (error) {
         reject(new Error(JSON.stringify({
@@ -35,6 +34,7 @@ function updateUser(data) {
           })));
         } else {
           reslove({
+            group_id:  group._id,
             name: group.name,
             type: group.type,
             created_date: group.created_date,

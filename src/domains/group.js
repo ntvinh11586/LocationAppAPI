@@ -65,6 +65,20 @@ module.exports = {
       .then((group) => {
         const { _id: groupId } = group;
         return groupModel.addMember({ groupId, userId });
-      })
-    },
+      });
+  },
+
+  createNewTwoPersonsGroup: (userId, friendId, type = 'friend') => {
+    const createdDate = (new Date()).getTime();
+    const name = `${userId}${friendId}`;
+    return groupModel.createNewGroup({ name, type, createdDate })
+    .then((group) => {
+      const { _id: groupId } = group;
+      return groupModel.addMember({ groupId, userId });
+    })
+    .then((group) => {
+      const { group_id: groupId } = group;
+      return groupModel.addMember({ groupId, userId });
+    });
+  },
 };
