@@ -34,15 +34,13 @@ function updateUser(data) {
           })));
         } else {
           reslove({
-            group_id:  group._id,
+            group_id: group._id,
             name: group.name,
             type: group.type,
             created_date: group.created_date,
             users: group.users,
-            // Support leggacy fields
-            status_code: 200,
-            success: true,
-            status_message: 'Add friend successfully',
+            // Support legacy fields
+            _id: group._id,
           });
         }
       });

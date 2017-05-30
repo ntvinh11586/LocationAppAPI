@@ -19,8 +19,8 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const { user_id: userId } = res.locals;
   // Support group_name as a legacy field.
-  const { group_name: groupName, name, type } = req.body;
-  groupDomain.createNewGroup(name || groupName, type, userId)
+  const { group_name: groupName, name } = req.body;
+  groupDomain.createNewGroup(name || groupName, userId)
     .then(data => res.json(data))
     .catch((error) => {
       const message = JSON.parse(error.message);

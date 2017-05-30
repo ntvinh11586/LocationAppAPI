@@ -67,7 +67,7 @@ module.exports = {
       return response;
     }),
 
-  createNewGroup: (name, type = 'group', userId) => {
+  createNewGroup: (name, userId, type = 'group') => {
     const createdDate = (new Date()).getTime();
     return groupModel.createNewGroup({ name, type, createdDate })
       .then((group) => {
