@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
 
-router.get('/', (req, res) => {
+router.get('', (req, res) => {
   const userId = res.locals.user_id;
   friendModel.getFriendLists(userId, (err, data) => {
     if (err) {

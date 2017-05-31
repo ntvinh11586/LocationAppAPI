@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
 
-router.get('/', (req, res) => {
+router.get('', (req, res) => {
   const { user_id: userId } = res.locals;
   groupDomain.showMessageList(userId)
     .then(data => res.json(data))
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('', (req, res) => {
   const { user_id: userId } = res.locals;
   // Support group_name as a legacy field.
   const { group_name: groupName, name } = req.body;
