@@ -191,14 +191,14 @@ function getEndingPoint(groupId, callback) {
       callback(null, {
         group_id: group._id,
         name: group.name,
-        start_time: group.end_time,
-        start_latlng: group.end_latlng,
+        end_time: group.end_time,
+        end_latlng: group.end_latlng,
       });
     } else {
       callback(null, {
         group_id: group._id,
         name: group.name,
-        start_time: group.end_time,
+        end_time: group.end_time,
       });
     }
   });
