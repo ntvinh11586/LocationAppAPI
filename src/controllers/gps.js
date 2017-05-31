@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
 
-router.get('/', (req, res) => {
+router.get('', (req, res) => {
   const { user_id: userId } = res.locals;
   gpsModel.getPreviousLatlng(userId, (err, data) => {
     if (err) {
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/', (req, res) => {
+router.post('', (req, res) => {
   const { user_id: userId } = res.locals;
   const { lat, lng } = req.body;
   gpsModel.createCurrentLatlng(userId, lat, lng, (err, data) => {
@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.put('/', (req, res) => {
+router.put('', (req, res) => {
   const { user_id: userId } = res.locals;
   const { lat, lng } = req.body;
   gpsModel.updateLatlng(userId, lat, lng, (err, data) => {
@@ -40,7 +40,7 @@ router.put('/', (req, res) => {
   });
 });
 
-router.delete('/', (req, res) => {
+router.delete('', (req, res) => {
   const { user_id: userId } = res.locals;
   gpsModel.deleteLatlng(userId, (err, data) => {
     if (err) {
