@@ -84,7 +84,7 @@ function deleteTripPlan(groupId, callback) {
   setTripPlan(groupId, undefined, undefined, callback);
 }
 
-function updateStartingPoint(groupId, startTime, startLatlng, callback) {
+function updateStartingPoint(groupId, startTime, startLatlng, startAddress, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
       callback(err, {
@@ -101,19 +101,21 @@ function updateStartingPoint(groupId, startTime, startLatlng, callback) {
     } else {
       group.start_time = startTime;
       group.start_latlng = startLatlng;
+      group.start_address = startAddress;
       group.save();
 
       callback(null, {
         group_id: group._id,
         name: group.name,
         start_time: group.start_time,
+        start_address: group.start_address,
         start_latlng: group.start_latlng,
       });
     }
   });
 }
 
-function updateEndingPoint(groupId, endTime, endLatlng, callback) {
+function updateEndingPoint(groupId, endTime, endLatlng, endAddress, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
       callback(err, {
@@ -130,6 +132,7 @@ function updateEndingPoint(groupId, endTime, endLatlng, callback) {
     } else {
       group.end_time = endTime;
       group.end_latlng = endLatlng;
+      group.end_address = endAddress;
       group.save();
 
       callback(null, {
@@ -161,6 +164,7 @@ function getStartingPoint(groupId, callback) {
         group_id: group._id,
         name: group.name,
         start_time: group.start_time,
+        start_address: group.start_address,
         start_latlng: group.start_latlng,
       });
     } else {
@@ -192,6 +196,7 @@ function getEndingPoint(groupId, callback) {
         group_id: group._id,
         name: group.name,
         end_time: group.end_time,
+        end_address: group.end_address,
         end_latlng: group.end_latlng,
       });
     } else {
@@ -390,6 +395,7 @@ function deleteStartingPoint(groupId, callback) {
     } else {
       group.start_latlng = undefined;
       group.arriving_users = undefined;
+      group.start_address = undefined;
       group.save();
       callback(null, {
         group_id: groupId,
@@ -415,6 +421,7 @@ function deleteEndingPoint(groupId, callback) {
     } else {
       group.end_latlng = undefined;
       group.destination_users = undefined;
+      group.end_address = undefined;
       group.save();
       callback(null, {
         group_id: groupId,

@@ -71,7 +71,8 @@ function updateStartingPoint(startingPointInfo, callback) {
   const groupId = startingPointInfoJSON.group_id;
   const startLatlng = startingPointInfoJSON.start_latlng;
   const startTime = startingPointInfoJSON.start_time;
-  groupModel.updateStartingPoint(groupId, startTime, startLatlng, (err, data) => {
+  const startAddress = startingPointInfoJSON.start_address;
+  groupModel.updateStartingPoint(groupId, startTime, startLatlng, startAddress, (err, data) => {
     callback(err, data);
   });
 }
@@ -81,7 +82,8 @@ function updateEndingPoint(endingPointInfo, callback) {
   const groupId = endingPointInfoJSON.group_id;
   const endLatlng = endingPointInfoJSON.end_latlng;
   const endTime = endingPointInfoJSON.end_time;
-  groupModel.updateEndingPoint(groupId, endTime, endLatlng, (err, data) => {
+  const endAddress = endingPointInfoJSON.end_address;
+  groupModel.updateEndingPoint(groupId, endTime, endLatlng, endAddress, (err, data) => {
     callback(err, data);
   });
 }
@@ -306,14 +308,6 @@ function groupLocation(mapNamespace) {
         .on('get_starting_point', (groupInfo) => {
           getStartingPoint(groupInfo, (err, data) => {
             socket.emit('get_starting_point_callback', data);
-          });
-        })
-        .on('update_ending_point', (endingPointInfo) => {
-          updateEndingPoint(endingPointInfo, (err, data) => {
-            socket.emit('update_ending_point_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('update_ending_point_callback', data);
           });
         })
         .on('get_ending_point', (groupInfo) => {

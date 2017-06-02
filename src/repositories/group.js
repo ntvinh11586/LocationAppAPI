@@ -5,6 +5,7 @@ const groupSchema = new mongoose.Schema({
   created_date: Number,
   type: String,
   start_time: Number,
+  start_address: String,
   start_latlng: {
     lat: Number,
     lng: Number,
@@ -16,6 +17,7 @@ const groupSchema = new mongoose.Schema({
     },
   ],
   end_time: Number,
+  end_address: String,
   end_latlng: {
     lat: Number,
     lng: Number,
