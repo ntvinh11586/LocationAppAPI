@@ -30,8 +30,6 @@ module.exports = {
           name: data[i].name,
           created_date: data[i].created_date || -1,
           type: data[i].type || 'group',
-          start_time: data[i].start_time,
-          end_time: data[i].end_time,
           users: data[i].users,
           messages: data[i + 1].messages,
           // Support leggacy field
@@ -56,8 +54,6 @@ module.exports = {
       const response = {
         group_id: data[0]._id,
         name: data[0].name,
-        start_time: data[0].start_time,
-        end_time: data[0].end_time,
         created_date: data[0].created_date || -1,
         type: data[0].type || 'group',
         users: data[0].users,
