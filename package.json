@@ -1,6 +1,6 @@
 {
   "name": "locationappapi",
-  "version": "0.9.0a",
+  "version": "0.10.0a",
   "description": "Thesis Application API",
   "main": "server.js",
   "scripts": {
