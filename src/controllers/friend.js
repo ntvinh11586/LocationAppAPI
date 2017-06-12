@@ -1,6 +1,7 @@
 const express = require('express');
 const friendModel = require('../models/friend');
 const authMiddleware = require('../middlewares/auth');
+const notificationDomain = require('../domains/notification');
 
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
@@ -57,6 +58,13 @@ router.post('/:friend_id/add', (req, res) => {
     if (err) {
       res.status(data.status_code).send(data);
     } else {
+      notificationDomain.addNotification({
+        content: `${userId} send your friend request!`,
+        type: 'friend_request',
+        userId: acceptedFriendId,
+      })
+      .then()
+      .catch();
       res.json(data);
     }
   });
@@ -69,6 +77,13 @@ router.post('/:friend_id/accept', (req, res) => {
     if (err) {
       res.status(data.status_code).send(data);
     } else {
+      notificationDomain.addNotification({
+        content: `${friendId} accept your friend requests`,
+        type: 'friend_accept',
+        userId,
+      })
+      .then()
+      .catch();
       res.json(data);
     }
   });

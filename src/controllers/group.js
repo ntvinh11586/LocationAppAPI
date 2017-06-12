@@ -1,6 +1,7 @@
 const express = require('express');
 const groupDomain = require('../domains/group');
 const authMiddleware = require('../middlewares/auth');
+const notificationDomain = require('../domains/notification');
 
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
@@ -41,7 +42,16 @@ router.post('/:group_id/members', (req, res) => {
   const { group_id: groupId } = req.params;
   const { friend_id: friendId, user_id: userId } = req.query;
   groupDomain.addUserIntoGroup(groupId, friendId || userId)
-    .then(data => res.json(data))
+    .then((data) => {
+      notificationDomain.addNotification({
+        content: `You're added into group ${groupId}`,
+        type: 'add_into_group',
+        userId: friendId,
+      })
+      .then()
+      .catch();
+      res.json(data);
+    })
     .catch((error) => {
       const message = JSON.parse(error.message);
       res.status(message.status_code || 501).send(message);
