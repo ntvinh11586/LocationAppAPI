@@ -19,7 +19,6 @@ function readNotificationsByUserId(userId) {
 }
 
 function createNotification({ content, type, userId }) {
-  console.log('abcdef');
   return new Promise((resolve, reject) => {
     notificationRepository.create(
       { content, type, user: userId },

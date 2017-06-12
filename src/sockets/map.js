@@ -322,6 +322,14 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('add_arriving_user_callback', data);
 
+            notificationDomain.addNotification({
+              content: 'You are in starting point',
+              type: 'in_starting_point',
+              user: data.user_id,
+            })
+            .then()
+            .catch();
+
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -340,6 +348,14 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_arriving_user_callback', data);
+
+            notificationDomain.addNotification({
+              content: 'You are out starting point',
+              type: 'out_starting_point',
+              user: data.user_id,
+            })
+            .then()
+            .catch();
 
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
@@ -370,6 +386,14 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('add_destination_user_callback', data);
 
+            notificationDomain.addNotification({
+              content: 'You are in ending point',
+              type: 'in_ending_point',
+              user: data.user_id,
+            })
+            .then()
+            .catch();
+
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -388,6 +412,14 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_destination_user_callback', data);
+
+            notificationDomain.addNotification({
+              content: 'You are out ending point',
+              type: 'out_ending_poing',
+              user: data.user_id,
+            })
+            .then()
+            .catch();
 
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
@@ -445,6 +477,14 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('add_user_into_stopover_callback', data);
 
+            notificationDomain.addNotification({
+              content: 'You are in stopover',
+              type: 'in_stopover',
+              user: data.user_id,
+            })
+            .then()
+            .catch();
+
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -463,6 +503,14 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_user_into_stopover_callback', data);
+
+            notificationDomain.addNotification({
+              content: 'You are out stopover',
+              type: 'out_stopover',
+              user: data.user_id,
+            })
+            .then()
+            .catch();
 
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
