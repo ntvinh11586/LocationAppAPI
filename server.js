@@ -43,8 +43,8 @@ app.use((err, req, res, next) => {
       status_message: 'Internal server error.',
     });
   } else {
-    res.status(err.status).send({
-      status_code: err.status,
+    res.status(501).send({
+      status_code: 501,
       success: false,
       status_message: err.message,
     });
