@@ -10,7 +10,11 @@ module.exports = {
   },
 
   getNotifications: userId =>
-    notificationModel.getNotifications(userId),
+    notificationModel.getNotifications(userId)
+      .then((data) => {
+        return { notifications: data };
+      }),
+
   addNotification: notification =>
     notificationModel.addNotification(notification),
 };
