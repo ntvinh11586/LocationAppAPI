@@ -4,6 +4,11 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   avatar_url: String,
+  phone: Number,
+  email: String,
+  gender: String, // Male, Female, Other
+  birthday: Number,
+  city: Number,
   latlng: {
     lng: Number,
     lat: Number,
