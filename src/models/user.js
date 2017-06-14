@@ -16,6 +16,11 @@ function getUserInfo(userId, callback) {
         callback(null, {
           user_id: user._id,
           username: user.username,
+          phone: user.phone,
+          email: user.email,
+          gender: user.gender,
+          birthday: user.birthday,
+          city: user.city,
           friends: user.friends,
           friend_pendings: user.friend_pendings,
           friend_requests: user.friend_requests,

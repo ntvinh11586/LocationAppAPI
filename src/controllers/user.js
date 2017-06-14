@@ -19,7 +19,7 @@ router.post('/avatar', (req, res) => {
 });
 
 router.get('/:user_id', (req, res) => {
-  const userId = res.locals.user_id;
+  const userId = req.params.user_id;
   userModel.getUserInfo(userId, (err, data) => {
     if (err) {
       res.status(data.status_code).send(data);

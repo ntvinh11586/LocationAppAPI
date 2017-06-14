@@ -2,44 +2,33 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const userRepository = require('../repositories/user');
 
-function register(username, password, callback) {
-  userRepository.findOne({ username }, (err, hasAccount) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (hasAccount) {
-      callback(new Error('422'), {
-        status_code: 422,
-        success: false,
-        status_message: 'Account already exists.',
-      });
-    } else {
-      userRepository.create({ username, password }, (err, account) => {
-        if (err) {
-          callback(err, {
+function createUser({ username, password, phone, email, gender, birthday, city }) {
+  return new Promise((resolve, reject) => {
+    userRepository.create(
+      { username, password, phone, email, gender, birthday, city },
+      (error, user) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
             status_code: 422,
             success: false,
-            status_message: err.message,
-          });
+            status_message: error.message,
+          })));
         } else {
-          const userInfo = {
-            username: account.username,
-            user_id: account._id,
-          };
-          const tokenSecretKey = config.tokenSecretKey;
-          const expiresIn = { expiresIn: config.tokenExpired };
-          const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
-          callback(null, {
-            user_id: account._id,
-            username: account.username,
-            user_token: token,
-          });
+          resolve(user);
         }
       });
-    }
+  });
+}
+
+
+function generateToken(userId, username) {
+  return new Promise((resolve) => {
+    const userInfo = { username, user_id: userId };
+    const tokenSecretKey = config.tokenSecretKey;
+    const expiresIn = { expiresIn: config.tokenExpired };
+    const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
+    console.log(token);
+    resolve(token);
   });
 }
 
@@ -83,7 +72,8 @@ function logout(callback) {
 }
 
 module.exports = {
-  register,
+  register: payload => createUser(payload),
+  generateToken: (userId, username) => generateToken(userId, username),
   login,
   logout,
 };
