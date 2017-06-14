@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   email: String,
   gender: String, // Male, Female, Other
   birthday: Number,
-  city: Number,
+  city: String,
   latlng: {
     lng: Number,
     lat: Number,
