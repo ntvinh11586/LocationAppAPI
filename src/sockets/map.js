@@ -330,6 +330,7 @@ function groupLocation(mapNamespace) {
             .then()
             .catch();
 
+            console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -357,6 +358,7 @@ function groupLocation(mapNamespace) {
             .then()
             .catch();
 
+            console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -394,6 +396,7 @@ function groupLocation(mapNamespace) {
             .then()
             .catch();
 
+            console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -421,6 +424,7 @@ function groupLocation(mapNamespace) {
             .then()
             .catch();
 
+            console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -485,6 +489,7 @@ function groupLocation(mapNamespace) {
             .then()
             .catch();
 
+            console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
@@ -512,6 +517,7 @@ function groupLocation(mapNamespace) {
             .then()
             .catch();
 
+            console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
