@@ -501,6 +501,19 @@ function groupLocation(mapNamespace) {
               .emit('delete_route_callback', data);
           });
         })
+        // Appointment
+        .on('get_appointments', (groupInfo) => {
+        })
+        .on('add_appointment', (groupInfo) => {
+        })
+        .on('delete_appointment', (groupInfo) => {
+        })
+        .on('get_users_to_appointment', (groupInfo) => {
+        })
+        .on('add_user_to_appointment', (groupInfo) => {
+        })
+        .on('delete_user_from_appointment', (groupInfo) => {
+        })
         .on('disconnect', () => {
           const room = socket.handshake.query.group_id;
           socket.leave(room);
