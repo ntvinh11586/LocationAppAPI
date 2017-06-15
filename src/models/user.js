@@ -52,7 +52,7 @@ function addDevice(userId, device) {
 
 function removeDevice(userId, device) {
   return new Promise((resolve, reject) => {
-    userRepository.findByIdAndUpdate(userId, { $pullAll: { devices: device } })
+    userRepository.findByIdAndUpdate(userId, { $pullAll: { devices: [device] } })
       .exec((error) => {
         if (error) {
           reject(new Error(JSON.stringify({

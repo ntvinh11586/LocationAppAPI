@@ -242,6 +242,22 @@ function deleteAppointment(groupInfo) {
   return appointmentDomain.deleteAppointment({ groupId, appointmentId });
 }
 
+function addUserToAppointment(groupInfo) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const appointmentId = groupInfoJSON.appointment_id;
+  const userId = groupInfoJSON.user_id;
+  return appointmentDomain.addUserToAppointment({ groupId, appointmentId, userId });
+}
+
+function deleteUserToAppointment(groupInfo) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const appointmentId = groupInfoJSON.appointment_id;
+  const userId = groupInfoJSON.user_id;
+  return appointmentDomain.deleteUserFromAppointment({ groupId, appointmentId, userId });
+}
+
 function groupLocation(mapNamespace) {
   mapNamespace
     .on('connection', socketioJwt.authorize({
@@ -551,11 +567,23 @@ function groupLocation(mapNamespace) {
                 .emit('delete_appointment_callback', data);
             });
         })
-        .on('get_users_to_appointment', (groupInfo) => {
-        })
         .on('add_user_to_appointment', (groupInfo) => {
+          addUserToAppointment(groupInfo)
+            .then((data) => {
+              socket.emit('add_user_to_appointment_callback', data);
+              socket.broadcast
+                .to(socket.handshake.query.group_id)
+                .emit('add_user_to_appointment_callback', data);
+            })
         })
         .on('delete_user_from_appointment', (groupInfo) => {
+          deleteUserToAppointment(groupInfo)
+            .then((data) => {
+              socket.emit('delete_user_from_appointment_callback', data);
+              socket.broadcast
+                .to(socket.handshake.query.group_id)
+                .emit('delete_user_from_appointment_callback', data);
+            })
         })
         .on('disconnect', () => {
           const room = socket.handshake.query.group_id;

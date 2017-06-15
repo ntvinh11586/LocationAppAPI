@@ -31,4 +31,24 @@ module.exports = {
           appointment_id: payload.appointmentId,
         };
       }),
+
+  addUserToAppointment: payload =>
+    appointmentModel.addUserToAppointment(payload)
+      .then(() => {
+        return {
+          group_id: payload.groupId,
+          appointment_id: payload.appointmentId,
+          user_id: payload.userId,
+        };
+      }),
+
+  deleteUserFromAppointment: payload =>
+    appointmentModel.deleteUserFromAppointment(payload)
+      .then(() => {
+        return {
+          group_id: payload.groupId,
+          appointment_id: payload.appointmentId,
+          user_id: payload.userId,
+        };
+      }),
 };

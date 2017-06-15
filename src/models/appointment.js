@@ -56,6 +56,50 @@ function deleteAppointmentById(appointmentId) {
   });
 }
 
+function findAppointmentAndUpdateUser({ appointmentId, userId }) {
+  return new Promise((resolve, reject) => {
+    appointmentRepository.findByIdAndUpdate(appointmentId, { $push: { users: userId } })
+      .populate({ path: 'users', model: 'User', select: 'username' })
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Add user in appointment Successfully!',
+          });
+        }
+      });
+  });
+}
+
+function findAppointmentAndDeleteUser({ appointmentId, userId }) {
+  console.log(userId);
+  return new Promise((resolve, reject) => {
+    appointmentRepository.findByIdAndUpdate(appointmentId, { $pullAll: { users: [userId] } })
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Delete user in appointment Successfully!',
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   addAppointment: payload =>
     createAppointment(payload),
@@ -65,4 +109,10 @@ module.exports = {
 
   deleteAppointment: ({ appointmentId }) =>
     deleteAppointmentById(appointmentId),
+
+  addUserToAppointment: ({ appointmentId, userId }) =>
+    findAppointmentAndUpdateUser({ appointmentId, userId }),
+
+  deleteUserFromAppointment: ({ appointmentId, userId }) =>
+    findAppointmentAndDeleteUser({ appointmentId, userId }),
 };
