@@ -48,18 +48,6 @@ const groupSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  markers: [
-    {
-      latlng: {
-        lat: Number,
-        lng: Number,
-      },
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    },
-  ],
 });
 
 module.exports = mongoose.model('Group', groupSchema);

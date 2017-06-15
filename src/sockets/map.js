@@ -1,5 +1,4 @@
 const latlngModel = require('../models/latlng');
-const markerModel = require('../models/marker');
 const groupModel = require('../models/group');
 const socketioJwt = require('socketio-jwt');
 const config = require('../config');
@@ -34,34 +33,6 @@ function getAllUsersLocation(groupInfo, callback) {
   const groupJSON = JSON.parse(groupInfo);
   const groupId = groupJSON.group_id;
   latlngModel.getUsersLatlng(groupId, (err, data) => {
-    callback(err, data);
-  });
-}
-
-function addMarker(markerInfo, callback) {
-  const markerInfoJSON = JSON.parse(markerInfo);
-  const groupId = markerInfoJSON.group_id;
-  const userId = markerInfoJSON.user_id;
-  const lat = markerInfoJSON.latlng.lat;
-  const lng = markerInfoJSON.latlng.lng;
-  markerModel.addMarker(groupId, userId, lat, lng, (err, data) => {
-    callback(err, data);
-  });
-}
-
-function getAllMarkers(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  markerModel.getMarkers(groupId, (err, data) => {
-    callback(err, data);
-  });
-}
-
-function deleteMarker(markerInfo, callback) {
-  const markerInfoJSON = JSON.parse(markerInfo);
-  const groupId = markerInfoJSON.group_id;
-  const markerId = markerInfoJSON.marker_id;
-  markerModel.deleteMarker(groupId, markerId, (err, data) => {
     callback(err, data);
   });
 }
@@ -266,27 +237,6 @@ function groupLocation(mapNamespace) {
         .on('get_latlngs', (groupInfo) => {
           getAllUsersLocation(groupInfo, (err, data) => {
             socket.emit('get_latlngs_callback', data);
-          });
-        })
-        .on('add_marker', (markerInfo) => {
-          addMarker(markerInfo, (err, data) => {
-            socket.emit('add_marker_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('add_marker_callback', data);
-          });
-        })
-        .on('delete_marker', (markerInfo) => {
-          deleteMarker(markerInfo, (err, data) => {
-            socket.emit('delete_marker_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('delete_marker_callback', data);
-          });
-        })
-        .on('get_markers', (groupInfo) => {
-          getAllMarkers(groupInfo, (err, data) => {
-            socket.emit('get_markers_callback', data);
           });
         })
         .on('update_starting_point', (startingPointInfo) => {
