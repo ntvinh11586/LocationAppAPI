@@ -1,3 +1,10 @@
 {
-  "group_id": "5927f85b3bcd550c98398e74"
+  "group_id": "5927f85b3bcd550c98398e74",
+  "address": "12345, abc street",
+  "latlng": {
+    "lat": 12345,
+    "lng": 98765
+  },
+  "start_time": 1234567890,
+  "end_time": 987654321
 }

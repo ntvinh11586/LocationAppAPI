@@ -3,6 +3,7 @@ const groupModel = require('../models/group');
 const socketioJwt = require('socketio-jwt');
 const config = require('../config');
 const notificationDomain = require('../domains/notification');
+const appointmentDomain = require('../domains/appointment');
 const fcmDomain = require('../domains/fcm');
 
 function joinChat(socket, groupId) {
@@ -215,6 +216,17 @@ function deleteRoute(groupInfo, callback) {
   groupModel.deleteRoute(groupId, (err, data) => {
     callback(err, data);
   });
+}
+
+// Appointment
+function addAppointment(groupInfo) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const address = groupInfoJSON.address;
+  const latlng = groupInfoJSON.latlng;
+  const startTime = groupInfoJSON.start_time;
+  const endTime = groupInfoJSON.end_time;
+  return appointmentDomain.addAppointment({ groupId, latlng, address, startTime, endTime });
 }
 
 function groupLocation(mapNamespace) {
@@ -505,6 +517,13 @@ function groupLocation(mapNamespace) {
         .on('get_appointments', (groupInfo) => {
         })
         .on('add_appointment', (groupInfo) => {
+          addAppointment(groupInfo)
+            .then((data) => {
+              socket.emit('add_appointment_callback', data);
+              socket.broadcast
+                .to(socket.handshake.query.group_id)
+                .emit('add_appointment_callback', data);
+            })
         })
         .on('delete_appointment', (groupInfo) => {
         })
