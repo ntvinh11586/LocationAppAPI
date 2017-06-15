@@ -219,6 +219,12 @@ function deleteRoute(groupInfo, callback) {
 }
 
 // Appointment
+function getAppointments(groupInfo) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  return appointmentDomain.getAppointments({ groupId });
+}
+
 function addAppointment(groupInfo) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -227,6 +233,13 @@ function addAppointment(groupInfo) {
   const startTime = groupInfoJSON.start_time;
   const endTime = groupInfoJSON.end_time;
   return appointmentDomain.addAppointment({ groupId, latlng, address, startTime, endTime });
+}
+
+function deleteAppointment(groupInfo) {
+  const groupInfoJSON = JSON.parse(groupInfo);
+  const groupId = groupInfoJSON.group_id;
+  const appointmentId = groupInfoJSON.appointment_id;
+  return appointmentDomain.deleteAppointment({ groupId, appointmentId });
 }
 
 function groupLocation(mapNamespace) {
@@ -515,6 +528,10 @@ function groupLocation(mapNamespace) {
         })
         // Appointment
         .on('get_appointments', (groupInfo) => {
+          getAppointments(groupInfo)
+            .then((data) => {
+              socket.emit('get_appointments_callback', data);
+            });
         })
         .on('add_appointment', (groupInfo) => {
           addAppointment(groupInfo)
@@ -523,9 +540,16 @@ function groupLocation(mapNamespace) {
               socket.broadcast
                 .to(socket.handshake.query.group_id)
                 .emit('add_appointment_callback', data);
-            })
+            });
         })
         .on('delete_appointment', (groupInfo) => {
+          deleteAppointment(groupInfo)
+            .then((data) => {
+              socket.emit('delete_appointment_callback', data);
+              socket.broadcast
+                .to(socket.handshake.query.group_id)
+                .emit('delete_appointment_callback', data);
+            });
         })
         .on('get_users_to_appointment', (groupInfo) => {
         })
