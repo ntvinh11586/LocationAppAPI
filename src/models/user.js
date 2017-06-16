@@ -92,9 +92,30 @@ function updateAvatar(userId, avatarUrl) {
   });
 }
 
+function readLatlngByUserId(userId) {
+  return new Promise((resolve, reject) => {
+    userRepository.findById(userId)
+      .select('latlng')
+      .exec((error, latlng) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(latlng);
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
   addDevice,
   removeDevice,
   updateAvatar,
+
+  getUserLatlng: userId =>
+    readLatlngByUserId(userId),
 };

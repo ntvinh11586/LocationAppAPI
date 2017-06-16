@@ -2,6 +2,7 @@ const express = require('express');
 const authModel = require('../models/auth');
 const authMiddleware = require('../middlewares/auth');
 const authDomain = require('../domains/auth');
+const cacheDomain = require('../domains/cache');
 
 const router = express.Router();
 
@@ -22,6 +23,10 @@ router.post('/login', (req, res) => {
       res.status(data.status_code).send(data);
     } else {
       res.json(data);
+
+      cacheDomain.setUserInfoFromDatabase({
+        userId: data.user_id,
+      });
     }
   });
 });
