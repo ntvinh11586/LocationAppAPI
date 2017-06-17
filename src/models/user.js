@@ -96,7 +96,7 @@ function readLatlngByUserId(userId) {
   return new Promise((resolve, reject) => {
     userRepository.findById(userId)
       .select('latlng')
-      .exec((error, latlng) => {
+      .exec((error, user) => {
         if (error) {
           reject(new Error(JSON.stringify({
             status_code: 422,
@@ -104,7 +104,7 @@ function readLatlngByUserId(userId) {
             status_message: error.message,
           })));
         } else {
-          resolve(latlng);
+          resolve(user);
         }
       });
   });

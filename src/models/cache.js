@@ -27,7 +27,11 @@ function setUserValue(userId, data) {
 }
 
 function getUserValue(userId) {
-  return cache.get(userId);
+  const value = cache.get(JSON.stringify(userId));
+  if (value === undefined) {
+    return new Promise(resolve => resolve({ _id: userId }));
+  }
+  return new Promise(resolve => resolve(value));
 }
 
 module.exports = {

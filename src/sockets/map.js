@@ -5,6 +5,7 @@ const config = require('../config');
 const notificationDomain = require('../domains/notification');
 const appointmentDomain = require('../domains/appointment');
 const fcmDomain = require('../domains/fcm');
+const locationDomain = require('../domains/location');
 
 function joinChat(socket, groupId) {
   if (groupId === undefined || groupId === null) {
@@ -36,6 +37,11 @@ function getAllUsersLocation(groupInfo, callback) {
   latlngModel.getUsersLatlng(groupId, (err, data) => {
     callback(err, data);
   });
+}
+
+function getUserLocation(body) {
+  const { user_id: userId } = JSON.parse(body);
+  return locationDomain.getUserCurrentLocation({ userId });
 }
 
 function updateStartingPoint(startingPointInfo, callback) {
@@ -274,6 +280,12 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('update_latlng_callback', data);
           });
+        })
+        .on('get_latlng', (body) => {
+          getUserLocation(body)
+            .then((data) => {
+              socket.emit('get_latlng_callback', data);
+            });
         })
         .on('get_latlngs', (groupInfo) => {
           getAllUsersLocation(groupInfo, (err, data) => {
