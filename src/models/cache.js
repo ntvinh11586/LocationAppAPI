@@ -14,7 +14,7 @@ function setUserValue(userId, data) {
       };
     }
     cache.set(JSON.stringify(userId), {
-      _id: data.id, latlng,
+      _id: data._id, latlng,
     }, ((error, success) => {
       if (!error && success) {
         const value = cache.get(JSON.stringify(userId));
