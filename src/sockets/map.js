@@ -5,6 +5,8 @@ const config = require('../config');
 const notificationDomain = require('../domains/notification');
 const appointmentDomain = require('../domains/appointment');
 const fcmDomain = require('../domains/fcm');
+const locationDomain = require('../domains/location');
+const cacheDomain = require('../domains/cache');
 
 function joinChat(socket, groupId) {
   if (groupId === undefined || groupId === null) {
@@ -20,22 +22,17 @@ function joinChat(socket, groupId) {
   return socket;
 }
 
-function updateNewUserLocation(newLocationInfo, callback) {
-  const newLocationInfoJSON = JSON.parse(newLocationInfo);
-  const groupId = newLocationInfoJSON.group_id;
-  const userId = newLocationInfoJSON.user_id;
-  const latlng = newLocationInfoJSON.latlng;
-  latlngModel.updateUserLatlng(groupId, userId, latlng, (err, data) => {
-    callback(err, data);
-  });
-}
-
 function getAllUsersLocation(groupInfo, callback) {
   const groupJSON = JSON.parse(groupInfo);
   const groupId = groupJSON.group_id;
   latlngModel.getUsersLatlng(groupId, (err, data) => {
     callback(err, data);
   });
+}
+
+function getUserLocation(body) {
+  const { user_id: userId } = JSON.parse(body);
+  return locationDomain.getUserCurrentLocation({ userId });
 }
 
 function updateStartingPoint(startingPointInfo, callback) {
@@ -267,13 +264,24 @@ function groupLocation(mapNamespace) {
     .on('authenticated', (socket) => {
     // .on('connection', (socket) => {
       joinChat(socket, socket.handshake.query.group_id)
-        .on('update_latlng', (newLocationInfo) => {
-          updateNewUserLocation(newLocationInfo, (err, data) => {
-            socket.emit('update_latlng_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('update_latlng_callback', data);
+        .on('update_latlng', (body) => {
+          const { user_id: userId, group_id: groupId, latlng } = JSON.parse(body);
+          const response = { user_id: userId, group_id: groupId, latlng };
+
+          socket.emit('update_latlng_callback', response);
+          socket.broadcast.to(groupId).emit('update_latlng_callback', response);
+
+          cacheDomain.setUserInfo({ userId, latlng })
+            .then(d => console.log(d));
+          latlngModel.updateUserLatlng(groupId, userId, latlng, (err, data) => {
+            console.log(data);
           });
+        })
+        .on('get_latlng', (body) => {
+          getUserLocation(body)
+            .then((data) => {
+              socket.emit('get_latlng_callback', data);
+            });
         })
         .on('get_latlngs', (groupInfo) => {
           getAllUsersLocation(groupInfo, (err, data) => {
@@ -574,7 +582,7 @@ function groupLocation(mapNamespace) {
               socket.broadcast
                 .to(socket.handshake.query.group_id)
                 .emit('add_user_to_appointment_callback', data);
-            })
+            });
         })
         .on('delete_user_from_appointment', (groupInfo) => {
           deleteUserToAppointment(groupInfo)
@@ -583,7 +591,7 @@ function groupLocation(mapNamespace) {
               socket.broadcast
                 .to(socket.handshake.query.group_id)
                 .emit('delete_user_from_appointment_callback', data);
-            })
+            });
         })
         .on('disconnect', () => {
           const room = socket.handshake.query.group_id;
