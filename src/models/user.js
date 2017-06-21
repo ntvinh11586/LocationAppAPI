@@ -134,6 +134,25 @@ function pushOneGroupRequestByUserId(userId, { groupId }) {
   });
 }
 
+function readGroupRequestsByUserId(userId) {
+  return new Promise((resolve, reject) => {
+    userRepository.findById(userId)
+      .select('group_requests')
+      .populate({ path: 'group_requests', model: 'Group', select: 'name' })
+      .exec((error, user) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(user);
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
   addDevice,
@@ -145,4 +164,7 @@ module.exports = {
 
   addGroupRequestByUserId: ({ userId, groupId }) =>
     pushOneGroupRequestByUserId(userId, { groupId }),
+
+  getGroupRequestsByUserId: userId =>
+    readGroupRequestsByUserId(userId),
 };

@@ -11,11 +11,21 @@ router.post('/avatar', (req, res) => {
   const { user_id: userId } = res.locals;
   const { avatar_url: avatarUrl } = req.body;
   userDomain.updateAvatar(userId, avatarUrl)
-  .then(data => res.json(data))
-  .catch((error) => {
-    const message = JSON.parse(error.message);
-    res.status(message.status_code || 501).send(message);
-  });
+    .then(data => res.json(data))
+    .catch((error) => {
+      const message = JSON.parse(error.message);
+      res.status(message.status_code || 501).send(message);
+    });
+});
+
+router.get('/group_requests', (req, res) => {
+  const { user_id: userId } = res.locals;
+  userDomain.getGroupRequests(userId)
+    .then(data => res.json(data))
+    .catch((error) => {
+      const message = JSON.parse(error.message);
+      res.status(message.status_code || 501).send(message);
+    });
 });
 
 router.get('/:user_id', (req, res) => {
