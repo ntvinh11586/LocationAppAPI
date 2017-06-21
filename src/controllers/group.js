@@ -44,7 +44,7 @@ router.post('/:group_id/members', (req, res) => {
   groupDomain.addUserIntoGroup(groupId, friendId || userId)
     .then((data) => {
       notificationDomain.addNotification({
-        content: `You're added into group ${groupId}`,
+        content: `You're received request from group ${groupId}`,
         type: 'add_into_group',
         userId: friendId,
       })

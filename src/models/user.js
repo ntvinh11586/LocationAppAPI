@@ -110,6 +110,30 @@ function readLatlngByUserId(userId) {
   });
 }
 
+function pushOneGroupRequestByUserId(userId, { groupId }) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId,
+      { $push: { group_requests: groupId } },
+      { new: true })
+      .select('')
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Add user into group successfully.',
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
   addDevice,
@@ -118,4 +142,7 @@ module.exports = {
 
   getUserLatlng: userId =>
     readLatlngByUserId(userId),
+
+  addGroupRequestByUserId: ({ userId, groupId }) =>
+    pushOneGroupRequestByUserId(userId, { groupId }),
 };
