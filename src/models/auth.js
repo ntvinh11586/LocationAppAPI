@@ -27,40 +27,49 @@ function generateToken(userId, username) {
     const tokenSecretKey = config.tokenSecretKey;
     const expiresIn = { expiresIn: config.tokenExpired };
     const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
-    console.log(token);
     resolve(token);
   });
 }
 
 function login(username, password, callback) {
-  userRepository.findOne({ username, password }, (err, account) => {
-    if (err) {
-      callback(err, {
-        status_code: 422,
-        success: false,
-        status_message: err.message,
-      });
-    } else if (account == null) {
-      callback(new Error('401'), {
-        status_code: 401,
-        success: false,
-        status_message: 'Username or password is incorrect.',
-      });
-    } else {
-      const userInfo = {
-        username: account.username,
-        user_id: account._id,
-      };
-      const tokenSecretKey = config.tokenSecretKey;
-      const expiresIn = { expiresIn: config.tokenExpired };
-      const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
-      callback(null, {
-        user_id: account._id,
-        username: account.username,
-        user_token: token,
-      });
-    }
-  });
+  userRepository.findOne({ username, password })
+    .select('username phone email gender birthday city')
+    .exec((err, account) => {
+      if (err) {
+        callback(err, {
+          status_code: 422,
+          success: false,
+          status_message: err.message,
+        });
+      } else if (account == null) {
+        callback(new Error('401'), {
+          status_code: 401,
+          success: false,
+          status_message: 'Username or password is incorrect.',
+        });
+      } else {
+        const userInfo = {
+          username: account.username,
+          user_id: account._id,
+        };
+        const tokenSecretKey = config.tokenSecretKey;
+        const expiresIn = {
+          expiresIn: config.tokenExpired,
+        };
+        const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
+
+        callback(null, {
+          user_id: account._id,
+          username: account.username,
+          user_token: token,
+          phone: account.phone,
+          email: account.email,
+          gender: account.gender,
+          birthday: account.birthday,
+          city: account.birthday,
+        });
+      }
+    });
 }
 
 function logout(callback) {
@@ -72,8 +81,9 @@ function logout(callback) {
 }
 
 module.exports = {
-  register: payload => createUser(payload),
-  generateToken: (userId, username) => generateToken(userId, username),
   login,
   logout,
+
+  register: payload => createUser(payload),
+  generateToken: (userId, username) => generateToken(userId, username),
 };
