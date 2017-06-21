@@ -153,6 +153,28 @@ function readGroupRequestsByUserId(userId) {
   });
 }
 
+function pullGroupRequestByUserId(userId, { groupId }) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId,
+      { $pull: { group_requests: groupId } },
+      { new: true })
+      .select('')
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            group_id: groupId,
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
   addDevice,
@@ -167,4 +189,7 @@ module.exports = {
 
   getGroupRequestsByUserId: userId =>
     readGroupRequestsByUserId(userId),
+
+  removeGroupRequestByUserId: ({ userId, groupId }) =>
+    pullGroupRequestByUserId(userId, { groupId }),
 };

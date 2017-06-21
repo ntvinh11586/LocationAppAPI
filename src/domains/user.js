@@ -1,4 +1,5 @@
 const userModel = require('../models/user');
+const groupModel = require('../models/group');
 
 module.exports = {
   updateAvatar: (userId, avatarUrl) =>
@@ -12,4 +13,8 @@ module.exports = {
           group_requests: data.group_requests,
         };
       }),
+
+  acceptGroupRequest: ({ userId, groupId }) =>
+    userModel.removeGroupRequestByUserId({ userId, groupId })
+      .then(() => groupModel.addAcceptedMember({ userId, groupId })),
 };
