@@ -789,6 +789,30 @@ function migrateFromRouteToGroupModel(groupId) {
     });
 }
 
+function pushOneUserIntoGroupByGroupId(groupId, { userId }) {
+  return new Promise((resolve, reject) => {
+    groupRepository.findByIdAndUpdate(groupId,
+      { $push: { users: userId } },
+      { new: true })
+      .select('')
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Add user into group successfully.',
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   setTripPlan,
   updateTripPlan,
@@ -831,4 +855,7 @@ module.exports = {
 
   addMember: requestData =>
     updateUser(requestData),
+
+  addAcceptedMember: ({ groupId, userId }) =>
+    pushOneUserIntoGroupByGroupId(groupId, { userId }),
 };

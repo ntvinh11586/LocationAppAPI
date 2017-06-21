@@ -110,6 +110,71 @@ function readLatlngByUserId(userId) {
   });
 }
 
+function pushOneGroupRequestByUserId(userId, { groupId }) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId,
+      { $push: { group_requests: groupId } },
+      { new: true })
+      .select('')
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Add user into group successfully.',
+          });
+        }
+      });
+  });
+}
+
+function readGroupRequestsByUserId(userId) {
+  return new Promise((resolve, reject) => {
+    userRepository.findById(userId)
+      .select('group_requests')
+      .populate({ path: 'group_requests', model: 'Group', select: 'name' })
+      .exec((error, user) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(user);
+        }
+      });
+  });
+}
+
+function pullGroupRequestByUserId(userId, { groupId }) {
+  return new Promise((resolve, reject) => {
+    userRepository.findByIdAndUpdate(userId,
+      { $pull: { group_requests: groupId } },
+      { new: true })
+      .select('')
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            group_id: groupId,
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   getUserInfo,
   addDevice,
@@ -118,4 +183,13 @@ module.exports = {
 
   getUserLatlng: userId =>
     readLatlngByUserId(userId),
+
+  addGroupRequestByUserId: ({ userId, groupId }) =>
+    pushOneGroupRequestByUserId(userId, { groupId }),
+
+  getGroupRequestsByUserId: userId =>
+    readGroupRequestsByUserId(userId),
+
+  removeGroupRequestByUserId: ({ userId, groupId }) =>
+    pullGroupRequestByUserId(userId, { groupId }),
 };

@@ -40,11 +40,13 @@ router.get('/:group_id', (req, res) => {
 
 router.post('/:group_id/members', (req, res) => {
   const { group_id: groupId } = req.params;
+  // friend_id: legacy query field
+  // user_id: new field
   const { friend_id: friendId, user_id: userId } = req.query;
   groupDomain.addUserIntoGroup(groupId, friendId || userId)
     .then((data) => {
       notificationDomain.addNotification({
-        content: `You're added into group ${groupId}`,
+        content: `You're received request from group ${groupId}`,
         type: 'add_into_group',
         userId: friendId,
       })
