@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  group_requests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Group',
+    },
+  ],
 });
 
 module.exports = mongoose.model('User', userSchema);
