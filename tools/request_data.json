@@ -1,8 +1,22 @@
 {
-  "group_id": "5927f85b3bcd550c98398e74",
-  "user_id": "5926bfbcf9763736a08fd44e",
-  "latlng": {
-    "lat": 1.43223423423,
-    "lng": 1.2342234
-  }
+  "group_id": "592d2a842f402a3e081f73b6",
+  "start_radius": 0.12345,
+  "end_radius": 0.54321,
+  "start_latlng": {
+    "lat": 123.12,
+    "lng": 123.34
+  },
+  "end_latlng": {
+    "lat": 345.21,
+    "lng": 23.223
+  },
+  "stopovers": [
+    {
+      "radius": 0.98765,
+      "latlng": {
+        "lat": 345.32,
+        "lng": 234.33
+      }
+    }
+  ]
 }

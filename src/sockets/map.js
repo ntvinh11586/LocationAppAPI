@@ -129,9 +129,17 @@ function addRoute(groupInfo, callback) {
   const startLatlng = groupInfoJSON.start_latlng;
   const endLatlng = groupInfoJSON.end_latlng;
   const stopovers = groupInfoJSON.stopovers;
-  groupModel.addRoute(groupId, startLatlng, endLatlng, stopovers, (err, data) => {
-    callback(err, data);
-  });
+  const startRadius = groupInfoJSON.start_radius;
+  const endRadius = groupInfoJSON.end_radius;
+  groupModel.addRoute(groupId,
+    startLatlng,
+    endLatlng,
+    startRadius,
+    endRadius,
+    stopovers,
+    (err, data) => {
+      callback(err, data);
+    });
 }
 
 function getRoute(groupInfo, callback) {
