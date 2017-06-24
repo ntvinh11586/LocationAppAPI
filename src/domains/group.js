@@ -8,7 +8,9 @@ module.exports = {
     .then(({ groups }) => {
       const promises = [];
       groups.forEach((group) => {
+        // First is Group Object Id
         promises.push(group);
+        // Second is the lastest message
         promises.push(messageModel.findTheLastestMessage({ groupId: group }));
       });
       return Promise.all(promises);
@@ -30,6 +32,7 @@ module.exports = {
           _id: data[i]._id,
           name: data[i].name,
           created_date: data[i].created_date || -1,
+          avatar_url: data[i].avatar_url,
           type: data[i].type || 'group',
           users: data[i].users,
           messages: data[i + 1].messages,
@@ -56,6 +59,7 @@ module.exports = {
         group_id: data[0]._id,
         name: data[0].name,
         created_date: data[0].created_date || -1,
+        avatar_url: data[0].avatar_url,
         type: data[0].type || 'group',
         users: data[0].users,
         messages: data[1].messages,
@@ -91,4 +95,7 @@ module.exports = {
 
   addUserIntoGroup: (groupId, userId) =>
     userModel.addGroupRequestByUserId({ userId, groupId }),
+
+  uploadAvatar: ({ groupId, avatarUrl }) =>
+    groupModel.updateAvatar({ groupId, avatarUrl }),
 };

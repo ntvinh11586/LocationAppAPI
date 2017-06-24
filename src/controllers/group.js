@@ -60,4 +60,15 @@ router.post('/:group_id/members', (req, res) => {
     });
 });
 
+router.post('/:group_id/avatar', (req, res) => {
+  const { group_id: groupId } = req.params;
+  const { avatar_url: avatarUrl } = req.body;
+  groupDomain.uploadAvatar({ groupId, avatarUrl })
+    .then(data => res.json(data))
+    .catch((error) => {
+      const message = JSON.parse(error.message);
+      res.status(message.status_code || 501).send(message);
+    });
+});
+
 module.exports = router;
