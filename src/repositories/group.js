@@ -10,6 +10,7 @@ const groupSchema = new mongoose.Schema({
     lat: Number,
     lng: Number,
   },
+  start_radius: Number,
   arriving_users: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +23,7 @@ const groupSchema = new mongoose.Schema({
     lat: Number,
     lng: Number,
   },
+  end_radius: Number,
   destination_users: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +36,7 @@ const groupSchema = new mongoose.Schema({
         lat: Number,
         lng: Number,
       },
+      radius: Number,
       users: [
         {
           type: mongoose.Schema.Types.ObjectId,

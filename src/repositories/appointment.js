@@ -5,6 +5,7 @@ const appointmentShema = new mongoose.Schema({
     lat: Number,
     lng: Number,
   },
+  radius: Number,
   address: String,
   start_time: Number,
   end_time: Number,
