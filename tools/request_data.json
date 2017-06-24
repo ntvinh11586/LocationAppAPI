@@ -1,22 +1,11 @@
 {
   "group_id": "592d2a842f402a3e081f73b6",
-  "start_radius": 0.12345,
-  "end_radius": 0.54321,
-  "start_latlng": {
-    "lat": 123.12,
-    "lng": 123.34
-  },
-  "end_latlng": {
-    "lat": 345.21,
-    "lng": 23.223
-  },
-  "stopovers": [
-    {
-      "radius": 0.98765,
-      "latlng": {
-        "lat": 345.32,
-        "lng": 234.33
-      }
-    }
-  ]
+  "address": "123 Main St.Chicago, IL 1234567890",
+  "start_time": 1494547974415,
+  "end_time": 1494547975436,
+  "radius": 0.123456789,
+  "latlng": {
+    "lat": 1234.243242,
+    "lng": 243.32423
+  }
 }

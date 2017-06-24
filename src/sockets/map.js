@@ -172,7 +172,8 @@ function addAppointment(groupInfo) {
   const latlng = groupInfoJSON.latlng;
   const startTime = groupInfoJSON.start_time;
   const endTime = groupInfoJSON.end_time;
-  return appointmentDomain.addAppointment({ groupId, latlng, address, startTime, endTime });
+  const radius = groupInfoJSON.radius;
+  return appointmentDomain.addAppointment({ groupId, latlng, address, startTime, endTime, radius });
 }
 
 function deleteAppointment(groupInfo) {

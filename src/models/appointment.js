@@ -1,9 +1,9 @@
 const appointmentRepository = require('../repositories/appointment');
 
-function createAppointment({ groupId, address, latlng, startTime, endTime }) {
+function createAppointment({ groupId, address, latlng, startTime, endTime, radius }) {
   return new Promise((resolve, reject) => {
     appointmentRepository.create(
-      { group: groupId, address, latlng, start_time: startTime, end_time: endTime },
+      { group: groupId, address, latlng, start_time: startTime, end_time: endTime, radius },
       (error, appointment) => {
         if (error) {
           reject(new Error(JSON.stringify({
