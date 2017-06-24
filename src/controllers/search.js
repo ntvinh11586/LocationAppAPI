@@ -18,7 +18,8 @@ router.get('/friends', (req, res) => {
 
 router.get('/nearby_friends', (req, res) => {
   const { user_id: userId } = res.locals;
-  friendModel.findNearbyFriends(userId)
+  const { radius } = req.query;
+  friendModel.findNearbyFriends(userId, radius)
     .then(data => res.json(data))
     .catch((error) => {
       const message = JSON.parse(error.message);

@@ -4,6 +4,7 @@ const groupSchema = new mongoose.Schema({
   name: String,
   created_date: Number,
   type: String,
+  avatar_url: String,
   start_time: Number,
   start_address: String,
   start_latlng: {

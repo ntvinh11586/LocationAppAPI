@@ -553,6 +553,28 @@ function pushOneUserIntoGroupByGroupId(groupId, { userId }) {
   });
 }
 
+function updateAvatar(groupId, { avatarUrl }) {
+  return new Promise((resolve, reject) => {
+    console.log(avatarUrl);
+    groupRepository.findByIdAndUpdate(groupId, { avatar_url: avatarUrl })
+      .exec((error) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve({
+            status_code: 200,
+            success: true,
+            status_message: 'Update avatar successfully.',
+          });
+        }
+      });
+  });
+}
+
 module.exports = {
   // trip plan
   setTripPlan,
@@ -580,7 +602,7 @@ module.exports = {
   migrateFromRouteToGroupModel,
 
   getGroup: requestData =>
-    composeReadGroupsQuery(requestData, 'name users created_date type')
+    composeReadGroupsQuery(requestData, 'name users created_date type avatar_url')
       .then(data => readGroupById(data)),
 
   getGroupIds: requestData =>
@@ -596,4 +618,7 @@ module.exports = {
 
   addAcceptedMember: ({ groupId, userId }) =>
     pushOneUserIntoGroupByGroupId(groupId, { userId }),
+
+  updateAvatar: ({ groupId, avatarUrl }) =>
+    updateAvatar(groupId, { avatarUrl }),
 };

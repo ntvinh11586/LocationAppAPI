@@ -36,11 +36,8 @@ router.post('/login_with_token',
   (req, res) => {
     const { username, user_id: userId } = res.locals;
     const { token } = req.headers;
-    res.json({
-      token,
-      username,
-      _id: userId,
-    });
+    res.json({ token, username, _id: userId });
+    cacheDomain.setUserInfoFromDatabase({ userId });
   });
 
 router.get('/logout',

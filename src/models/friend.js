@@ -309,7 +309,7 @@ function findFriends(userId, keyword) {
   });
 }
 
-function findNearbyFriends(userId) {
+function findNearbyFriends(userId, radius = 0.001) {
   return new Promise((resolve, reject) => {
     userRepository.findById(userId)
       .select('latlng')
@@ -324,11 +324,11 @@ function findNearbyFriends(userId) {
           userRepository.find({})
             .select('username')
             .where('latlng.lat')
-            .gt(user.latlng.lat - 100)
-            .lt(user.latlng.lat + 100)
+            .gt(user.latlng.lat - radius)
+            .lt(user.latlng.lat + radius)
             .where('latlng.lng')
-            .gt(user.latlng.lng - 100)
-            .lt(user.latlng.lng + 100)
+            .gt(user.latlng.lng - radius)
+            .lt(user.latlng.lng + radius)
             .exec((error, friends) => {
               if (error) {
                 reject(new Error(JSON.stringify({
