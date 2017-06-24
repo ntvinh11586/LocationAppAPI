@@ -5,7 +5,9 @@ module.exports = {
     if (tokens === undefined || tokens.length === 0) {
       // Process the missing tokens
     } else {
-      admin.messaging().sendToDevice(tokens, payload);
+      // Temporary solutions for unique token fcmDomain
+      const uniqueTokens = tokens.filter((x, i, a) => a.indexOf(x).equals(i));
+      admin.messaging().sendToDevice(uniqueTokens, payload);
     }
   },
 };
