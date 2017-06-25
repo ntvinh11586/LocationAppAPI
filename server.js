@@ -8,15 +8,25 @@ const mongoose = require('mongoose');
 const logger = require('morgan');
 const admin = require('firebase-admin');
 const serviceAccount = require('./src/config/serviceAccountKey.json');
+// Use cluster to help Node.JS run in multi-thread
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+// Compress with gzip
+const compression = require('compression');
 
 const app = express();
 
-app.use(logger('dev'));
+app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
+
+// Exclude these express plugin in production
+if (app.get('env') !== 'production') {
+  app.use(logger('dev'));
+}
 
 // main routes pointer
 app.use('/', locationAppAPI.router);
@@ -69,6 +79,23 @@ admin.initializeApp({
   databaseURL: 'https://locationapp-f02ac.firebaseio.com/',
 });
 
-locationAppAPI.ioServer(app).listen(app.get('port'), () => {
-  console.log('LocationAppAPI is running on Port:', app.get('port'));
-});
+//  Make cluster run in current multi-thread in CPU
+(() => {
+  if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
+    // Fork workers.
+    for (let i = 0; i < numCPUs; i += 1) {
+      cluster.fork();
+    }
+    // Exit fork.
+    cluster.on('exit', (worker, code, signal) => {
+      console.log(`worker ${worker.process.pid} died`);
+    });
+  } else {
+    // Start server.
+    console.log(`Worker ${process.pid} started`);
+    locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+      console.log('LocationAppAPI is running on Port:', app.get('port'));
+    });
+  }
+})();
