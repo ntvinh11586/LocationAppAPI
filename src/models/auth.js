@@ -1,11 +1,13 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const userRepository = require('../repositories/user');
+const hashRepository = require('./hash');
 
 function createUser({ username, password, phone, email, gender, birthday, city }) {
   return new Promise((resolve, reject) => {
+    const passwordHash = hashRepository.saltHashPassword(password);
     userRepository.create(
-      { username, password, phone, email, gender, birthday, city },
+      { username, password_hash: passwordHash, phone, email, gender, birthday, city },
       (error, user) => {
         if (error) {
           reject(new Error(JSON.stringify({
