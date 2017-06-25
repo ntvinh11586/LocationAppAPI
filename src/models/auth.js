@@ -1,11 +1,13 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const userRepository = require('../repositories/user');
+const hashRepository = require('./hash');
 
 function createUser({ username, password, phone, email, gender, birthday, city }) {
   return new Promise((resolve, reject) => {
+    const passwordHash = hashRepository.saltHashPassword(password);
     userRepository.create(
-      { username, password, phone, email, gender, birthday, city },
+      { username, password_hash: passwordHash, phone, email, gender, birthday, city },
       (error, user) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -32,7 +34,8 @@ function generateToken(userId, username) {
 }
 
 function login(username, password, callback) {
-  userRepository.findOne({ username, password })
+  const passwordHash = hashRepository.saltHashPassword(password);
+  userRepository.findOne({ username, password_hash: passwordHash })
     .select('username phone email gender birthday city')
     .exec((err, account) => {
       if (err) {
@@ -42,11 +45,45 @@ function login(username, password, callback) {
           status_message: err.message,
         });
       } else if (account == null) {
-        callback(new Error('401'), {
-          status_code: 401,
-          success: false,
-          status_message: 'Username or password is incorrect.',
-        });
+        // execute for legacy storing password
+        userRepository.findOne({ username, password })
+          .select('username phone email gender birthday city')
+          .exec((err, account1) => {
+            if (err) {
+              callback(err, {
+                status_code: 422,
+                success: false,
+                status_message: err.message,
+              });
+            } else if (account1 == null) {
+              callback(new Error('401'), {
+                status_code: 401,
+                success: false,
+                status_message: 'Username or password is incorrect.',
+              });
+            } else {
+              const userInfo = {
+                username: account1.username,
+                user_id: account1._id,
+              };
+              const tokenSecretKey = config.tokenSecretKey;
+              const expiresIn = {
+                expiresIn: config.tokenExpired,
+              };
+              const token = jwt.sign(userInfo, tokenSecretKey, expiresIn);
+
+              callback(null, {
+                user_id: account1._id,
+                username: account1.username,
+                user_token: token,
+                phone: account1.phone,
+                email: account1.email,
+                gender: account1.gender,
+                birthday: account1.birthday,
+                city: account1.birthday,
+              });
+            }
+          });
       } else {
         const userInfo = {
           username: account.username,
@@ -84,6 +121,9 @@ module.exports = {
   login,
   logout,
 
-  register: payload => createUser(payload),
-  generateToken: (userId, username) => generateToken(userId, username),
+  register: payload =>
+    createUser(payload),
+
+  generateToken: (userId, username) =>
+    generateToken(userId, username),
 };
