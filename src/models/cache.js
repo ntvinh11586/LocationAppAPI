@@ -2,23 +2,15 @@ const CacheGlobal = require('../globals/cache');
 
 const cache = (new CacheGlobal()).getInstance();
 
+// data: { _id, latlng }
 function setUserValue(userId, data) {
   return new Promise((resolve) => {
-    let latlng;
-    if (data.latlng.lat === undefined) {
-      latlng = { lat: 0, lng: 0 };
-    } else {
-      latlng = {
-        lat: data.latlng.lat,
-        lng: data.latlng.lng,
-      };
-    }
-    cache.set(JSON.stringify(userId), {
-      _id: data._id, latlng,
-    }, ((error, success) => {
+    const cachedData = JSON.parse(JSON.stringify(data));
+    cache.set(JSON.stringify(userId), cachedData, ((error, success) => {
       if (!error && success) {
         const value = cache.get(JSON.stringify(userId));
         if (value !== undefined) {
+          console.log('setUserValue', userId, value);
           resolve(value);
         }
       }
@@ -27,11 +19,15 @@ function setUserValue(userId, data) {
 }
 
 function getUserValue(userId) {
-  const value = cache.get(JSON.stringify(userId));
-  if (value === undefined) {
-    return new Promise(resolve => resolve({ _id: userId }));
-  }
-  return new Promise(resolve => resolve(value));
+  return new Promise((resolve) => {
+    const value = cache.get(JSON.stringify(userId));
+    if (value === undefined) {
+      resolve({ _id: userId });
+    } else {
+      console.log('getUserValue', userId, value);
+      resolve(value);
+    }
+  });
 }
 
 module.exports = {
