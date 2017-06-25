@@ -6,6 +6,7 @@ const locationAppAPI = require('./src');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const logger = require('morgan');
+// Firebase FCM configure
 const admin = require('firebase-admin');
 const serviceAccount = require('./src/config/serviceAccountKey.json');
 // Use cluster to help Node.JS run in multi-thread
@@ -13,10 +14,13 @@ const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 // Compress with gzip
 const compression = require('compression');
+// Protect server
+const helmet = require('helmet');
 
 const app = express();
 
 app.use(compression());
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
