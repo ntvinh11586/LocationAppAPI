@@ -20,4 +20,6 @@ function saltHashPassword(userpassword) {
   return passwordData.passwordHash;
 }
 
-console.log(saltHashPassword('1234567890'));
+module.exports = {
+  saltHashPassword,
+};
