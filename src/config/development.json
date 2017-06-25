@@ -3,5 +3,6 @@
   "dbURI": "mongodb://luanvantnk13:datvavinh@ds139470.mlab.com:39470/locationappdb",
   "tokenSecretKey": "supersecret",
   "tokenExpired": 5184000,
-  "networkTimeout": 60000
+  "networkTimeout": 60000,
+  "passwordHashKey": "supersupersecret"
 }
