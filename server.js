@@ -11,15 +11,22 @@ const serviceAccount = require('./src/config/serviceAccountKey.json');
 // Use cluster to help Node.JS run in multi-thread
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
+// Compress with gzip
+const compression = require('compression');
 
 const app = express();
 
-app.use(logger('dev'));
+app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
+
+// Exclude these express plugin in production
+if (app.get('env') !== 'production') {
+  app.use(logger('dev'));
+}
 
 // main routes pointer
 app.use('/', locationAppAPI.router);
