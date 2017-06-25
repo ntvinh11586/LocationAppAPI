@@ -30,7 +30,19 @@ function getUserValue(userId) {
   });
 }
 
+function deleteUserValue(userId) {
+  return new Promise((resolve) => {
+    cache.del(JSON.stringify(userId), (err, value) => {
+      if (!err) {
+        console.log(userId, value);
+        resolve(value === 1);
+      }
+    });
+  });
+}
+
 module.exports = {
   setUserValue,
   getUserValue,
+  deleteUserValue,
 };

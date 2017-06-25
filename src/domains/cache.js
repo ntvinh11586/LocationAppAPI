@@ -8,4 +8,7 @@ module.exports = {
 
   setUserInfo: ({ userId, latlng }) =>
     cacheModel.setUserValue(userId, { _id: userId, latlng }),
+
+  deleteUserInfo: ({ userId }) =>
+    cacheModel.deleteUserValue(userId),
 };

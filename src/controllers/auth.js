@@ -43,11 +43,13 @@ router.post('/login_with_token',
 router.get('/logout',
   authMiddleware.isUserAuthenticated,
   (req, res) => {
+    const { user_id: userId } = res.locals;
     authModel.logout((err, data) => {
       if (err) {
         res.status(data.status_code).send(data);
       } else {
         res.json(data);
+        cacheDomain.deleteUserInfo({ userId });
       }
     });
   });
