@@ -424,11 +424,15 @@ function getUserFCMTokenSameGroup(groupId, callback) {
     .populate({ path: 'users', model: 'User', select: 'devices.token -_id' })
     .exec((err, group) => {
       const tokens = [];
-      group.users.forEach((user) => {
-        user.devices.forEach((device) => {
-          tokens.push(device.token || null);
+      if (group.users.length > 0) {
+        group.users.forEach((user) => {
+          if (user.devices !== undefined) {
+            user.devices.forEach((device) => {
+              tokens.push(device.token || null);
+            });
+          }
         });
-      });
+      }
       callback(null, { tokens });
     });
 }
