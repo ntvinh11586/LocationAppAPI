@@ -109,12 +109,7 @@ http {
 	 upstream nodebeats {
 	    server unix:/tmp/nginx.socket fail_timeout=0;
 		keepalive	32;
-	 }
-
-	 upstream socket_nodes {
-	    ip_hash;
-			server unix:/tmp/nginx.socket fail_timeout=0;
-	 }
+	}
 
 	 server {
 		listen       <%= ENV['PORT'] %>;
@@ -139,21 +134,6 @@ http {
 		        proxy_set_header Host $host;
 		        proxy_cache_bypass $http_upgrade;
 	       }
-
-		 # Requests for socket.io are passed on to Node on port 3000
-	   location ~* \.io {
-	       proxy_set_header X-Real-IP $remote_addr;
-	       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	       proxy_set_header Host $http_host;
-	       proxy_set_header X-NginX-Proxy true;
-
-	       proxy_pass http://socket_nodes;
-	       proxy_redirect off;
-
-	       proxy_http_version 1.1;
-	       proxy_set_header Upgrade $http_upgrade;
-	       proxy_set_header Connection "upgrade";
-	     }
 
 		location /dist {
 			alias	"/app/app-dist";
