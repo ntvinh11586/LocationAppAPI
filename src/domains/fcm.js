@@ -6,7 +6,7 @@ module.exports = {
       // Process the missing tokens
     } else {
       // Temporary solutions for unique token fcmDomain
-      const uniqueTokens = tokens.filter((x, i, a) => a.indexOf(x).equals(i));
+      const uniqueTokens = tokens.filter((x, i, a) => a.indexOf(x) === i);
       admin.messaging().sendToDevice(uniqueTokens, payload);
     }
   },

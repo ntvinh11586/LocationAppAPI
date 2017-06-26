@@ -1,11 +1,5 @@
 {
-  "group_id": "592d2a842f402a3e081f73b6",
-  "address": "123 Main St.Chicago, IL 1234567890",
-  "start_time": 1494547974415,
-  "end_time": 1494547975436,
-  "radius": 0.123456789,
-  "latlng": {
-    "lat": 1234.243242,
-    "lng": 243.32423
-  }
+  "group_id": "594fe500d82fc300113f7280",
+  "user_id": "58d71877f677991fe0bf574f",
+  "content": "Message B"
 }
