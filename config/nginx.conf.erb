@@ -113,6 +113,7 @@ http {
 
 	 upstream socket_nodes {
 	    ip_hash;
+			server unix:/tmp/nginx.socket fail_timeout=0;
 	 }
 
 	 server {
