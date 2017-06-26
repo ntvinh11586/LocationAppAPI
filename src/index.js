@@ -7,9 +7,7 @@ const socket = require('./sockets');
 const ioServer = (app) => {
   // Configure server with Socket.io
   const server = http.Server(app);
-  const io = socketio(server, {
-    transports: ['websocket', 'flashsocket', 'polling'],
-  });
+  const io = socketio(server);
   socket(io);
 
   return server;

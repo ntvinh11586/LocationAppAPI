@@ -14,9 +14,9 @@ const EMIT_CALLBACK = `${EMIT}_callback`;
 const requestData = require('./request_data.json');
 
 const socket = io.connect(BASE_URL, {
-  path: `/${NAMESPACE}`,
   query: `group_id=${QUERY}`,
 });
+
 console.log(URL);
 socket.on('connect', () => {
   console.log('EMIT', EMIT);
