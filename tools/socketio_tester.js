@@ -2,10 +2,10 @@ const io = require('socket.io-client');
 
 // const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://stormy-woodland-18039.herokuapp.com';
-// const NAMESPACE = 'chats';
-const URL = `${BASE_URL}/`;
+const NAMESPACE = 'chats';
+const URL = `${BASE_URL}/${NAMESPACE}`;
 
-// const USER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9pZCI6IjU5MjZiZmJjZjk3NjM3MzZhMDhmZDQ0ZSIsImlhdCI6MTQ5NTcxMTY3NiwiZXhwIjoxNTAwODk1Njc2fQ.3lDwP9-Hk5GjlDYvXKfw8s1XicTKSCP6TaZpWDRJWDQ';
+const USER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9pZCI6IjU5MjZiZmJjZjk3NjM3MzZhMDhmZDQ0ZSIsImlhdCI6MTQ5NTcxMTY3NiwiZXhwIjoxNTAwODk1Njc2fQ.3lDwP9-Hk5GjlDYvXKfw8s1XicTKSCP6TaZpWDRJWDQ';
 const QUERY = '594fe500d82fc300113f7280';
 
 const EMIT = process.argv[2] || 'MISSING_EMIT';
