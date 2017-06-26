@@ -31,11 +31,10 @@ function getUserValue(userId) {
 }
 
 function deleteUserValue(userId) {
-  console.log('abc');
   return new Promise((resolve) => {
-    cache.del(JSON.stringify(userId), (err, value) => {
-      if (!err) {
-        console.log(userId, value);
+    cache.del(JSON.stringify(userId), (error, value) => {
+      if (!error) {
+        console.log('deleteUserValue', userId, value);
         resolve(value === 1);
       }
     });
