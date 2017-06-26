@@ -109,7 +109,10 @@ http {
 	 upstream nodebeats {
 	    server unix:/tmp/nginx.socket fail_timeout=0;
 		keepalive	32;
-		ip_hash;
+	 }
+
+	 upstream socket_nodes {
+	    ip_hash;
 	 }
 
 	 server {
@@ -143,7 +146,7 @@ http {
 	       proxy_set_header Host $http_host;
 	       proxy_set_header X-NginX-Proxy true;
 
-	       proxy_pass http://nodebeats;
+	       proxy_pass http://socket_nodes;
 	       proxy_redirect off;
 
 	       proxy_http_version 1.1;
