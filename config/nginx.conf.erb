@@ -111,6 +111,10 @@ http {
 		keepalive	32;
 	 }
 
+	 upstream io_nodes {
+			 ip_hash;
+	 }
+
 	 server {
 		listen       <%= ENV['PORT'] %>;
 		server_name  _;
@@ -135,14 +139,14 @@ http {
 		        proxy_cache_bypass $http_upgrade;
 	       }
 
-		# Requests for socket.io are passed on to Node on port 3000
+		 # Requests for socket.io are passed on to Node on port 3000
 	   location ~* \.io {
 	       proxy_set_header X-Real-IP $remote_addr;
 	       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	       proxy_set_header Host $http_host;
 	       proxy_set_header X-NginX-Proxy true;
 
-	       proxy_pass http://nodebeats;
+	       proxy_pass http://io_nodes;
 	       proxy_redirect off;
 
 	       proxy_http_version 1.1;
