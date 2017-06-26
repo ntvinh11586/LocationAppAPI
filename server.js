@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 
+const fs = require('fs');
 const config = require('./src/config');
 const express = require('express');
 const locationAppAPI = require('./src');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const logger = require('morgan');
+const bluebird = require('bluebird');
 // Firebase FCM configure
 const admin = require('firebase-admin');
 const serviceAccount = require('./src/config/serviceAccountKey.json');
@@ -68,7 +70,9 @@ app.use((err, req, res, next) => {
 // Fix deprecation warning mpromise
 // by using the default promise of Node.js.
 // https://github.com/Automattic/mongoose/issues/4291
-mongoose.Promise = global.Promise;
+// In this case, we use bluebird.
+// http://mongoosejs.com/docs/promises.html
+mongoose.Promise = bluebird;
 mongoose.connect(config.dbURI);
 
 // Log an error if the connection fails
@@ -99,6 +103,10 @@ admin.initializeApp({
     // Start server.
     console.log(`Worker ${process.pid} started`);
     locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+      if (process.env.DYNO) {
+        console.log('This is on Heroku..!!');
+        fs.openSync('/tmp/app-initialized', 'w');
+      }
       console.log('LocationAppAPI is running on Port:', app.get('port'));
     });
   }
