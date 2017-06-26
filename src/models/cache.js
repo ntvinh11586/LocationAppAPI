@@ -1,6 +1,6 @@
-const CacheGlobal = require('../globals/cache');
+const UserCache = require('../caches/user');
 
-const cache = (new CacheGlobal()).getInstance();
+const cache = (new UserCache()).getInstance();
 
 // data: { _id, latlng }
 function setUserValue(userId, data) {
@@ -31,6 +31,7 @@ function getUserValue(userId) {
 }
 
 function deleteUserValue(userId) {
+  console.log('abc');
   return new Promise((resolve) => {
     cache.del(JSON.stringify(userId), (err, value) => {
       if (!err) {

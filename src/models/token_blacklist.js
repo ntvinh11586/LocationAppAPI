@@ -1,4 +1,4 @@
-const TokenBlacklist = require('../globals/cache');
+const TokenBlacklist = require('../caches/token_blacklist');
 
 const tokenBlacklist = (new TokenBlacklist()).getInstance();
 
