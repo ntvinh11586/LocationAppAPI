@@ -8,6 +8,7 @@ function isUserAuthenticated(req, res, next) {
     } else {
       res.locals.user_id = data.user_id;
       res.locals.username = data.username;
+      res.locals.token = token;
       next();
     }
   });

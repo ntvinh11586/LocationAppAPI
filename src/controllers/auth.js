@@ -3,6 +3,7 @@ const authModel = require('../models/auth');
 const authMiddleware = require('../middlewares/auth');
 const authDomain = require('../domains/auth');
 const cacheDomain = require('../domains/cache');
+const tokenExpiredDomain = require('../domains/token_expired');
 
 const router = express.Router();
 
@@ -43,13 +44,14 @@ router.post('/login_with_token',
 router.get('/logout',
   authMiddleware.isUserAuthenticated,
   (req, res) => {
-    const { user_id: userId } = res.locals;
+    const { user_id: userId, token } = res.locals;
     authModel.logout((err, data) => {
       if (err) {
         res.status(data.status_code).send(data);
       } else {
         res.json(data);
         cacheDomain.deleteUserInfo({ userId });
+        tokenExpiredDomain.expireToken(token);
       }
     });
   });
