@@ -102,7 +102,7 @@ admin.initializeApp({
 //   } else {
     // Start server.
     // console.log(`Worker ${process.pid} started`);
-    locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+    locationAppAPI.ioServer(app).listen('/tmp/nginx.socket', () => {
       if (process.env.DYNO) {
         console.log('This is on Heroku..!!');
         fs.openSync('/tmp/app-initialized', 'w');
