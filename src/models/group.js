@@ -20,6 +20,7 @@ function createGroup({ name, type, createdDate: created_date }) {
 
 function updateUser(data) {
   return new Promise((reslove, reject) => {
+    // userId is new,
     groupRepository.findByIdAndUpdate(data.groupId,
       { $push: { users: data.userId || data.friendId } },
       { new: true })
