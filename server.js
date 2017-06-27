@@ -5,8 +5,9 @@ const config = require('./src/config');
 const express = require('express');
 const locationAppAPI = require('./src');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const logger = require('morgan');
+// MongoDB management
+const mongoose = require('mongoose');
 const bluebird = require('bluebird');
 // Firebase FCM configure
 const admin = require('firebase-admin');
