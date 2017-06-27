@@ -26,7 +26,7 @@ if (process.argv[2] === 'get_all') {
     console.log('get', process.argv[3] || '', value);
   });
 } else if (process.argv[2] === 'delete') {
-  client.del(process.argv[3] || '', (error, value) => {
+  client.del(JSON.stringify(process.argv[3] || ''), (error, value) => {
     console.log('delete', process.argv[3] || '', value);
   });
 } else if (process.argv[2] === 'delete_all') {

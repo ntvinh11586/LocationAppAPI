@@ -206,7 +206,6 @@ function groupLocation(mapNamespace) {
       timeout: config.networkTimeout,
     }))
     .on('authenticated', (socket) => {
-    // .on('connection', (socket) => {
       joinChat(socket, socket.handshake.query.group_id)
         .on('update_latlng', (body) => {
           const { user_id: userId, group_id: groupId, latlng } = JSON.parse(body);
@@ -214,9 +213,7 @@ function groupLocation(mapNamespace) {
 
           socket.emit('update_latlng_callback', response);
           socket.broadcast.to(groupId).emit('update_latlng_callback', response);
-
-          cacheDomain.setUserInfo({ userId, latlng })
-            .then(d => console.log(d));
+          cacheDomain.setUserInfo({ userId, latlng });
           latlngModel.updateUserLatlng(groupId, userId, latlng, (err, data) => {
             console.log(data);
           });
