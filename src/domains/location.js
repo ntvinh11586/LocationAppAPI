@@ -6,11 +6,9 @@ module.exports = {
     cacheModel.getUserValue(userId)
       .then(({ _id, latlng }) => {
         if (latlng === undefined) {
-          return cacheDomain.setUserInfoFromDatabase({ userId });
+          return cacheDomain.loadUserInfoFromDatabase({ userId });
         }
         return { _id, latlng };
       })
-      .then(({ _id: user_id, latlng }) => {
-        return { user_id, latlng };
-      }),
+      .then(({ _id: user_id, latlng }) => ({ user_id, latlng })),
 };

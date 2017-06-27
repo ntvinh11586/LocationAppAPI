@@ -3,6 +3,7 @@ const userModel = require('../models/user');
 const authMiddleware = require('../middlewares/auth');
 const userDomain = require('../domains/user');
 const groupDomain = require('../domains/group');
+const cacheDomain = require('../domains/cache');
 
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
@@ -33,6 +34,7 @@ router.post('/group_requests/:group_id/accept', (req, res) => {
   const { user_id: userId } = res.locals;
   userDomain.acceptGroupRequest({ groupId, userId })
     .then(data => res.json(data))
+    .then(() => cacheDomain.loadUserInfoFromDatabase({ userId }))
     .catch((error) => {
       const message = JSON.parse(error.message);
       res.status(message.status_code || 501).send(message);

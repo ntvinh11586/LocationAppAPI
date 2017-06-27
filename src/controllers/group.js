@@ -2,6 +2,7 @@ const express = require('express');
 const groupDomain = require('../domains/group');
 const authMiddleware = require('../middlewares/auth');
 const notificationDomain = require('../domains/notification');
+const cacheDomain = require('../domains/cache');
 
 const router = express.Router();
 router.use(authMiddleware.isUserAuthenticated);
@@ -22,6 +23,7 @@ router.post('', (req, res) => {
   const { group_name: groupName, name } = req.body;
   groupDomain.createNewGroup(name || groupName, userId)
     .then(data => res.json(data))
+    .then(() => cacheDomain.loadUserInfoFromDatabase({ userId }))
     .catch((error) => {
       const message = JSON.parse(error.message);
       res.status(message.status_code || 501).send(message);
