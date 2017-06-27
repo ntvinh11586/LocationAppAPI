@@ -2,19 +2,20 @@ const UserCache = require('../caches/user');
 
 const cache = (new UserCache()).getInstance();
 
-// data: { _id, latlng }
+// data: { _id, latlng, groups: [ { group_id }] }
 function setUserValue(userId, data) {
   return new Promise((resolve) => {
-    const cachedData = JSON.parse(JSON.stringify(data));
-    cache.set(JSON.stringify(userId), cachedData, ((error, success) => {
-      if (!error && success) {
-        const value = cache.get(JSON.stringify(userId));
-        if (value !== undefined) {
-          console.log('setUserValue', userId, value);
-          resolve(value);
+    cache.set(JSON.stringify(userId),
+      JSON.stringify(data),
+      ((error, success) => {
+        if (!error && success) {
+          const value = cache.get(JSON.stringify(userId));
+          if (value !== undefined) {
+            console.log('setUserValue', userId, value);
+            resolve(value);
+          }
         }
-      }
-    }));
+      }));
   });
 }
 
@@ -24,7 +25,7 @@ function getUserValue(userId) {
     if (value === undefined) {
       resolve({ _id: userId });
     } else {
-      console.log('getUserValue', userId, value);
+      console.log('getUserValue', userId, JSON.parse(value));
       resolve(value);
     }
   });

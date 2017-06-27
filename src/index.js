@@ -10,6 +10,12 @@ const ioServer = (app) => {
   const io = socketio(server);
   socket(io);
 
+  io.on('connection', (socket1) => {
+    socket1.on('abc', (body) => {
+      socket1.emit('abc_callback', body);
+    });
+  });
+
   return server;
 };
 

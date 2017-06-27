@@ -87,8 +87,7 @@ admin.initializeApp({
   databaseURL: 'https://locationapp-f02ac.firebaseio.com/',
 });
 
-//  Make cluster run in current multi-thread in CPU
-(() => {
+function loadServerWithCluster() {
   if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
     // Fork workers.
@@ -102,12 +101,26 @@ admin.initializeApp({
   } else {
     // Start server.
     console.log(`Worker ${process.pid} started`);
-    locationAppAPI.ioServer(app).listen('/tmp/nginx.socket', () => {
-      if (process.env.DYNO) {
-        console.log('This is on Heroku..!!');
-        fs.openSync('/tmp/app-initialized', 'w');
-      }
+    locationAppAPI.ioServer(app).listen(app.get('port'), () => {
       console.log('LocationAppAPI is running on Port:', app.get('port'));
     });
+  }
+}
+
+function loadServerWithNginx() {
+  locationAppAPI.ioServer(app).listen('/tmp/nginx.socket', () => {
+    if (process.env.DYNO) {
+      console.log('This is on Heroku..!!');
+      fs.openSync('/tmp/app-initialized', 'w');
+    }
+    console.log('LocationAppAPI is running on Port:', app.get('port'));
+  });
+}
+
+(() => {
+  if (app.get('env') !== 'production') {
+    loadServerWithCluster();
+  } else {
+    loadServerWithNginx();
   }
 })();

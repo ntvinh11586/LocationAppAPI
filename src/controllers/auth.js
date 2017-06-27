@@ -25,7 +25,7 @@ router.post('/login', (req, res) => {
     } else {
       res.json(data);
 
-      cacheDomain.setUserInfoFromDatabase({
+      cacheDomain.loadUserInfoFromDatabase({
         userId: data.user_id,
       });
     }
@@ -38,7 +38,7 @@ router.post('/login_with_token',
     const { username, user_id: userId } = res.locals;
     const { token } = req.headers;
     res.json({ token, username, _id: userId });
-    cacheDomain.setUserInfoFromDatabase({ userId });
+    cacheDomain.loadUserInfoFromDatabase({ userId });
   });
 
 router.get('/logout',

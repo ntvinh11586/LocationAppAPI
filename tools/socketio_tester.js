@@ -13,15 +13,14 @@ const EMIT_CALLBACK = `${EMIT}_callback`;
 
 const requestData = require('./request_data.json');
 
-const socket = io.connect(BASE_URL, {
+const socket = io.connect(URL, {
   query: `group_id=${QUERY}`,
 });
 
-console.log(URL);
 socket.on('connect', () => {
   console.log('EMIT', EMIT);
   console.log('EMIT_CALLBACK', EMIT_CALLBACK);
-  console.log(URL);
+
   socket
   .emit('authenticate', { token: USER_TOKEN })
   .on('authenticated', () => {
