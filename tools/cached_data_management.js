@@ -25,6 +25,10 @@ if (process.argv[2] === 'get_all') {
   client.get(process.argv[3] || '', (error, value) => {
     console.log('get', process.argv[3] || '', value);
   });
+} else if (process.argv[2] === 'delete') {
+  client.del(process.argv[3] || '', (error, value) => {
+    console.log('delete', process.argv[3] || '', value);
+  });
 } else if (process.argv[2] === 'delete_all') {
   client.flushdb((err, succeeded) => {
     console.log('delete_all', succeeded); // will be true if successfull
