@@ -28,10 +28,16 @@ module.exports = {
     .then((data) => {
       const groups = [];
       for (let i = 0; i < data.length; i += 2) {
+        const modifiedDateByMessages
+          = data[i + 1].messages[0] !== undefined
+          ? data[i + 1].messages[0].date
+          : undefined;
+
         groups.push({
           _id: data[i]._id,
           name: data[i].name,
           created_date: data[i].created_date || -1,
+          modified_date: modifiedDateByMessages || data[i].created_date || -1,
           avatar_url: data[i].avatar_url,
           type: data[i].type || 'group',
           users: data[i].users,
@@ -43,7 +49,7 @@ module.exports = {
       return { groups };
     })
     .then((data) => {
-      data.groups.sort((p1, p2) => p2.created_date - p1.created_date);
+      data.groups.sort((p1, p2) => p2.modified_date - p1.modified_date);
       return data;
     }),
 
