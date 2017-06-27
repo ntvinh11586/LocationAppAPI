@@ -118,7 +118,7 @@ function loadServerWithNginx() {
   });
 }
 
-loadServerWithCluster();
+// loadServerWithCluster();
 
 // (() => {
 //   if (app.get('env') !== 'production') {
@@ -127,3 +127,7 @@ loadServerWithCluster();
 //     loadServerWithNginx();
 //   }
 // })();
+
+locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+  console.log('LocationAppAPI is running on Port:', app.get('port'));
+});
