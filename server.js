@@ -118,16 +118,10 @@ function loadServerWithNginx() {
   });
 }
 
-// loadServerWithCluster();
-
-// (() => {
-//   if (app.get('env') !== 'production') {
-//     loadServerWithCluster();
-//   } else {
-//     loadServerWithNginx();
-//   }
-// })();
-
-locationAppAPI.ioServer(app).listen(app.get('port'), () => {
-  console.log('LocationAppAPI is running on Port:', app.get('port'));
-});
+(() => {
+  if (app.get('env') !== 'production') {
+    loadServerWithCluster();
+  } else {
+    loadServerWithNginx();
+  }
+})();
