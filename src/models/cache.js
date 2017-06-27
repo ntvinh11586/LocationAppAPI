@@ -2,7 +2,7 @@ const UserCache = require('../caches/user');
 
 const cache = (new UserCache()).getInstance();
 
-// data: { _id, latlng }
+// data: { _id, latlng, groups: [ { group_id }] }
 function setUserValue(userId, data) {
   return new Promise((resolve) => {
     cache.set(JSON.stringify(userId),
