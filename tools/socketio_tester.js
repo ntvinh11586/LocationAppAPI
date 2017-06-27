@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
-const BASE_URL = 'http://localhost:3000';
-// const BASE_URL = 'https://stormy-woodland-18039.herokuapp.com';
+// const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://stormy-woodland-18039.herokuapp.com';
 const NAMESPACE = 'chats';
 const URL = `${BASE_URL}/${NAMESPACE}`;
 
@@ -26,19 +26,19 @@ socket.on('connect', () => {
   .on('authenticated', () => {
     console.log('authenticated!');
     console.log(requestData);
-    // setInterval(() => {
-    //   socket
-    //     .emit(EMIT, JSON.stringify((requestData)))
-    //     .on(EMIT_CALLBACK, (data) => {
-    //       console.log(data);
-    //     });
-    // }, 1000);
+    setInterval(() => {
+      socket
+        .emit(EMIT, JSON.stringify((requestData)))
+        .on(EMIT_CALLBACK, (data) => {
+          console.log(data);
+        });
+    }, 1000);
 
-    socket
-      .emit(EMIT, JSON.stringify((requestData)))
-      .on(EMIT_CALLBACK, (data) => {
-        console.log(data);
-      });
+    // socket
+    //   .emit(EMIT, JSON.stringify((requestData)))
+    //   .on(EMIT_CALLBACK, (data) => {
+    //     console.log(data);
+    //   });
   })
   .on('unauthorized', (msg) => {
     console.log('unauthorized!', msg);

@@ -118,10 +118,12 @@ function loadServerWithNginx() {
   });
 }
 
-(() => {
-  if (app.get('env') !== 'production') {
-    loadServerWithCluster();
-  } else {
-    loadServerWithNginx();
-  }
-})();
+loadServerWithCluster();
+
+// (() => {
+//   if (app.get('env') !== 'production') {
+//     loadServerWithCluster();
+//   } else {
+//     loadServerWithNginx();
+//   }
+// })();
