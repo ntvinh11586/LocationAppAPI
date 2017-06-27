@@ -33,11 +33,11 @@ function notification(socket, data) {
 
 module.exports = (chatNamespace) => {
   chatNamespace
-    .on('connection', socketioJwt.authorize({
-      secret: config.tokenSecretKey,
-      timeout: config.networkTimeout,
-    }))
-    .on('authenticated', (socket) => {
+    // .on('connection', socketioJwt.authorize({
+    //   secret: config.tokenSecretKey,
+    //   timeout: config.networkTimeout,
+    // }))
+    .on('connection', (socket) => {
       joinChat(socket, socket.handshake.query.group_id)
         .on('add_message', (data) => {
           messageDomain.addMessage(JSON.parse(data))
