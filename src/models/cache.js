@@ -21,13 +21,14 @@ function setUserValue(userId, data) {
 
 function getUserValue(userId) {
   return new Promise((resolve) => {
-    const value = cache.get(JSON.stringify(userId));
-    if (value === undefined) {
-      resolve({ _id: userId });
-    } else {
-      console.log('getUserValue', userId, JSON.parse(value));
-      resolve(value);
-    }
+    cache.get(JSON.stringify(userId), (error, value) => {
+      if (value === undefined) {
+        resolve({ _id: userId });
+      } else {
+        console.log('getUserValue', userId, JSON.parse(value));
+        resolve(JSON.parse(value));
+      }
+    });
   });
 }
 
