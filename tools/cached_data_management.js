@@ -1,7 +1,8 @@
 const redis = require('redis');
 
 // User Cache Database
-const client = redis.createClient('redis://redis-10039.c9.us-east-1-4.ec2.cloud.redislabs.com:10039/');
+// const client = redis.createClient('redis://redis-10039.c9.us-east-1-4.ec2.cloud.redislabs.com:10039/');
+const client = redis.createClient('redis://pub-redis-12471.ap-northeast-1-2.1.ec2.garantiadata.com:12471/');
 
 if (process.argv[2] === 'get_all') {
   client.keys('*', (err, keys) => {
