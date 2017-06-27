@@ -87,7 +87,7 @@ admin.initializeApp({
   databaseURL: 'https://locationapp-f02ac.firebaseio.com/',
 });
 
-function loadServerWithNgix() {
+function loadServerWithCluster() {
   if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
     // Fork workers.
@@ -107,7 +107,7 @@ function loadServerWithNgix() {
   }
 }
 
-function loadServerWithCluster() {
+function loadServerWithNginx() {
   locationAppAPI.ioServer(app).listen('/tmp/nginx.socket', () => {
     if (process.env.DYNO) {
       console.log('This is on Heroku..!!');
@@ -119,8 +119,8 @@ function loadServerWithCluster() {
 
 (() => {
   if (app.get('env') !== 'production') {
-    loadServerWithNgix();
-  } else {
     loadServerWithCluster();
+  } else {
+    loadServerWithNginx();
   }
 })();
