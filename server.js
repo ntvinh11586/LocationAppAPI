@@ -74,7 +74,7 @@ app.use((err, req, res, next) => {
 // In this case, we use bluebird.
 // http://mongoosejs.com/docs/promises.html
 mongoose.Promise = bluebird;
-mongoose.connect(config.dbURI);
+mongoose.connect(config.dbURI, { auto_reconnect: true });
 
 // Log an error if the connection fails
 mongoose.connection.on('error', (error) => {
