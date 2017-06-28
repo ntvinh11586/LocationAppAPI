@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/auth');
 const notificationDomain = require('../domains/notification');
 
 const router = express.Router();
+
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('', (req, res) => {

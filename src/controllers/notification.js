@@ -4,6 +4,7 @@ const subscriptionDomain = require('../domains/subscription');
 const notificationDomain = require('../domains/notification');
 
 const router = express.Router();
+
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('', (req, res) => {

@@ -5,6 +5,7 @@ const notificationDomain = require('../domains/notification');
 const cacheDomain = require('../domains/cache');
 
 const router = express.Router();
+
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('', (req, res) => {
@@ -48,7 +49,7 @@ router.post('/:group_id/members', (req, res) => {
   groupDomain.addUserIntoGroup(groupId, friendId || userId)
     .then((data) => {
       notificationDomain.addNotification({
-        content: `You're received request from group ${groupId}`,
+        content: `You've received request from group ${groupId}`,
         type: 'add_into_group',
         userId: friendId,
       })

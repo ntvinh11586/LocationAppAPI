@@ -6,6 +6,7 @@ const groupDomain = require('../domains/group');
 const cacheDomain = require('../domains/cache');
 
 const router = express.Router();
+
 router.use(authMiddleware.isUserAuthenticated);
 
 router.post('/avatar', (req, res) => {

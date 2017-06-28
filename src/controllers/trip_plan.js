@@ -1,14 +1,14 @@
 const express = require('express');
 const groupModel = require('../models/group');
 const authMiddleware = require('../middlewares/auth');
-const migrationDomain = require('../domains/migration');
 
 // Merge parent params with their child
 // https://expressjs.com/en/api.html
 const router = express.Router({ mergeParams: true });
+
 router.use(authMiddleware.isUserAuthenticated);
 
-router.post('/', (req, res) => {
+router.post('', (req, res) => {
   const groupId = req.params.group_id;
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
@@ -17,12 +17,11 @@ router.post('/', (req, res) => {
       res.status(data.status_code).send(data);
     } else {
       res.json(data);
-      migrationDomain.migrateFromGroupToRouteModel(groupId);
     }
   });
 });
 
-router.put('/', (req, res) => {
+router.put('', (req, res) => {
   const groupId = req.params.group_id;
   const startTime = req.body.start_time;
   const endTime = req.body.end_time;
@@ -35,7 +34,7 @@ router.put('/', (req, res) => {
   });
 });
 
-router.delete('/', (req, res) => {
+router.delete('', (req, res) => {
   const groupId = req.params.group_id;
   groupModel.deleteTripPlan(groupId, (err, data) => {
     if (err) {

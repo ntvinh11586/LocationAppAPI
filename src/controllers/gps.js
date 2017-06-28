@@ -3,6 +3,7 @@ const gpsModel = require('../models/gps');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
+
 router.use(authMiddleware.isUserAuthenticated);
 
 router.get('', (req, res) => {

@@ -42,35 +42,38 @@ module.exports = (chatNamespace) => {
       timeout: config.networkTimeout,
     }))
     .on('authenticated', (socket) => {
-      joinChat(socket, socket.handshake.query.group_id)
-        .on('add_message', (data) => {
-          messageDomain.addMessage(JSON.parse(data))
-            .then((dataResponse) => {
-              socket.emit('add_message_callback', dataResponse);
-              socket.broadcast
-                .to(socket.handshake.query.group_id)
-                .emit('add_message_callback', dataResponse);
+      joinChat(socket, socket.handshake.query.group_id);
 
-              notification(socket, dataResponse);
-            })
-            .catch((error) => {
-              const message = JSON.parse(error.message);
-              socket.emit('error', message);
-            });
-        })
-        .on('get_messages', (requestData) => {
-          messageDomain.getMessages(JSON.parse(requestData))
-            .then((responseData) => {
-              socket.emit('get_messages_callback', responseData);
-            })
-            .catch((error) => {
-              const message = JSON.parse(error.message);
-              socket.emit('error', message);
-            });
-        })
-        .on('disconnect', () => {
-          const room = socket.handshake.query.group_id;
-          socket.leave(room);
-        });
+      socket.on('add_message', (data) => {
+        messageDomain.addMessage(JSON.parse(data))
+          .then((dataResponse) => {
+            socket.emit('add_message_callback', dataResponse);
+            socket.broadcast
+              .to(socket.handshake.query.group_id)
+              .emit('add_message_callback', dataResponse);
+
+            notification(socket, dataResponse);
+          })
+          .catch((error) => {
+            const message = JSON.parse(error.message);
+            socket.emit('error', message);
+          });
+      });
+
+      socket.on('get_messages', (requestData) => {
+        messageDomain.getMessages(JSON.parse(requestData))
+          .then((responseData) => {
+            socket.emit('get_messages_callback', responseData);
+          })
+          .catch((error) => {
+            const message = JSON.parse(error.message);
+            socket.emit('error', message);
+          });
+      });
+
+      socket.on('disconnect', () => {
+        const room = socket.handshake.query.group_id;
+        socket.leave(room);
+      });
     });
 };
