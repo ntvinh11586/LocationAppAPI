@@ -263,8 +263,12 @@ function groupLocation(mapNamespace) {
             (err, dTokens) => {
               fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                 notification: {
-                  title: data.name,
+                  title: data.name || data.group_id,
                   body: `${data.username} is at Starting Point now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
                 },
               });
             });
@@ -291,8 +295,12 @@ function groupLocation(mapNamespace) {
             (err, dTokens) => {
               fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                 notification: {
-                  title: data.name,
-                  body: `${data.username} left Starting Point now!`,
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} left Starting Point now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
                 },
               });
             });
@@ -329,8 +337,12 @@ function groupLocation(mapNamespace) {
             (err, dTokens) => {
               fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                 notification: {
-                  title: data.name,
-                  body: `${data.username} is at Ending Point now!`,
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} is at Ending Point now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
                 },
               });
             });
@@ -357,8 +369,12 @@ function groupLocation(mapNamespace) {
             (err, dTokens) => {
               fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                 notification: {
-                  title: data.name,
-                  body: `${data.username} left Ending Point now!`,
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} left Ending Point now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
                 },
               });
             });
@@ -401,8 +417,12 @@ function groupLocation(mapNamespace) {
             (err, dTokens) => {
               fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                 notification: {
-                  title: data.name,
-                  body: `${data.username} is at Stopover ${data.stopover_position}!`,
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} is at Stopover ${data.stopover_position}!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
                 },
               });
             });
@@ -429,8 +449,12 @@ function groupLocation(mapNamespace) {
             (err, dTokens) => {
               fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                 notification: {
-                  title: data.name,
-                  body: `${data.username} left Stopover ${data.stopover_position} now!`,
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} left Stopover ${data.stopover_position} now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
                 },
               });
             });
@@ -489,6 +513,22 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('add_user_to_appointment_callback', data);
+
+            console.log(socket.handshake.query.group_id);
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name || data.group_id,
+                    body: `${data.username || data.user_id} is at appointment ${data.appointment_id} now!`,
+                  },
+                  data: {
+                    group_id: JSON.stringify(data.group_id),
+                    user_id: JSON.stringify(data.user_id),
+                  },
+                });
+              });
           });
       })
       .on('delete_user_from_appointment', (groupInfo) => {
@@ -498,6 +538,20 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_user_from_appointment_callback', data);
+            notificationDomain.notifyNewMessage(
+              socket.handshake.query.group_id,
+              (err, dTokens) => {
+                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                  notification: {
+                    title: data.name || data.group_id,
+                    body: `${data.username || data.user_id} left appointment ${data.appointment_id} now!`,
+                  },
+                  data: {
+                    group_id: JSON.stringify(data.group_id),
+                    user_id: JSON.stringify(data.user_id),
+                  },
+                });
+              });
           });
       })
       .on('disconnect', () => {

@@ -27,6 +27,10 @@ function notification(socket, data) {
             title: data.group.name,
             body: `${data.chatter.username}: ${data.content}`,
           },
+          data: {
+            group_id: JSON.stringify(data.group._id),
+            user_id: JSON.stringify(data.chat_id),
+          },
         });
       });
 }
