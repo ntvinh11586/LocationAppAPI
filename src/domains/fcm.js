@@ -7,6 +7,7 @@ module.exports = {
     } else {
       // Temporary solutions for unique token fcmDomain
       const uniqueTokens = tokens.filter((x, i, a) => a.indexOf(x) === i);
+      console.log('fire');
       admin.messaging().sendToDevice(uniqueTokens, payload);
     }
   },

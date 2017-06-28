@@ -424,6 +424,8 @@ function getUserFCMTokenSameGroup(groupId, callback) {
     .populate({ path: 'users', model: 'User', select: 'devices.token -_id' })
     .exec((err, group) => {
       const tokens = [];
+      console.log(groupId);
+      console.log(group.users);
       if (group.users.length > 0) {
         group.users.forEach((user) => {
           if (user.devices !== undefined) {
