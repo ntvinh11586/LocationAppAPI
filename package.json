@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "babel-node server.js",
+    "build": "babel server.js -d dist && babel src -d dist/src",
+    "serve": "node dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -42,6 +44,9 @@
     "socketio-jwt": "4.5.0"
   },
   "devDependencies": {
+    "babel-cli": "6.24.1",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-stage-2": "6.24.1",
     "eslint": "3.19.0",
     "eslint-config-airbnb": "14.1.0",
     "eslint-plugin-import": "2.2.0",
