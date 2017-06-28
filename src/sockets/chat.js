@@ -3,6 +3,7 @@ const config = require('../config');
 const notificationDomain = require('../domains/notification');
 const fcmDomain = require('../domains/fcm');
 const messageDomain = require('../domains/message');
+const userModel = require('../models/user');
 
 function joinChat(socket, groupId) {
   if (groupId === undefined || groupId === null) {
@@ -19,20 +20,23 @@ function joinChat(socket, groupId) {
 }
 
 function notification(socket, data) {
-  notificationDomain.notifyNewMessage(
-      socket.handshake.query.group_id,
-      (err, dTokens) => {
-        fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-          notification: {
-            title: data.group.name,
-            body: `${data.chatter.username}: ${data.content}`,
-          },
-          data: {
-            group_id: JSON.stringify(data.group._id),
-            user_id: JSON.stringify(data.chat_id),
-          },
+  userModel.getUserInfo(data.chatter._id, (error, userData) => {
+    notificationDomain.notifyNewMessage(
+        socket.handshake.query.group_id,
+        (err, dTokens) => {
+          fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+            notification: {
+              title: data.group.name,
+              body: `${userData.name || userData.username}: ${data.content}`,
+            },
+            data: {
+              group_id: JSON.stringify(data.group._id),
+              user_id: JSON.stringify(data.chatter._id),
+              type: 'chats',
+            },
+          });
         });
-      });
+  });
 }
 
 module.exports = (chatNamespace) => {
