@@ -18,7 +18,7 @@ module.exports = {
     appointmentModel.getAppointments(payload)
       .then((data) => {
         return {
-          group_id: data.group,
+          group_id: payload.groupId,
           appointments: data,
         };
       }),

@@ -89,23 +89,27 @@ admin.initializeApp({
 });
 
 function loadServerWithCluster() {
-  if (cluster.isMaster) {
-    console.log(`Master ${process.pid} is running`);
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i += 1) {
-      cluster.fork();
-    }
-    // Exit fork.
-    cluster.on('exit', (worker, code, signal) => {
-      console.log(`worker ${worker.process.pid} died`);
-    });
-  } else {
-    // Start server.
-    console.log(`Worker ${process.pid} started`);
-    locationAppAPI.ioServer(app).listen(app.get('port'), () => {
-      console.log('LocationAppAPI is running on Port:', app.get('port'));
-    });
-  }
+  locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+    console.log('LocationAppAPI is running on Port:', app.get('port'));
+  });
+  // TODO: Fix cluster to work with socket.io later
+  // if (cluster.isMaster) {
+  //   console.log(`Master ${process.pid} is running`);
+  //   // Fork workers.
+  //   for (let i = 0; i < numCPUs; i += 1) {
+  //     cluster.fork();
+  //   }
+  //   // Exit fork.
+  //   cluster.on('exit', (worker, code, signal) => {
+  //     console.log(`worker ${worker.process.pid} died`);
+  //   });
+  // } else {
+  //   // Start server.
+  //   console.log(`Worker ${process.pid} started`);
+  //   locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+  //     console.log('LocationAppAPI is running on Port:', app.get('port'));
+  //   });
+  // }
 }
 
 function loadServerWithNginx() {
