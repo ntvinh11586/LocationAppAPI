@@ -87,22 +87,6 @@ function getDestinationUsers(groupInfo, callback) {
   });
 }
 
-function deleteStartingPoint(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  groupModel.deleteStartingPoint(groupId, (err, data) => {
-    callback(err, data);
-  });
-}
-
-function deleteEndingPoint(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  groupModel.deleteEndingPoint(groupId, (err, data) => {
-    callback(err, data);
-  });
-}
-
 function addUserIntoStopover(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -224,25 +208,27 @@ function groupLocation(mapNamespace) {
 
         // Emit & broadcast data
         socket.emit('update_latlng_callback', response);
-        socket.broadcast.to(groupId)
-          .emit('update_latlng_callback', response);
+        socket.broadcast.to(groupId).emit('update_latlng_callback', response);
 
         // Write Through Strategy: Update Cache and DB
         cacheDomain.setUserInfo({ userId, latlng });
         latlngModel.updateUserLatlng(groupId, userId, latlng, () => {});
-      })
-      .on('get_latlng', (body) => {
+      });
+
+      socket.on('get_latlng', (body) => {
         getUserLocation(body)
           .then((data) => {
             socket.emit('get_latlng_callback', data);
           });
-      })
-      .on('get_latlngs', (groupInfo) => {
+      });
+
+      socket.on('get_latlngs', (groupInfo) => {
         getAllUsersLocation(groupInfo, (err, data) => {
           socket.emit('get_latlngs_callback', data);
         });
-      })
-      .on('add_arriving_user', (groupInfo) => {
+      });
+
+      socket.on('add_arriving_user', (groupInfo) => {
         addArrivingUser(groupInfo, (err, data) => {
           socket.emit('add_arriving_user_callback', data);
           socket.broadcast
@@ -273,8 +259,9 @@ function groupLocation(mapNamespace) {
               });
             });
         });
-      })
-      .on('delete_arriving_user', (groupInfo) => {
+      });
+
+      socket.on('delete_arriving_user', (groupInfo) => {
         deleteArrivingUser(groupInfo, (err, data) => {
           socket.emit('delete_arriving_user_callback', data);
           socket.broadcast
@@ -305,18 +292,21 @@ function groupLocation(mapNamespace) {
               });
             });
         });
-      })
-      .on('get_arriving_users', (groupInfo) => {
+      });
+
+      socket.on('get_arriving_users', (groupInfo) => {
         getArrivingUsers(groupInfo, (err, data) => {
           socket.emit('get_arriving_users_callback', data);
         });
-      })
-      .on('get_destination_users', (groupInfo) => {
+      });
+
+      socket.on('get_destination_users', (groupInfo) => {
         getDestinationUsers(groupInfo, (err, data) => {
           socket.emit('get_destination_users_callback', data);
         });
-      })
-      .on('add_destination_user', (groupInfo) => {
+      });
+
+      socket.on('add_destination_user', (groupInfo) => {
         addDestinationUser(groupInfo, (err, data) => {
           socket.emit('add_destination_user_callback', data);
           socket.broadcast
@@ -347,8 +337,9 @@ function groupLocation(mapNamespace) {
               });
             });
         });
-      })
-      .on('delete_destination_user', (groupInfo) => {
+      });
+
+      socket.on('delete_destination_user', (groupInfo) => {
         deleteDestinationUser(groupInfo, (err, data) => {
           socket.emit('delete_destination_user_callback', data);
           socket.broadcast
@@ -378,22 +369,6 @@ function groupLocation(mapNamespace) {
                 },
               });
             });
-        });
-      })
-      .on('delete_starting_point', (groupInfo) => {
-        deleteStartingPoint(groupInfo, (err, data) => {
-          socket.emit('delete_starting_point_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_starting_point_callback', data);
-        });
-      })
-      .on('delete_ending_point', (groupInfo) => {
-        deleteEndingPoint(groupInfo, (err, data) => {
-          socket.emit('delete_ending_point_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_ending_point_callback', data);
         });
       })
       .on('add_user_into_stopover', (groupInfo) => {

@@ -5,10 +5,13 @@ const cache = (new UserCache()).getInstance();
 // data: { _id, latlng, groups: [ { group_id }] }
 function setUserValue(userId, data) {
   return new Promise((resolve) => {
-    cache.set(JSON.stringify(userId),
+    // TODO: Need to keep current fields not changed instead overwrite
+    cache.set(
+      JSON.stringify(userId),
       JSON.stringify(data),
       ((error, success) => {
         if (!error && success) {
+          // TODO: Use async for Redis cache
           const value = cache.get(JSON.stringify(userId));
           if (value !== undefined) {
             console.log('setUserValue', userId, value);
