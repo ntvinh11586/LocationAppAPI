@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const TokenBlacklist = require('../caches/token_blacklist');
 
 const tokenBlacklist = (new TokenBlacklist()).getInstance();
@@ -12,7 +13,8 @@ function hasToken(token) {
 
 function setToken(token) {
   return new Promise((resolve) => {
-    tokenBlacklist.set(JSON.stringify(token), true, ((error, success) => {
+    const time = (new Date()).getTime() - jwt.decode(token).exp;
+    tokenBlacklist.setex(JSON.stringify(token), time, true, ((error, success) => {
       if (!error && success) {
         console.log('setToken', token, true);
         resolve(true);
