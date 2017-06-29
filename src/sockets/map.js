@@ -412,12 +412,12 @@ function groupLocation(mapNamespace) {
         });
       });
 
-      socket.on('add_route', (groupInfo) => {
-        addRoute(groupInfo, (err, data) => {
+      socket.on('add_route', (body) => {
+        const { group_id: groupId } = JSON.parse(body);
+
+        addRoute(body, (err, data) => {
           socket.emit('add_route_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('add_route_callback', data);
+          socket.broadcast.to(groupId).emit('add_route_callback', data);
         });
       });
 

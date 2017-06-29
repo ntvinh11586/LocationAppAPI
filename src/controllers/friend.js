@@ -62,6 +62,7 @@ router.post('/:friend_id/add', (req, res) => {
       notificationDomain.addNotification({
         content: `${userId} send your friend request!`,
         type: 'friend_request',
+        date: (new Date()).getTime(),
         userId: acceptedFriendId,
       })
       .then()
@@ -81,6 +82,7 @@ router.post('/:friend_id/accept', (req, res) => {
       notificationDomain.addNotification({
         content: `${friendId} accept your friend requests`,
         type: 'friend_accept',
+        date: (new Date()).getTime(),
         userId,
       })
       .then()
