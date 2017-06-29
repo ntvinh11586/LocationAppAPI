@@ -9,7 +9,7 @@ function isUserAuthenticated(req, res, next) {
     } else {
       tokenExpiredDomain.hasToken(token)
         .then((hasToken) => {
-          if (false) {
+          if (hasToken) {
             res.status(401).json({
               status_code: 401,
               success: false,
