@@ -230,6 +230,7 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are in starting point',
             type: 'in_starting_point',
+            date: (new Date()).getTime(),
             userId,
           });
 
@@ -261,10 +262,9 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are out starting point',
             type: 'out_starting_point',
+            date: (new Date()).getTime(),
             userId: data.user_id,
-          })
-          .then()
-          .catch();
+          });
 
           console.log(socket.handshake.query.group_id);
           notificationDomain.notifyNewMessage(
@@ -306,10 +306,9 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are in ending point',
             type: 'in_ending_point',
+            date: (new Date()).getTime(),
             userId: data.user_id,
-          })
-          .then()
-          .catch();
+          });
 
           console.log(socket.handshake.query.group_id);
           notificationDomain.notifyNewMessage(
@@ -339,10 +338,9 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are out ending point',
             type: 'out_ending_poing',
+            date: (new Date()).getTime(),
             userId: data.user_id,
-          })
-          .then()
-          .catch();
+          });
 
           console.log(socket.handshake.query.group_id);
           notificationDomain.notifyNewMessage(
@@ -371,10 +369,9 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are in stopover',
             type: 'in_stopover',
+            date: (new Date()).getTime(),
             userId: data.user_id,
-          })
-          .then()
-          .catch();
+          });
 
           console.log(socket.handshake.query.group_id);
           notificationDomain.notifyNewMessage(
@@ -403,10 +400,9 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are out stopover',
             type: 'out_stopover',
+            date: (new Date()).getTime(),
             userId: data.user_id,
-          })
-          .then()
-          .catch();
+          });
 
           console.log(socket.handshake.query.group_id);
           notificationDomain.notifyNewMessage(
@@ -482,6 +478,7 @@ function groupLocation(mapNamespace) {
             notificationDomain.addNotification({
               content: 'You are in starting point',
               type: 'in_starting_point',
+              date: (new Date()).getTime(),
               userId: data.user_id,
             });
 
@@ -513,6 +510,7 @@ function groupLocation(mapNamespace) {
             notificationDomain.addNotification({
               content: 'You are in starting point',
               type: 'in_starting_point',
+              date: (new Date()).getTime(),
               userId: data.user_id,
             });
 
