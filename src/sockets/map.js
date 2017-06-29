@@ -35,15 +35,6 @@ function getUserLocation(body) {
   return locationDomain.getUserCurrentLocation({ userId });
 }
 
-function addArrivingUser(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  const userId = groupInfoJSON.user_id;
-  groupModel.addArrivingUser(groupId, userId, (err, data) => {
-    callback(err, data);
-  });
-}
-
 function addDestinationUser(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -222,28 +213,27 @@ function groupLocation(mapNamespace) {
           });
       });
 
-      socket.on('get_latlngs', (groupInfo) => {
-        getAllUsersLocation(groupInfo, (err, data) => {
+      socket.on('get_latlngs', (body) => {
+        getAllUsersLocation(body, (err, data) => {
           socket.emit('get_latlngs_callback', data);
         });
       });
 
-      socket.on('add_arriving_user', (groupInfo) => {
-        addArrivingUser(groupInfo, (err, data) => {
+      socket.on('add_arriving_user', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        groupModel.addArrivingUser(groupId, userId, (err, data) => {
+          // Emit & broadcast data
           socket.emit('add_arriving_user_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('add_arriving_user_callback', data);
+          socket.broadcast.to(groupId).emit('add_arriving_user_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are in starting point',
             type: 'in_starting_point',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
+          console.log(groupId);
           notificationDomain.notifyNewMessage(
             socket.handshake.query.group_id,
             (err, dTokens) => {
@@ -271,7 +261,7 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are out starting point',
             type: 'out_starting_point',
-            user: data.user_id,
+            userId: data.user_id,
           })
           .then()
           .catch();
@@ -316,7 +306,7 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are in ending point',
             type: 'in_ending_point',
-            user: data.user_id,
+            userId: data.user_id,
           })
           .then()
           .catch();
@@ -349,7 +339,7 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are out ending point',
             type: 'out_ending_poing',
-            user: data.user_id,
+            userId: data.user_id,
           })
           .then()
           .catch();
@@ -381,7 +371,7 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are in stopover',
             type: 'in_stopover',
-            user: data.user_id,
+            userId: data.user_id,
           })
           .then()
           .catch();
@@ -413,7 +403,7 @@ function groupLocation(mapNamespace) {
           notificationDomain.addNotification({
             content: 'You are out stopover',
             type: 'out_stopover',
-            user: data.user_id,
+            userId: data.user_id,
           })
           .then()
           .catch();
@@ -489,6 +479,12 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('add_user_to_appointment_callback', data);
 
+            notificationDomain.addNotification({
+              content: 'You are in starting point',
+              type: 'in_starting_point',
+              userId: data.user_id,
+            });
+
             console.log(socket.handshake.query.group_id);
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
@@ -513,6 +509,13 @@ function groupLocation(mapNamespace) {
             socket.broadcast
               .to(socket.handshake.query.group_id)
               .emit('delete_user_from_appointment_callback', data);
+
+            notificationDomain.addNotification({
+              content: 'You are in starting point',
+              type: 'in_starting_point',
+              userId: data.user_id,
+            });
+
             notificationDomain.notifyNewMessage(
               socket.handshake.query.group_id,
               (err, dTokens) => {
