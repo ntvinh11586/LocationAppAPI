@@ -229,6 +229,7 @@ function groupLocation(mapNamespace) {
               data: {
                 group_id: JSON.stringify(data.group_id),
                 user_id: JSON.stringify(data.user_id),
+                type: 'maps',
               },
             });
           });
@@ -260,6 +261,7 @@ function groupLocation(mapNamespace) {
               data: {
                 group_id: JSON.stringify(data.group_id),
                 user_id: JSON.stringify(data.user_id),
+                type: 'maps',
               },
             });
           });
@@ -303,6 +305,7 @@ function groupLocation(mapNamespace) {
               data: {
                 group_id: JSON.stringify(data.group_id),
                 user_id: JSON.stringify(data.user_id),
+                type: 'maps',
               },
             });
           });
@@ -334,6 +337,7 @@ function groupLocation(mapNamespace) {
               data: {
                 group_id: JSON.stringify(data.group_id),
                 user_id: JSON.stringify(data.user_id),
+                type: 'maps',
               },
             });
           });
@@ -365,6 +369,7 @@ function groupLocation(mapNamespace) {
               data: {
                 group_id: JSON.stringify(data.group_id),
                 user_id: JSON.stringify(data.user_id),
+                type: 'maps',
               },
             });
           });
@@ -396,6 +401,7 @@ function groupLocation(mapNamespace) {
               data: {
                 group_id: JSON.stringify(data.group_id),
                 user_id: JSON.stringify(data.user_id),
+                type: 'maps',
               },
             });
           });
@@ -484,6 +490,7 @@ function groupLocation(mapNamespace) {
                 data: {
                   group_id: JSON.stringify(data.group_id),
                   user_id: JSON.stringify(data.user_id),
+                  type: 'maps',
                 },
               });
             });
@@ -515,6 +522,7 @@ function groupLocation(mapNamespace) {
                 data: {
                   group_id: JSON.stringify(data.group_id),
                   user_id: JSON.stringify(data.user_id),
+                  type: 'maps',
                 },
               });
             });
