@@ -1,4 +1,5 @@
 const demoModel = require('../models/demo');
+const tokenExpiredDomain = require('../domains/token_expired');
 
 function isUserAuthenticated(req, res, next) {
   const token = req.headers.token;
@@ -6,10 +7,21 @@ function isUserAuthenticated(req, res, next) {
     if (err) {
       res.status(401).json(data);
     } else {
-      res.locals.user_id = data.user_id;
-      res.locals.username = data.username;
-      res.locals.token = token;
-      next();
+      tokenExpiredDomain.hasToken(token)
+        .then((hasToken) => {
+          if (hasToken) {
+            res.status(401).json({
+              status_code: 401,
+              success: false,
+              status_message: 'Invalid authorization.',
+            });
+          } else {
+            res.locals.user_id = data.user_id;
+            res.locals.username = data.username;
+            res.locals.token = token;
+            next();
+          }
+        });
     }
   });
 }
