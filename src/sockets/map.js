@@ -8,20 +8,6 @@ const fcmDomain = require('../domains/fcm');
 const locationDomain = require('../domains/location');
 const cacheDomain = require('../domains/cache');
 
-function joinChat(socket, groupId) {
-  if (groupId === undefined || groupId === null) {
-    socket.emit('error', {
-      message_code: 422,
-      success: true,
-      status_message: 'Group Id not found',
-    });
-  } else {
-    socket.join(groupId);
-  }
-
-  return socket;
-}
-
 function getAllUsersLocation(groupInfo, callback) {
   const groupJSON = JSON.parse(groupInfo);
   const groupId = groupJSON.group_id;
@@ -181,9 +167,6 @@ function groupLocation(mapNamespace) {
       timeout: config.networkTimeout,
     }))
     .on('authenticated', (socket) => {
-      // Will remove right away
-      joinChat(socket, socket.handshake.query.group_id);
-
       socket.on('update_latlng', (body) => {
         const {
           user_id: userId,
@@ -199,6 +182,7 @@ function groupLocation(mapNamespace) {
 
         // Emit & broadcast data
         socket.emit('update_latlng_callback', response);
+        socket.join(groupId);
         socket.broadcast.to(groupId).emit('update_latlng_callback', response);
 
         // Write Through Strategy: Update Cache and DB
@@ -225,6 +209,7 @@ function groupLocation(mapNamespace) {
         groupModel.addArrivingUser(groupId, userId, (err, data) => {
           // Emit & broadcast data
           socket.emit('add_arriving_user_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('add_arriving_user_callback', data);
 
           notificationDomain.addNotification({
@@ -255,6 +240,7 @@ function groupLocation(mapNamespace) {
 
         deleteArrivingUser(body, (err, data) => {
           socket.emit('delete_arriving_user_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('delete_arriving_user_callback', data);
 
           notificationDomain.addNotification({
@@ -297,6 +283,7 @@ function groupLocation(mapNamespace) {
 
         addDestinationUser(body, (err, data) => {
           socket.emit('add_destination_user_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('add_destination_user_callback', data);
 
           notificationDomain.addNotification({
@@ -327,6 +314,7 @@ function groupLocation(mapNamespace) {
 
         deleteDestinationUser(body, (err, data) => {
           socket.emit('delete_destination_user_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('delete_destination_user_callback', data);
 
           notificationDomain.addNotification({
@@ -357,6 +345,7 @@ function groupLocation(mapNamespace) {
 
         addUserIntoStopover(body, (err, data) => {
           socket.emit('add_user_into_stopover_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('add_user_into_stopover_callback', data);
 
           notificationDomain.addNotification({
@@ -387,6 +376,7 @@ function groupLocation(mapNamespace) {
 
         deleteUserIntoStopover(body, (err, data) => {
           socket.emit('delete_user_into_stopover_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('delete_user_into_stopover_callback', data);
 
           notificationDomain.addNotification({
@@ -417,6 +407,7 @@ function groupLocation(mapNamespace) {
 
         addRoute(body, (err, data) => {
           socket.emit('add_route_callback', data);
+          socket.join(groupId);
           socket.broadcast.to(groupId).emit('add_route_callback', data);
         });
       });
@@ -427,12 +418,13 @@ function groupLocation(mapNamespace) {
         });
       });
 
-      socket.on('delete_route', (groupInfo) => {
-        deleteRoute(groupInfo, (err, data) => {
+      socket.on('delete_route', (body) => {
+        const { group_id: groupId } = JSON.parse(body);
+
+        deleteRoute(body, (err, data) => {
           socket.emit('delete_route_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_route_callback', data);
+          socket.join(groupId);
+          socket.broadcast.to(groupId).emit('delete_route_callback', data);
         });
       });
 
@@ -444,23 +436,25 @@ function groupLocation(mapNamespace) {
           });
       });
 
-      socket.on('add_appointment', (groupInfo) => {
-        addAppointment(groupInfo)
+      socket.on('add_appointment', (body) => {
+        const { group_id: groupId } = JSON.parse(body);
+
+        addAppointment(body)
           .then((data) => {
             socket.emit('add_appointment_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('add_appointment_callback', data);
+            socket.join(groupId);
+            socket.broadcast.to(groupId).emit('add_appointment_callback', data);
           });
       });
 
-      socket.on('delete_appointment', (groupInfo) => {
-        deleteAppointment(groupInfo)
+      socket.on('delete_appointment', (body) => {
+        const { group_id: groupId } = JSON.parse(body);
+
+        deleteAppointment(body)
           .then((data) => {
             socket.emit('delete_appointment_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('delete_appointment_callback', data);
+            socket.join(groupId);
+            socket.broadcast.to(groupId).emit('delete_appointment_callback', data);
           });
       });
 
@@ -470,6 +464,7 @@ function groupLocation(mapNamespace) {
         addUserToAppointment(body)
           .then((data) => {
             socket.emit('add_user_to_appointment_callback', data);
+            socket.join(groupId);
             socket.broadcast.to(groupId).emit('add_user_to_appointment_callback', data);
 
             notificationDomain.addNotification({
@@ -501,6 +496,7 @@ function groupLocation(mapNamespace) {
         deleteUserToAppointment(body)
           .then((data) => {
             socket.emit('delete_user_from_appointment_callback', data);
+            socket.join(groupId);
             socket.broadcast.to(groupId).emit('delete_user_from_appointment_callback', data);
 
             notificationDomain.addNotification({
@@ -526,8 +522,8 @@ function groupLocation(mapNamespace) {
       });
 
       socket.on('disconnect', () => {
-        const room = socket.handshake.query.group_id;
-        socket.leave(room);
+        // TODO Should do anything when disconnect`
+        // socket.leave(room);
       });
     });
 }

@@ -5,37 +5,21 @@ const fcmDomain = require('../domains/fcm');
 const messageDomain = require('../domains/message');
 const userModel = require('../models/user');
 
-function joinChat(socket, groupId) {
-  if (groupId === undefined || groupId === null) {
-    socket.emit('error', {
-      message_code: 422,
-      success: true,
-      status_message: 'Group Id not found',
-    });
-  } else {
-    socket.join(groupId);
-  }
-
-  return socket;
-}
-
-function notification(socket, data) {
+function notification(socket, groupId, data) {
   userModel.getUserInfo(data.chatter._id, (error, userData) => {
-    notificationDomain.notifyNewMessage(
-        socket.handshake.query.group_id,
-        (err, dTokens) => {
-          fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-            notification: {
-              title: data.group.name,
-              body: `${userData.name || userData.username}: ${data.content}`,
-            },
-            data: {
-              group_id: JSON.stringify(data.group._id),
-              user_id: JSON.stringify(data.chatter._id),
-              type: 'chats',
-            },
-          });
-        });
+    notificationDomain.notifyNewMessage(groupId, (err, dTokens) => {
+      fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+        notification: {
+          title: data.group.name,
+          body: `${userData.name || userData.username}: ${data.content}`,
+        },
+        data: {
+          group_id: JSON.stringify(data.group._id),
+          user_id: JSON.stringify(data.chatter._id),
+          type: 'chats',
+        },
+      });
+    });
   });
 }
 
@@ -46,17 +30,16 @@ module.exports = (chatNamespace) => {
       timeout: config.networkTimeout,
     }))
     .on('authenticated', (socket) => {
-      joinChat(socket, socket.handshake.query.group_id);
-
       socket.on('add_message', (data) => {
+        const { group_id: groupId } = JSON.parse(data);
+
         messageDomain.addMessage(JSON.parse(data))
           .then((dataResponse) => {
             socket.emit('add_message_callback', dataResponse);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('add_message_callback', dataResponse);
+            socket.join(groupId);
+            socket.broadcast.to(groupId).emit('add_message_callback', dataResponse);
 
-            notification(socket, dataResponse);
+            notification(socket, groupId, dataResponse);
           })
           .catch((error) => {
             const message = JSON.parse(error.message);
@@ -76,8 +59,8 @@ module.exports = (chatNamespace) => {
       });
 
       socket.on('disconnect', () => {
-        const room = socket.handshake.query.group_id;
-        socket.leave(room);
+        // TODO Should handle anything in disconnect
+        // socket.leave(room);
       });
     });
 };
