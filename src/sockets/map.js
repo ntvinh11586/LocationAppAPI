@@ -35,15 +35,6 @@ function getUserLocation(body) {
   return locationDomain.getUserCurrentLocation({ userId });
 }
 
-function addArrivingUser(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  const userId = groupInfoJSON.user_id;
-  groupModel.addArrivingUser(groupId, userId, (err, data) => {
-    callback(err, data);
-  });
-}
-
 function addDestinationUser(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
@@ -83,22 +74,6 @@ function getDestinationUsers(groupInfo, callback) {
   const groupInfoJSON = JSON.parse(groupInfo);
   const groupId = groupInfoJSON.group_id;
   groupModel.getDestinationUsers(groupId, (err, data) => {
-    callback(err, data);
-  });
-}
-
-function deleteStartingPoint(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  groupModel.deleteStartingPoint(groupId, (err, data) => {
-    callback(err, data);
-  });
-}
-
-function deleteEndingPoint(groupInfo, callback) {
-  const groupInfoJSON = JSON.parse(groupInfo);
-  const groupId = groupInfoJSON.group_id;
-  groupModel.deleteEndingPoint(groupId, (err, data) => {
     callback(err, data);
   });
 }
@@ -224,271 +199,252 @@ function groupLocation(mapNamespace) {
 
         // Emit & broadcast data
         socket.emit('update_latlng_callback', response);
-        socket.broadcast.to(groupId)
-          .emit('update_latlng_callback', response);
+        socket.broadcast.to(groupId).emit('update_latlng_callback', response);
 
         // Write Through Strategy: Update Cache and DB
         cacheDomain.setUserInfo({ userId, latlng });
         latlngModel.updateUserLatlng(groupId, userId, latlng, () => {});
-      })
-      .on('get_latlng', (body) => {
+      });
+
+      socket.on('get_latlng', (body) => {
         getUserLocation(body)
           .then((data) => {
             socket.emit('get_latlng_callback', data);
           });
-      })
-      .on('get_latlngs', (groupInfo) => {
-        getAllUsersLocation(groupInfo, (err, data) => {
+      });
+
+      socket.on('get_latlngs', (body) => {
+        getAllUsersLocation(body, (err, data) => {
           socket.emit('get_latlngs_callback', data);
         });
-      })
-      .on('add_arriving_user', (groupInfo) => {
-        addArrivingUser(groupInfo, (err, data) => {
+      });
+
+      socket.on('add_arriving_user', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        groupModel.addArrivingUser(groupId, userId, (err, data) => {
+          // Emit & broadcast data
           socket.emit('add_arriving_user_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('add_arriving_user_callback', data);
+          socket.broadcast.to(groupId).emit('add_arriving_user_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are in starting point',
             type: 'in_starting_point',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            date: (new Date()).getTime(),
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
-          notificationDomain.notifyNewMessage(
-            socket.handshake.query.group_id,
-            (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username} is at Starting Point now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                },
-              });
+          console.log(groupId);
+          notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+            fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+              notification: {
+                title: data.name || data.group_id,
+                body: `${data.username} is at Starting Point now!`,
+              },
+              data: {
+                group_id: JSON.stringify(data.group_id),
+                user_id: JSON.stringify(data.user_id),
+              },
             });
+          });
         });
-      })
-      .on('delete_arriving_user', (groupInfo) => {
-        deleteArrivingUser(groupInfo, (err, data) => {
+      });
+
+      socket.on('delete_arriving_user', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        deleteArrivingUser(body, (err, data) => {
           socket.emit('delete_arriving_user_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_arriving_user_callback', data);
+          socket.broadcast.to(groupId).emit('delete_arriving_user_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are out starting point',
             type: 'out_starting_point',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            date: (new Date()).getTime(),
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
-          notificationDomain.notifyNewMessage(
-            socket.handshake.query.group_id,
-            (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} left Starting Point now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                },
-              });
+          console.log(groupId);
+          notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+            fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+              notification: {
+                title: data.name || data.group_id,
+                body: `${data.username || data.user_id} left Starting Point now!`,
+              },
+              data: {
+                group_id: JSON.stringify(data.group_id),
+                user_id: JSON.stringify(data.user_id),
+              },
             });
+          });
         });
-      })
-      .on('get_arriving_users', (groupInfo) => {
+      });
+
+      socket.on('get_arriving_users', (groupInfo) => {
         getArrivingUsers(groupInfo, (err, data) => {
           socket.emit('get_arriving_users_callback', data);
         });
-      })
-      .on('get_destination_users', (groupInfo) => {
+      });
+
+      socket.on('get_destination_users', (groupInfo) => {
         getDestinationUsers(groupInfo, (err, data) => {
           socket.emit('get_destination_users_callback', data);
         });
-      })
-      .on('add_destination_user', (groupInfo) => {
-        addDestinationUser(groupInfo, (err, data) => {
+      });
+
+      socket.on('add_destination_user', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        addDestinationUser(body, (err, data) => {
           socket.emit('add_destination_user_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('add_destination_user_callback', data);
+          socket.broadcast.to(groupId).emit('add_destination_user_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are in ending point',
             type: 'in_ending_point',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            date: (new Date()).getTime(),
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
-          notificationDomain.notifyNewMessage(
-            socket.handshake.query.group_id,
-            (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} is at Ending Point now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                },
-              });
+          console.log(groupId);
+          notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+            fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+              notification: {
+                title: data.name || data.group_id,
+                body: `${data.username || data.user_id} is at Ending Point now!`,
+              },
+              data: {
+                group_id: JSON.stringify(data.group_id),
+                user_id: JSON.stringify(data.user_id),
+              },
             });
+          });
         });
-      })
-      .on('delete_destination_user', (groupInfo) => {
-        deleteDestinationUser(groupInfo, (err, data) => {
+      });
+
+      socket.on('delete_destination_user', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        deleteDestinationUser(body, (err, data) => {
           socket.emit('delete_destination_user_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_destination_user_callback', data);
+          socket.broadcast.to(groupId).emit('delete_destination_user_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are out ending point',
             type: 'out_ending_poing',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            date: (new Date()).getTime(),
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
-          notificationDomain.notifyNewMessage(
-            socket.handshake.query.group_id,
-            (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} left Ending Point now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                },
-              });
+          console.log(groupId);
+          notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+            fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+              notification: {
+                title: data.name || data.group_id,
+                body: `${data.username || data.user_id} left Ending Point now!`,
+              },
+              data: {
+                group_id: JSON.stringify(data.group_id),
+                user_id: JSON.stringify(data.user_id),
+              },
             });
+          });
         });
-      })
-      .on('delete_starting_point', (groupInfo) => {
-        deleteStartingPoint(groupInfo, (err, data) => {
-          socket.emit('delete_starting_point_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_starting_point_callback', data);
-        });
-      })
-      .on('delete_ending_point', (groupInfo) => {
-        deleteEndingPoint(groupInfo, (err, data) => {
-          socket.emit('delete_ending_point_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_ending_point_callback', data);
-        });
-      })
-      .on('add_user_into_stopover', (groupInfo) => {
-        addUserIntoStopover(groupInfo, (err, data) => {
+      });
+
+      socket.on('add_user_into_stopover', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        addUserIntoStopover(body, (err, data) => {
           socket.emit('add_user_into_stopover_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('add_user_into_stopover_callback', data);
+          socket.broadcast.to(groupId).emit('add_user_into_stopover_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are in stopover',
             type: 'in_stopover',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            date: (new Date()).getTime(),
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
-          notificationDomain.notifyNewMessage(
-            socket.handshake.query.group_id,
-            (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} is at Stopover ${data.stopover_position}!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                },
-              });
+          console.log(groupId);
+          notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+            fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+              notification: {
+                title: data.name || data.group_id,
+                body: `${data.username || data.user_id} is at Stopover ${data.stopover_position}!`,
+              },
+              data: {
+                group_id: JSON.stringify(data.group_id),
+                user_id: JSON.stringify(data.user_id),
+              },
             });
+          });
         });
-      })
-      .on('delete_user_into_stopover', (groupInfo) => {
-        deleteUserIntoStopover(groupInfo, (err, data) => {
+      });
+
+      socket.on('delete_user_into_stopover', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        deleteUserIntoStopover(body, (err, data) => {
           socket.emit('delete_user_into_stopover_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('delete_user_into_stopover_callback', data);
+          socket.broadcast.to(groupId).emit('delete_user_into_stopover_callback', data);
 
           notificationDomain.addNotification({
             content: 'You are out stopover',
             type: 'out_stopover',
-            user: data.user_id,
-          })
-          .then()
-          .catch();
+            date: (new Date()).getTime(),
+            userId,
+          });
 
-          console.log(socket.handshake.query.group_id);
-          notificationDomain.notifyNewMessage(
-            socket.handshake.query.group_id,
-            (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} left Stopover ${data.stopover_position} now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                },
-              });
+          console.log(groupId);
+          notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+            fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+              notification: {
+                title: data.name || data.group_id,
+                body: `${data.username || data.user_id} left Stopover ${data.stopover_position} now!`,
+              },
+              data: {
+                group_id: JSON.stringify(data.group_id),
+                user_id: JSON.stringify(data.user_id),
+              },
             });
+          });
         });
-      })
-      .on('add_route', (groupInfo) => {
-        addRoute(groupInfo, (err, data) => {
+      });
+
+      socket.on('add_route', (body) => {
+        const { group_id: groupId } = JSON.parse(body);
+
+        addRoute(body, (err, data) => {
           socket.emit('add_route_callback', data);
-          socket.broadcast
-            .to(socket.handshake.query.group_id)
-            .emit('add_route_callback', data);
+          socket.broadcast.to(groupId).emit('add_route_callback', data);
         });
-      })
-      .on('get_route', (groupInfo) => {
+      });
+
+      socket.on('get_route', (groupInfo) => {
         getRoute(groupInfo, (err, data) => {
           socket.emit('get_route_callback', data);
         });
-      })
-      .on('delete_route', (groupInfo) => {
+      });
+
+      socket.on('delete_route', (groupInfo) => {
         deleteRoute(groupInfo, (err, data) => {
           socket.emit('delete_route_callback', data);
           socket.broadcast
             .to(socket.handshake.query.group_id)
             .emit('delete_route_callback', data);
         });
-      })
+      });
+
       // Appointment
-      .on('get_appointments', (groupInfo) => {
+      socket.on('get_appointments', (groupInfo) => {
         getAppointments(groupInfo)
           .then((data) => {
             socket.emit('get_appointments_callback', data);
           });
-      })
-      .on('add_appointment', (groupInfo) => {
+      });
+
+      socket.on('add_appointment', (groupInfo) => {
         addAppointment(groupInfo)
           .then((data) => {
             socket.emit('add_appointment_callback', data);
@@ -496,8 +452,9 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('add_appointment_callback', data);
           });
-      })
-      .on('delete_appointment', (groupInfo) => {
+      });
+
+      socket.on('delete_appointment', (groupInfo) => {
         deleteAppointment(groupInfo)
           .then((data) => {
             socket.emit('delete_appointment_callback', data);
@@ -505,56 +462,70 @@ function groupLocation(mapNamespace) {
               .to(socket.handshake.query.group_id)
               .emit('delete_appointment_callback', data);
           });
-      })
-      .on('add_user_to_appointment', (groupInfo) => {
-        addUserToAppointment(groupInfo)
+      });
+
+      socket.on('add_user_to_appointment', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        addUserToAppointment(body)
           .then((data) => {
             socket.emit('add_user_to_appointment_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('add_user_to_appointment_callback', data);
+            socket.broadcast.to(groupId).emit('add_user_to_appointment_callback', data);
 
-            console.log(socket.handshake.query.group_id);
-            notificationDomain.notifyNewMessage(
-              socket.handshake.query.group_id,
-              (err, dTokens) => {
-                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                  notification: {
-                    title: data.name || data.group_id,
-                    body: `${data.username || data.user_id} is at appointment ${data.appointment_id} now!`,
-                  },
-                  data: {
-                    group_id: JSON.stringify(data.group_id),
-                    user_id: JSON.stringify(data.user_id),
-                  },
-                });
+            notificationDomain.addNotification({
+              content: 'You are in starting point',
+              type: 'in_starting_point',
+              date: (new Date()).getTime(),
+              userId,
+            });
+
+            console.log(groupId);
+            notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                notification: {
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} is at appointment ${data.appointment_id} now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
+                },
               });
+            });
           });
-      })
-      .on('delete_user_from_appointment', (groupInfo) => {
-        deleteUserToAppointment(groupInfo)
+      });
+
+      socket.on('delete_user_from_appointment', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+
+        deleteUserToAppointment(body)
           .then((data) => {
             socket.emit('delete_user_from_appointment_callback', data);
-            socket.broadcast
-              .to(socket.handshake.query.group_id)
-              .emit('delete_user_from_appointment_callback', data);
-            notificationDomain.notifyNewMessage(
-              socket.handshake.query.group_id,
-              (err, dTokens) => {
-                fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                  notification: {
-                    title: data.name || data.group_id,
-                    body: `${data.username || data.user_id} left appointment ${data.appointment_id} now!`,
-                  },
-                  data: {
-                    group_id: JSON.stringify(data.group_id),
-                    user_id: JSON.stringify(data.user_id),
-                  },
-                });
+            socket.broadcast.to(groupId).emit('delete_user_from_appointment_callback', data);
+
+            notificationDomain.addNotification({
+              content: 'You are in starting point',
+              type: 'in_starting_point',
+              date: (new Date()).getTime(),
+              userId,
+            });
+
+            notificationDomain.notifyNewMessage(groupId, (err, dTokens) => {
+              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                notification: {
+                  title: data.name || data.group_id,
+                  body: `${data.username || data.user_id} left appointment ${data.appointment_id} now!`,
+                },
+                data: {
+                  group_id: JSON.stringify(data.group_id),
+                  user_id: JSON.stringify(data.user_id),
+                },
               });
+            });
           });
-      })
-      .on('disconnect', () => {
+      });
+
+      socket.on('disconnect', () => {
         const room = socket.handshake.query.group_id;
         socket.leave(room);
       });

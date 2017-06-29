@@ -19,10 +19,10 @@ function readNotificationsByUserId(userId) {
   });
 }
 
-function createNotification({ content, type, userId }) {
+function createNotification({ content, type, userId, date }) {
   return new Promise((resolve, reject) => {
     notificationRepository.create(
-      { content, type, user: userId },
+      { content, type, user: userId, date },
       (error) => {
         if (error) {
           reject(new Error({

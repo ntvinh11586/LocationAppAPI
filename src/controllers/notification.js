@@ -20,7 +20,9 @@ router.get('', (req, res) => {
 router.post('', (req, res) => {
   const { user_id: userId } = res.locals;
   const { content, type } = req.body;
-  notificationDomain.addNotification({ content, type, userId })
+  const date = (new Date()).getTime();
+
+  notificationDomain.addNotification({ content, type, userId, date })
     .then(data => res.json(data))
     .catch((error) => {
       const message = JSON.parse(error.message);

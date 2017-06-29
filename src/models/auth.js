@@ -80,7 +80,7 @@ function login(username, password, callback) {
                 email: account1.email,
                 gender: account1.gender,
                 birthday: account1.birthday,
-                city: account1.birthday,
+                city: account1.city,
               });
             }
           });
@@ -103,7 +103,7 @@ function login(username, password, callback) {
           email: account.email,
           gender: account.gender,
           birthday: account.birthday,
-          city: account.birthday,
+          city: account.city,
         });
       }
     });
