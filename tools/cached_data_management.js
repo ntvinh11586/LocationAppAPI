@@ -11,7 +11,8 @@ if (process.argv[2] === 'get_all') {
     }
     for (let i = 0, len = keys.length; i < len; i += 1) {
       client.get(keys[i], (error, data) => {
-        console.log('get_all', keys[i], data);
+        console.log('get_all', keys[i]);
+        console.log(JSON.parse(data));
       });
     }
     return null;

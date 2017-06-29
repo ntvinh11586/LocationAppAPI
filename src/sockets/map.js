@@ -182,12 +182,21 @@ function groupLocation(mapNamespace) {
 
         // Emit & broadcast data
         socket.emit('update_latlng_callback', response);
-        socket.join(groupId);
-        socket.broadcast.to(groupId).emit('update_latlng_callback', response);
-
-        // Write Through Strategy: Update Cache and DB
-        cacheDomain.setUserInfo({ userId, latlng });
-        latlngModel.updateUserLatlng(groupId, userId, latlng, () => {});
+        cacheDomain.loadUserInfo({ userId })
+          .then((cachedUserData) => {
+            if (cachedUserData.groups !== undefined
+              && cachedUserData.groups.length > 0) {
+              cachedUserData.groups.forEach((group) => {
+                socket.join(group);
+                socket.broadcast.to(group).emit('update_latlng_callback', response);
+              });
+            }
+          })
+          .then(() => {
+            // Write Through Strategy: Update Cache and DB
+            cacheDomain.setUserInfo({ userId, latlng });
+            latlngModel.updateUserLatlng(groupId, userId, latlng, () => {});
+          });
       });
 
       socket.on('get_latlng', (body) => {

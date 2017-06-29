@@ -20,6 +20,9 @@ module.exports = {
       }))
       .then(data => cacheModel.setUserValue(userId, data)),
 
+  loadUserInfo: ({ userId }) =>
+    cacheModel.getUserValue(userId),
+
   setUserInfo: ({ userId, latlng }) =>
     cacheModel.setUserValue(userId, { _id: userId, latlng }),
 
