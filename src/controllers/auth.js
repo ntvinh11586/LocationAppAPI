@@ -8,8 +8,8 @@ const tokenExpiredDomain = require('../domains/token_expired');
 const router = express.Router();
 
 router.post('/register', (req, res) => {
-  const { username, password, phone, email, gender, birthday, city } = req.body;
-  authDomain.registerUser({ username, password, phone, email, gender, birthday, city })
+  const { username, fullname, password, phone, email, gender, birthday, city } = req.body;
+  authDomain.registerUser({ username, fullname, password, phone, email, gender, birthday, city })
     .then(data => res.json(data))
     .catch((error) => {
       const message = JSON.parse(error.message);

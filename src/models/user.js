@@ -1,10 +1,11 @@
 const userRepository = require('../repositories/user');
 
 function getUserInfo(userId, callback) {
+  // TODO Need to add select()
   userRepository.findById(userId)
-    .populate({ path: 'friends', model: 'User', select: 'username' })
-    .populate({ path: 'friend_requests', model: 'User', select: 'username' })
-    .populate({ path: 'friend_pendings', model: 'User', select: 'username' })
+    .populate({ path: 'friends', model: 'User', select: 'username fullname' })
+    .populate({ path: 'friend_requests', model: 'User', select: 'username fullname' })
+    .populate({ path: 'friend_pendings', model: 'User', select: 'username fullname' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -17,6 +18,7 @@ function getUserInfo(userId, callback) {
         callback(null, {
           user_id: user._id,
           username: user.username,
+          fullname: user.fullname,
           phone: user.phone,
           email: user.email,
           gender: user.gender,

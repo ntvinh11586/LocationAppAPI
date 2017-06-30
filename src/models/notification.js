@@ -3,8 +3,8 @@ const notificationRepository = require('../repositories/notification');
 function readNotificationsByUserId(userId) {
   return new Promise((resolve, reject) => {
     notificationRepository.find({ user: userId })
-      .select('content type user')
-      .populate({ path: 'user', model: 'User', select: 'username' })
+      .select('content date type user')
+      .populate({ path: 'user', model: 'User', select: 'username fullname' })
       .exec((error, notifications) => {
         if (error) {
           reject(new Error({
