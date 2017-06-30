@@ -32,6 +32,7 @@ function acceptFriend(userId, acceptedFriendId, callback) {
         callback(null, {
           user_id: friend._id,
           username: friend.username,
+          fullname: friend.fullname,
         });
       });
     } else {
@@ -75,6 +76,7 @@ function addFriend(userId, acceptedFriendId, callback) {
         callback(null, {
           friend_id: requestedFriend._id,
           username: requestedFriend.username,
+          fullname: requestedFriend.fullname,
         });
       });
     }
@@ -229,6 +231,7 @@ function getFriend(userId, friendId, callback) {
             callback(null, {
               friend_id: friend._id,
               username: friend.username,
+              fullname: friend.fullname,
             });
           }
         });
