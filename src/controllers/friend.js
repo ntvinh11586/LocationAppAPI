@@ -2,6 +2,7 @@ const express = require('express');
 const friendModel = require('../models/friend');
 const authMiddleware = require('../middlewares/auth');
 const notificationDomain = require('../domains/notification');
+const userModel = require('../models/user');
 
 const router = express.Router();
 
@@ -59,15 +60,16 @@ router.post('/:friend_id/add', (req, res) => {
     if (err) {
       res.status(data.status_code).send(data);
     } else {
-      notificationDomain.addNotification({
-        content: `${userId} send your friend request!`,
-        type: 'friend_request',
-        date: (new Date()).getTime(),
-        userId: acceptedFriendId,
-      })
-      .then()
-      .catch();
       res.json(data);
+
+      userModel.getUserInfo(userId, (error, userDataResponse) => {
+        notificationDomain.addNotification({
+          content: `${userDataResponse.fullname || userDataResponse.username || userId} send your friend request!`,
+          type: 'friend_request',
+          date: (new Date()).getTime(),
+          userId: acceptedFriendId,
+        });
+      });
     }
   });
 });
@@ -79,15 +81,16 @@ router.post('/:friend_id/accept', (req, res) => {
     if (err) {
       res.status(data.status_code).send(data);
     } else {
-      notificationDomain.addNotification({
-        content: `${friendId} accept your friend requests`,
-        type: 'friend_accept',
-        date: (new Date()).getTime(),
-        userId,
-      })
-      .then()
-      .catch();
       res.json(data);
+
+      userModel.getUserInfo(friendId, (error, friendDataResponse) => {
+        notificationDomain.addNotification({
+          content: `${friendDataResponse.fullname || friendDataResponse.username || userId} accept your friend requests.`,
+          type: 'friend_request',
+          date: (new Date()).getTime(),
+          userId,
+        });
+      });
     }
   });
 });

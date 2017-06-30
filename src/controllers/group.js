@@ -48,15 +48,17 @@ router.post('/:group_id/members', (req, res) => {
   const { friend_id: friendId, user_id: userId } = req.query;
   groupDomain.addUserIntoGroup(groupId, friendId || userId)
     .then((data) => {
-      notificationDomain.addNotification({
-        content: `You've received request from group ${groupId}`,
-        type: 'add_into_group',
-        date: (new Date()).getTime(),
-        userId: friendId,
-      })
-      .then()
-      .catch();
       res.json(data);
+
+      groupDomain.getGroup(groupId)
+        .then((groupDataResponse) => {
+          notificationDomain.addNotification({
+            content: `You've received request from group ${groupDataResponse.name || groupId}`,
+            type: 'add_into_group',
+            date: (new Date()).getTime(),
+            userId: friendId,
+          });
+        });
     })
     .catch((error) => {
       const message = JSON.parse(error.message);
