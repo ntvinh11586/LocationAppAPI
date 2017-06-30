@@ -14,6 +14,7 @@ module.exports = {
         return {
           user_id: user._id,
           username: user.username,
+          fullname: user.fullname,
           user_token: token,
           phone: user.phone,
           email: user.email,

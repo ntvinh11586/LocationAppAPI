@@ -3,11 +3,11 @@ const config = require('../config');
 const userRepository = require('../repositories/user');
 const hashRepository = require('./hash');
 
-function createUser({ username, password, phone, email, gender, birthday, city }) {
+function createUser({ username, fullname, password, phone, email, gender, birthday, city }) {
   return new Promise((resolve, reject) => {
     const passwordHash = hashRepository.saltHashPassword(password);
     userRepository.create(
-      { username, password_hash: passwordHash, phone, email, gender, birthday, city },
+      { username, password_hash: passwordHash, fullname, phone, email, gender, birthday, city },
       (error, user) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -36,7 +36,7 @@ function generateToken(userId, username) {
 function login(username, password, callback) {
   const passwordHash = hashRepository.saltHashPassword(password);
   userRepository.findOne({ username, password_hash: passwordHash })
-    .select('username phone email gender birthday city')
+    .select('username fullname phone email gender birthday city')
     .exec((err, account) => {
       if (err) {
         callback(err, {
@@ -47,7 +47,7 @@ function login(username, password, callback) {
       } else if (account == null) {
         // execute for legacy storing password
         userRepository.findOne({ username, password })
-          .select('username phone email gender birthday city')
+          .select('username fullname phone email gender birthday city')
           .exec((err, account1) => {
             if (err) {
               callback(err, {
@@ -75,6 +75,7 @@ function login(username, password, callback) {
               callback(null, {
                 user_id: account1._id,
                 username: account1.username,
+                fullname: account1.fullname,
                 user_token: token,
                 phone: account1.phone,
                 email: account1.email,
@@ -98,6 +99,7 @@ function login(username, password, callback) {
         callback(null, {
           user_id: account._id,
           username: account.username,
+          fullname: account.fullname,
           user_token: token,
           phone: account.phone,
           email: account.email,

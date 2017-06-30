@@ -32,6 +32,7 @@ function acceptFriend(userId, acceptedFriendId, callback) {
         callback(null, {
           user_id: friend._id,
           username: friend.username,
+          fullname: friend.fullname,
         });
       });
     } else {
@@ -75,6 +76,7 @@ function addFriend(userId, acceptedFriendId, callback) {
         callback(null, {
           friend_id: requestedFriend._id,
           username: requestedFriend.username,
+          fullname: requestedFriend.fullname,
         });
       });
     }
@@ -83,7 +85,7 @@ function addFriend(userId, acceptedFriendId, callback) {
 
 function getFriendLists(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friends', model: 'User', select: 'username' })
+    .populate({ path: 'friends', model: 'User', select: 'username fullname' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -101,7 +103,7 @@ function getFriendLists(userId, callback) {
 
 function getFriendRequests(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friend_requests', model: 'User', select: 'username' })
+    .populate({ path: 'friend_requests', model: 'User', select: 'username fullname' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -119,7 +121,7 @@ function getFriendRequests(userId, callback) {
 
 function getFriendPendings(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friend_pendings', model: 'User', select: 'username' })
+    .populate({ path: 'friend_pendings', model: 'User', select: 'username fullname' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -229,6 +231,7 @@ function getFriend(userId, friendId, callback) {
             callback(null, {
               friend_id: friend._id,
               username: friend.username,
+              fullname: friend.fullname,
             });
           }
         });
@@ -294,7 +297,7 @@ function deleteFriendRequest(userId, friendId, callback) {
 function findFriends(userId, keyword) {
   return new Promise((resolve, reject) => {
     userRepository.find({ username: { $regex: `.*${keyword}.*` } })
-      .select('username')
+      .select('username fullname')
       .exec((error, friends) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -322,7 +325,7 @@ function findNearbyFriends(userId, radius = 0.001) {
           })));
         } else {
           userRepository.find({})
-            .select('username')
+            .select('username fullname')
             .where('latlng.lat')
             .gt(user.latlng.lat - radius)
             .lt(user.latlng.lat + radius)
