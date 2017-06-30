@@ -36,8 +36,11 @@ module.exports = (chatNamespace) => {
         messageDomain.addMessage(JSON.parse(data))
           .then((dataResponse) => {
             socket.emit('add_message_callback', dataResponse);
+            socket.emit('get_lastest_sent_message_callback', dataResponse);
+
             socket.join(groupId);
             socket.broadcast.to(groupId).emit('add_message_callback', dataResponse);
+            socket.broadcast.to(groupId).emit('get_lastest_sent_message_callback', dataResponse);
 
             notification(socket, groupId, dataResponse);
           })
