@@ -108,6 +108,7 @@ function addArrivingUser(groupId, userId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
         });
       });
     }
@@ -137,6 +138,7 @@ function addDestinationUser(groupId, userId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
         });
       });
     }
@@ -219,6 +221,7 @@ function deleteArrivingUser(groupId, userId, callback) {
             name: group.name,
             user_id: userId,
             username: user.username,
+            fullname: user.fullname,
           });
         });
       }
@@ -248,6 +251,7 @@ function deleteDestinationUser(groupId, userId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
         });
       });
     }
@@ -280,6 +284,7 @@ function addUserIntoStopover(groupId, userId, stopoverId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
           stopover_id: stopoverId,
           stopover_position: stopoverIndex,
         });
@@ -314,6 +319,7 @@ function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
           stopover_position: stopoverIndex,
           stopover_id: stopoverId,
         });
@@ -492,50 +498,6 @@ function composeReadGroupIdsDataResponse(groupIds) {
   return { groups: ids };
 }
 
-function migrateFromGroupToRouteModel(groupId) {
-  groupRepository.findById(groupId)
-    .exec((err, group) => {
-      routeRepository.findOne({ group: groupId })
-        .exec((err, route) => {
-          const data = {
-            group: groupId,
-            start_latlng: group.start_latlng,
-            start_users: group.arriving_users,
-            end_latlng: group.end_latlng,
-            end_users: group.destination_users,
-            stopovers: group.stopovers,
-          };
-
-          if (route === null) {
-            routeRepository.create(data, (err, route1) => {  });
-          } else {
-            route.group = data.group;
-            route.start_latlng = data.start_latlng;
-            route.start_users = data.start_users;
-            route.end_latlng = data.end_latlng;
-            route.end_users = data.end_users;
-            route.stopovers = data.stopovers;
-            route.save();
-          }
-        });
-    });
-}
-
-function migrateFromRouteToGroupModel(groupId) {
-  routeRepository.findOne({ group: groupId })
-    .exec((error, route) => {
-      groupRepository.findById(groupId)
-        .exec((error, group) => {
-          group.start_latlng = route.start_lalng;
-          group.arriving_users = route.start_users;
-          group.end_latlng = route.end_latlng;
-          group.destination_users = route.end_users;
-          group.stopovers = route.stopovers;
-          group.save();
-        });
-    });
-}
-
 function pushOneUserIntoGroupByGroupId(groupId, { userId }) {
   return new Promise((resolve, reject) => {
     groupRepository.findByIdAndUpdate(groupId,
@@ -562,7 +524,6 @@ function pushOneUserIntoGroupByGroupId(groupId, { userId }) {
 
 function updateAvatar(groupId, { avatarUrl }) {
   return new Promise((resolve, reject) => {
-    console.log(avatarUrl);
     groupRepository.findByIdAndUpdate(groupId, { avatar_url: avatarUrl })
       .exec((error) => {
         if (error) {
@@ -604,9 +565,6 @@ module.exports = {
   deleteRoute,
   // fcm
   getUserFCMTokenSameGroup,
-  // Migrate data
-  migrateFromGroupToRouteModel,
-  migrateFromRouteToGroupModel,
 
   getGroup: requestData =>
     composeReadGroupsQuery(requestData, 'name users created_date type avatar_url')

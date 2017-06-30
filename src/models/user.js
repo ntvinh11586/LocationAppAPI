@@ -14,7 +14,6 @@ function getUserInfo(userId, callback) {
           status_message: err.message,
         });
       } else {
-        console.log(user);
         callback(null, {
           user_id: user._id,
           username: user.username,
