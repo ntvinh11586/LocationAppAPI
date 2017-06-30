@@ -7,6 +7,8 @@ const appointmentDomain = require('../domains/appointment');
 const fcmDomain = require('../domains/fcm');
 const locationDomain = require('../domains/location');
 const cacheDomain = require('../domains/cache');
+const groupDomain = require('../domains/group');
+const userModel = require('../models/user');
 
 function getAllUsersLocation(groupInfo, callback) {
   const groupJSON = JSON.parse(groupInfo);
@@ -228,12 +230,11 @@ function groupLocation(mapNamespace) {
             userId,
           });
 
-          console.log(groupId);
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.username} is at Starting Point now!`,
+                body: `${data.fullname || data.username} is at starting point.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -260,12 +261,11 @@ function groupLocation(mapNamespace) {
             userId,
           });
 
-          console.log(groupId);
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.username || data.user_id} left Starting Point now!`,
+                body: `${data.fullname || data.username || data.user_id} left Starting Point now!`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -304,12 +304,11 @@ function groupLocation(mapNamespace) {
             userId,
           });
 
-          console.log(groupId);
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.username || data.user_id} is at Ending Point now!`,
+                body: `${data.fullname || data.username || data.user_id} is at ending point.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -336,12 +335,11 @@ function groupLocation(mapNamespace) {
             userId,
           });
 
-          console.log(groupId);
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.username || data.user_id} left Ending Point now!`,
+                body: `${data.fullname || data.username || data.user_id} left ending point.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -368,12 +366,11 @@ function groupLocation(mapNamespace) {
             userId,
           });
 
-          console.log(groupId);
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.username || data.user_id} is at Stopover ${data.stopover_position}!`,
+                body: `${data.fullname || data.username || data.user_id} is at stopover ${data.stopover_position}!`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -400,12 +397,11 @@ function groupLocation(mapNamespace) {
             userId,
           });
 
-          console.log(groupId);
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.username || data.user_id} left Stopover ${data.stopover_position} now!`,
+                body: `${data.fullname || data.username || data.user_id} left stopover ${data.stopover_position}.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -489,18 +485,22 @@ function groupLocation(mapNamespace) {
               userId,
             });
 
-            console.log(groupId);
             notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} is at appointment ${data.appointment_id} now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                  type: 'maps',
-                },
+              userModel.getUserInfo(userId, (error, userDataResponse) => {
+                groupDomain.getGroup(groupId)
+                  .then((groupDataResponse) => {
+                    fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                      notification: {
+                        title: groupDataResponse.name || data.group_id,
+                        body: `${userDataResponse.username || data.user_id} is at appointment ${data.appointment_id}.`,
+                      },
+                      data: {
+                        group_id: JSON.stringify(data.group_id),
+                        user_id: JSON.stringify(data.user_id),
+                        type: 'maps',
+                      },
+                    });
+                  });
               });
             });
           });
@@ -523,16 +523,21 @@ function groupLocation(mapNamespace) {
             });
 
             notificationDomain.notifyNewMessage(groupId, (err, dTokens) => {
-              fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                notification: {
-                  title: data.name || data.group_id,
-                  body: `${data.username || data.user_id} left appointment ${data.appointment_id} now!`,
-                },
-                data: {
-                  group_id: JSON.stringify(data.group_id),
-                  user_id: JSON.stringify(data.user_id),
-                  type: 'maps',
-                },
+              userModel.getUserInfo(userId, (error, userDataResponse) => {
+                groupDomain.getGroup(groupId)
+                  .then((groupDataResponse) => {
+                    fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                      notification: {
+                        title: groupDataResponse.name || data.group_id,
+                        body: `${userDataResponse.username || data.user_id} left appointment ${data.appointment_id}.`,
+                      },
+                      data: {
+                        group_id: JSON.stringify(data.group_id),
+                        user_id: JSON.stringify(data.user_id),
+                        type: 'maps',
+                      },
+                    });
+                  });
               });
             });
           });

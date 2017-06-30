@@ -108,6 +108,7 @@ function addArrivingUser(groupId, userId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
         });
       });
     }
@@ -137,6 +138,7 @@ function addDestinationUser(groupId, userId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
         });
       });
     }
@@ -219,6 +221,7 @@ function deleteArrivingUser(groupId, userId, callback) {
             name: group.name,
             user_id: userId,
             username: user.username,
+            fullname: user.fullname,
           });
         });
       }
@@ -248,6 +251,7 @@ function deleteDestinationUser(groupId, userId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
         });
       });
     }
@@ -280,6 +284,7 @@ function addUserIntoStopover(groupId, userId, stopoverId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
           stopover_id: stopoverId,
           stopover_position: stopoverIndex,
         });
@@ -314,6 +319,7 @@ function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
           name: group.name,
           user_id: userId,
           username: user.username,
+          fullname: user.fullname,
           stopover_position: stopoverIndex,
           stopover_id: stopoverId,
         });
