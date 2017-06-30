@@ -64,6 +64,7 @@ module.exports = (chatNamespace) => {
       socket.on('disconnect', () => {
         // TODO Should handle anything in disconnect
         // socket.leave(room);
+        console.log('disconnect');
       });
     });
 };

@@ -38,7 +38,14 @@ function groupLocation(mapNamespace) {
               && cachedUserData.groups.length > 0) {
               cachedUserData.groups.forEach((group) => {
                 socket.join(group);
-                socket.broadcast.to(group).emit('update_latlng_callback', response);
+
+                const responseForBoardcast = {
+                  user_id: userId,
+                  group_id: group,
+                  latlng,
+                };
+
+                socket.broadcast.to(group).emit('update_latlng_callback', responseForBoardcast);
               });
             }
           })
@@ -46,6 +53,31 @@ function groupLocation(mapNamespace) {
             // Write Through Strategy: Update Cache and DB
             cacheDomain.setUserInfo({ userId, latlng });
             latlngModel.updateUserLatlng(groupId, userId, latlng, () => {});
+          });
+      });
+
+      socket.on('get_latlng_synchronization', (body) => {
+        const { user_id: userId } = JSON.parse(body);
+        locationDomain.getUserCurrentLocation({ userId })
+          .then((data) => {
+            cacheDomain.loadUserInfo({ userId })
+              .then((cachedUserData) => {
+                if (cachedUserData.groups !== undefined
+                  && cachedUserData.groups.length > 0) {
+                  cachedUserData.groups.forEach((group) => {
+                    socket.join(group);
+
+                    const response = {
+                      user_id: userId,
+                      group_id: group,
+                      latlng: data.latlng,
+                    };
+
+                    socket.emit('get_latlng_synchronization_callback', response);
+                    socket.broadcast.to(group).emit('get_latlng_synchronization_callback', response);
+                  });
+                }
+              });
           });
       });
 
