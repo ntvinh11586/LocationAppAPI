@@ -58,27 +58,30 @@ function groupLocation(mapNamespace) {
 
       socket.on('get_latlng_synchronization', (body) => {
         const { user_id: userId } = JSON.parse(body);
-        locationDomain.getUserCurrentLocation({ userId })
-          .then((data) => {
-            cacheDomain.loadUserInfo({ userId })
-              .then((cachedUserData) => {
-                if (cachedUserData.groups !== undefined
-                  && cachedUserData.groups.length > 0) {
-                  cachedUserData.groups.forEach((group) => {
-                    socket.join(group);
 
-                    const response = {
-                      user_id: userId,
-                      group_id: group,
-                      latlng: data.latlng,
-                    };
+        setInterval(() => {
+          locationDomain.getUserCurrentLocation({ userId })
+            .then((data) => {
+              cacheDomain.loadUserInfo({ userId })
+                .then((cachedUserData) => {
+                  if (cachedUserData.groups !== undefined
+                    && cachedUserData.groups.length > 0) {
+                    cachedUserData.groups.forEach((group) => {
+                      socket.join(group);
 
-                    socket.emit('get_latlng_synchronization_callback', response);
-                    socket.broadcast.to(group).emit('get_latlng_synchronization_callback', response);
-                  });
-                }
-              });
-          });
+                      const response = {
+                        user_id: userId,
+                        group_id: group,
+                        latlng: data.latlng,
+                      };
+
+                      socket.emit('get_latlng_synchronization_callback', response);
+                      socket.broadcast.to(group).emit('get_latlng_synchronization_callback', response);
+                    });
+                  }
+                });
+            });
+        }, 1000);
       });
 
       socket.on('get_latlng', (body) => {
@@ -409,17 +412,20 @@ function groupLocation(mapNamespace) {
               userModel.getUserInfo(userId, (error, userDataResponse) => {
                 groupDomain.getGroup(groupId)
                   .then((groupDataResponse) => {
-                    fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                      notification: {
-                        title: groupDataResponse.name || data.group_id,
-                        body: `${userDataResponse.username || data.user_id} is at appointment ${data.appointment_id}.`,
-                      },
-                      data: {
-                        group_id: JSON.stringify(data.group_id),
-                        user_id: JSON.stringify(data.user_id),
-                        type: 'maps',
-                      },
-                    });
+                    appointmentDomain.getAppointment({ appointmentId })
+                      .then((appointmentDataResponse) => {
+                        fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                          notification: {
+                            title: groupDataResponse.name || data.group_id,
+                            body: `${userDataResponse.username || data.user_id} is at appointment ${appointmentDataResponse.address || data.appointment_id}.`,
+                          },
+                          data: {
+                            group_id: JSON.stringify(data.group_id),
+                            user_id: JSON.stringify(data.user_id),
+                            type: 'maps',
+                          },
+                        });
+                      });
                   });
               });
             });
@@ -450,17 +456,20 @@ function groupLocation(mapNamespace) {
               userModel.getUserInfo(userId, (error, userDataResponse) => {
                 groupDomain.getGroup(groupId)
                   .then((groupDataResponse) => {
-                    fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
-                      notification: {
-                        title: groupDataResponse.name || data.group_id,
-                        body: `${userDataResponse.username || data.user_id} left appointment ${data.appointment_id}.`,
-                      },
-                      data: {
-                        group_id: JSON.stringify(data.group_id),
-                        user_id: JSON.stringify(data.user_id),
-                        type: 'maps',
-                      },
-                    });
+                    appointmentDomain.getAppointment({ appointmentId })
+                      .then((appointmentDataResponse) => {
+                        fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                          notification: {
+                            title: groupDataResponse.name || data.group_id,
+                            body: `${userDataResponse.username || data.user_id} left appointment ${appointmentDataResponse.address || data.appointment_id}.`,
+                          },
+                          data: {
+                            group_id: JSON.stringify(data.group_id),
+                            user_id: JSON.stringify(data.user_id),
+                            type: 'maps',
+                          },
+                        });
+                      });
                   });
               });
             });

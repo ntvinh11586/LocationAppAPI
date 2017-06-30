@@ -100,7 +100,29 @@ function findAppointmentAndDeleteUser({ appointmentId, userId }) {
   });
 }
 
+function readAppointmentById(appointmentId) {
+  console.log(appointmentId);
+  return new Promise((resolve, reject) => {
+    appointmentRepository.findById(appointmentId)
+      .select('address latlng radius start_time end_time group_id')
+      .exec((error, appointment) => {
+        if (error) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: error.message,
+          })));
+        } else {
+          resolve(appointment);
+        }
+      });
+  });
+}
+
 module.exports = {
+  getAppointmentById: appointmentId =>
+    readAppointmentById(appointmentId),
+
   addAppointment: payload =>
     createAppointment(payload),
 

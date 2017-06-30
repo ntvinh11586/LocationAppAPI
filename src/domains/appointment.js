@@ -1,6 +1,9 @@
 const appointmentModel = require('../models/appointment');
 
 module.exports = {
+  getAppointment: ({ appointmentId }) =>
+    appointmentModel.getAppointmentById(appointmentId),
+
   addAppointment: payload =>
     appointmentModel.addAppointment(payload)
       .then((data) => {

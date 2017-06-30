@@ -276,7 +276,9 @@ function deleteFriendRequest(userId, friendId, callback) {
           });
         } else if (user.friend_requests.some(u => u.equals(friendId))) {
           user.friend_requests.pull(friendId); user.save();
+          user.friend_pendings.pull(friendId); user.save();
           friend.friend_pendings.pull(userId); friend.save();
+          friend.friend_requests.pull(userId); friend.save();
           callback(null, {
             status_code: 200,
             success: true,
@@ -322,6 +324,12 @@ function findNearbyFriends(userId, radius = 0.001) {
             status_code: 422,
             success: false,
             status_message: error.message,
+          })));
+        } else if (user.latlng.lat === undefined) {
+          reject(new Error(JSON.stringify({
+            status_code: 422,
+            success: false,
+            status_message: `User doesn't have latlng`,
           })));
         } else {
           userRepository.find({})
