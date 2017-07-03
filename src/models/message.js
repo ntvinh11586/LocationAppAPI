@@ -59,7 +59,7 @@ function createMessage(data) {
 function readMessageById(messageId) {
   return new Promise((resolve, reject) => {
     messageRepository.findById(messageId)
-      .populate({ path: 'chatter', model: 'User', select: 'username fullname' })
+      .populate({ path: 'chatter', model: 'User', select: 'username fullname avatar_url' })
       .populate({ path: 'group', model: 'Group', select: 'name' })
       .exec((error, message) => {
         if (error) {
@@ -79,7 +79,7 @@ function readMessages(options) {
   return new Promise((resolve, reject) => {
     messageRepository.find({ group: options.groupId })
       .select('chatter content type date')
-      .populate({ path: 'chatter', model: 'User', select: 'username fullname' })
+      .populate({ path: 'chatter', model: 'User', select: 'username fullname avatar_url' })
       .exec((error, message) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -105,7 +105,7 @@ function readTheLastestMessage({ data, select }) {
       .select(select)
       .sort({ date: -1 })
       .limit(1)
-      .populate({ path: 'chatter', model: 'User', select: 'username fullname' })
+      .populate({ path: 'chatter', model: 'User', select: 'username fullname avatar_url' })
       .exec((error, messages) => {
         resolve({ messages });
       });

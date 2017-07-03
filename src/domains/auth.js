@@ -15,6 +15,7 @@ module.exports = {
           user_id: user._id,
           username: user.username,
           fullname: user.fullname,
+          avatar_url: user.avatar_url,
           user_token: token,
           phone: user.phone,
           email: user.email,

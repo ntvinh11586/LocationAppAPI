@@ -85,7 +85,7 @@ function addFriend(userId, acceptedFriendId, callback) {
 
 function getFriendLists(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friends', model: 'User', select: 'username fullname' })
+    .populate({ path: 'friends', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -103,7 +103,7 @@ function getFriendLists(userId, callback) {
 
 function getFriendRequests(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friend_requests', model: 'User', select: 'username fullname' })
+    .populate({ path: 'friend_requests', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -121,7 +121,7 @@ function getFriendRequests(userId, callback) {
 
 function getFriendPendings(userId, callback) {
   userRepository.findById(userId)
-    .populate({ path: 'friend_pendings', model: 'User', select: 'username fullname' })
+    .populate({ path: 'friend_pendings', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, user) => {
       if (err) {
         callback(err, {
@@ -299,7 +299,7 @@ function deleteFriendRequest(userId, friendId, callback) {
 function findFriends(userId, keyword) {
   return new Promise((resolve, reject) => {
     userRepository.find({ username: { $regex: `.*${keyword}.*` } })
-      .select('username fullname')
+      .select('username fullname avatar_url')
       .exec((error, friends) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -329,11 +329,11 @@ function findNearbyFriends(userId, radius = 0.001) {
           reject(new Error(JSON.stringify({
             status_code: 422,
             success: false,
-            status_message: `User doesn't have latlng`,
+            status_message: 'User doesn\'t have latlng',
           })));
         } else {
           userRepository.find({})
-            .select('username fullname')
+            .select('username fullname avatar_url')
             .where('latlng.lat')
             .gt(user.latlng.lat - radius)
             .lt(user.latlng.lat + radius)

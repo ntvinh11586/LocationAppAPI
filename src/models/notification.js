@@ -4,7 +4,7 @@ function readNotificationsByUserId(userId) {
   return new Promise((resolve, reject) => {
     notificationRepository.find({ user: userId })
       .select('content date type user')
-      .populate({ path: 'user', model: 'User', select: 'username fullname' })
+      .populate({ path: 'user', model: 'User', select: 'username fullname avatar_url' })
       .exec((error, notifications) => {
         if (error) {
           reject(new Error({

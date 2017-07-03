@@ -1,6 +1,5 @@
 const userRepository = require('../repositories/user');
 const groupRepository = require('../repositories/group');
-const routeRepository = require('../repositories/route');
 
 function createGroup({ name, type, createdDate: created_date }) {
   return new Promise((resolve, reject) => {
@@ -25,7 +24,7 @@ function updateUser(data) {
       { $push: { users: data.userId || data.friendId } },
       { new: true })
       .select('name type created_date users')
-      .populate({ path: 'users', model: 'User', select: 'username fullname' })
+      .populate({ path: 'users', model: 'User', select: 'username fullname avatar_url' })
       .exec((error, group) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -147,7 +146,7 @@ function addDestinationUser(groupId, userId, callback) {
 
 function getArrivingUsers(groupId, callback) {
   groupRepository.findById(groupId)
-    .populate({ path: 'arriving_users', model: 'User', select: 'username fullname' })
+    .populate({ path: 'arriving_users', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, group) => {
       if (err) {
         callback(err, {
@@ -172,7 +171,7 @@ function getArrivingUsers(groupId, callback) {
 
 function getDestinationUsers(groupId, callback) {
   groupRepository.findById(groupId)
-    .populate({ path: 'destination_users', model: 'User', select: 'username fullname' })
+    .populate({ path: 'destination_users', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, group) => {
       if (err) {
         callback(err, {
@@ -197,7 +196,7 @@ function getDestinationUsers(groupId, callback) {
 
 function deleteArrivingUser(groupId, userId, callback) {
   groupRepository.findById(groupId)
-    .populate({ path: 'arriving_users', model: 'User', select: 'username fullname' })
+    .populate({ path: 'arriving_users', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, group) => {
       if (err) {
         callback(err, {
@@ -364,9 +363,9 @@ function addRoute(groupId, startLatlng, endLatlng, startRadius, endRadius, stopo
 
 function getRoute(groupId, callback) {
   groupRepository.findById(groupId)
-    .populate({ path: 'arriving_users', model: 'User', select: 'username fullname' })
-    .populate({ path: 'destination_users', model: 'User', select: 'username fullname' })
-    .populate({ path: 'stopovers.users', model: 'User', select: 'username fullname' })
+    .populate({ path: 'arriving_users', model: 'User', select: 'username fullname avatar_url' })
+    .populate({ path: 'destination_users', model: 'User', select: 'username fullname avatar_url' })
+    .populate({ path: 'stopovers.users', model: 'User', select: 'username fullname avatar_url' })
     .exec((err, group) => {
       if (err) {
         callback(err, {
@@ -456,7 +455,7 @@ function readGroups({ data, select }) {
   return new Promise((reslove, reject) => {
     groupRepository.find({ users: data.userId, groups: data.groupId })
       .select(select)
-      .populate({ path: 'users', model: 'User', select: 'username fullname' })
+      .populate({ path: 'users', model: 'User', select: 'username fullname avatar_url' })
       .exec((error, groupIds) => {
         if (error) {
           reject(new Error(JSON.stringify({
@@ -475,7 +474,7 @@ function readGroupById({ data, select }) {
   return new Promise((resolve, reject) => {
     groupRepository.findById(data.groupId)
       .select(select)
-      .populate({ path: 'users', model: 'User', select: 'username fullname' })
+      .populate({ path: 'users', model: 'User', select: 'username fullname avatar_url' })
       .exec((error, groupIds) => {
         if (error) {
           reject(new Error(JSON.stringify({

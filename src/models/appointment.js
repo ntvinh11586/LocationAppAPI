@@ -79,7 +79,6 @@ function findAppointmentAndUpdateUser({ appointmentId, userId }) {
 }
 
 function findAppointmentAndDeleteUser({ appointmentId, userId }) {
-  console.log(userId);
   return new Promise((resolve, reject) => {
     appointmentRepository.findByIdAndUpdate(appointmentId, { $pullAll: { users: [userId] } })
       .exec((error) => {

@@ -36,7 +36,7 @@ function generateToken(userId, username) {
 function login(username, password, callback) {
   const passwordHash = hashRepository.saltHashPassword(password);
   userRepository.findOne({ username, password_hash: passwordHash })
-    .select('username fullname phone email gender birthday city')
+    .select('username fullname avatar_url phone email gender birthday city')
     .exec((err, account) => {
       if (err) {
         callback(err, {
@@ -47,7 +47,7 @@ function login(username, password, callback) {
       } else if (account == null) {
         // execute for legacy storing password
         userRepository.findOne({ username, password })
-          .select('username fullname phone email gender birthday city')
+          .select('username fullname avatar_url phone email gender birthday city')
           .exec((err, account1) => {
             if (err) {
               callback(err, {
@@ -76,6 +76,7 @@ function login(username, password, callback) {
                 user_id: account1._id,
                 username: account1.username,
                 fullname: account1.fullname,
+                avatar_url: account1.avatar_url,
                 user_token: token,
                 phone: account1.phone,
                 email: account1.email,
@@ -100,6 +101,7 @@ function login(username, password, callback) {
           user_id: account._id,
           username: account.username,
           fullname: account.fullname,
+          avatar_url: account.avatar_url,
           user_token: token,
           phone: account.phone,
           email: account.email,
