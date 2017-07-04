@@ -104,10 +104,14 @@ function loadServerWithNginx() {
   });
 }
 
-(() => {
-  if (app.get('env') !== 'production') {
-    loadServer();
-  } else {
-    loadServerWithNginx();
-  }
-})();
+locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+  console.log('LocationAppAPI is running on Port:', app.get('port'));
+});
+
+// (() => {
+//   if (app.get('env') !== 'production') {
+//     loadServer();
+//   } else {
+//     loadServerWithNginx();
+//   }
+// })();
