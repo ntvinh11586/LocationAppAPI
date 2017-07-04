@@ -5,9 +5,18 @@ const hashRepository = require('./hash');
 
 function createUser({ username, fullname, password, phone, email, gender, birthday, city }) {
   return new Promise((resolve, reject) => {
+    const avatarUrl = 'https://res.cloudinary.com/togoimagestore/image/upload/t_media_lib_thumb/v1499149653/default_avatar_foydbh.png';
     const passwordHash = hashRepository.saltHashPassword(password);
     userRepository.create(
-      { username, password_hash: passwordHash, fullname, phone, email, gender, birthday, city },
+      { username,
+        password_hash: passwordHash,
+        avatar_url: avatarUrl,
+        fullname,
+        phone,
+        email,
+        gender,
+        birthday,
+        city },
       (error, user) => {
         if (error) {
           reject(new Error(JSON.stringify({
