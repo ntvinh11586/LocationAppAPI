@@ -64,6 +64,8 @@ module.exports = {
       const response = {
         group_id: data[0]._id,
         name: data[0].name,
+        start_time: data[0].start_time,
+        end_time: data[0].end_time,
         created_date: data[0].created_date || -1,
         avatar_url: data[0].avatar_url,
         type: data[0].type || 'group',

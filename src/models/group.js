@@ -566,7 +566,7 @@ module.exports = {
   getUserFCMTokenSameGroup,
 
   getGroup: requestData =>
-    composeReadGroupsQuery(requestData, 'name users created_date type avatar_url')
+    composeReadGroupsQuery(requestData, 'name users created_date type avatar_url start_time end_time')
       .then(data => readGroupById(data)),
 
   getGroupIds: requestData =>

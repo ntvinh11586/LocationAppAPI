@@ -477,8 +477,102 @@ function groupLocation(mapNamespace) {
       });
 
       socket.on('disconnect', () => {
-        // TODO Should do anything when disconnect`
-        // socket.leave(room);
+        const userId = socket.decoded_token.user_id;
+        cacheDomain.loadUserInfo({ userId })
+          .then(data => data.groups)
+          .then((data) => {
+            const groups = [];
+            data.forEach((groupId) => {
+              groups.push(groupDomain.getGroup(groupId));
+            });
+            return Promise.all(groups);
+          })
+          .then((data) => {
+            const groupTimes = [];
+            data.forEach((group) => {
+              groupTimes.push({
+                _id: group.group_id,
+                start_time: group.start_time,
+                end_time: group.end_time,
+              });
+            });
+            return Promise.all(groupTimes);
+          })
+          .then((data) => {
+            return data.filter((group) => {
+              return group.start_time !== undefined && group.end_time !== undefined;
+            });
+          })
+          .then((data) => {
+            const groups = [];
+            data.forEach((group) => {
+              groups.push(group);
+              groups.push(appointmentDomain.getAppointments({ groupId: group._id }));
+            });
+            return Promise.all(groups);
+          })
+          .then((data) => {
+            const groups = [];
+            for (let i = 0; i < data.length; i += 2) {
+              groups.push({
+                _id: data[i]._id,
+                start_time: data[i].start_time,
+                end_time: data[i].end_time,
+                appointments: data[i + 1].appointments.map((app) => {
+                  return {
+                    _id: app._id,
+                    start_time: app.start_time,
+                    end_time: app.end_time,
+                  };
+                }),
+              });
+            }
+            return groups;
+          })
+          .then((data) => {
+            const date = 1496175420001;
+            const groupIds = [];
+
+            console.log('kakaka');
+            for (let i = 0; i < data.length; i += 1) {
+              console.log(data[i].start_time);
+              console.log(data[i].end_time);
+              if (data[i].start_time < date && date < data[i].end_time) {
+                groupIds.push(data[i]._id);
+              } else {
+                for (let j = 0; j < data[i].appointments.length; j += 1) {
+                  if (data[i].appointments.start_time < date
+                    && date < data[i].appointments.end_time) {
+                    groupIds.push(data[i]._id);
+                    break;
+                  }
+                }
+              }
+            }
+            return groupIds;
+          })
+          .then((data) => {
+            data.forEach((groupId) => {
+              notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+                userModel.getUserInfo(userId, (error1, userDataResponse) => {
+                  groupDomain.getGroup(groupId)
+                    .then((groupDataResponse) => {
+                      fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+                        notification: {
+                          title: groupDataResponse.name || groupId,
+                          body: `${userDataResponse.username || userId} bị mất kết nối!`,
+                        },
+                        data: {
+                          group_id: JSON.stringify(groupId),
+                          user_id: JSON.stringify(userId),
+                          type: 'maps',
+                        },
+                      });
+                    });
+                });
+              });
+            });
+          });
       });
     });
 }
