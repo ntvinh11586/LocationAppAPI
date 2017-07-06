@@ -2,6 +2,7 @@ const express = require('express');
 const friendModel = require('../models/friend');
 const authMiddleware = require('../middlewares/auth');
 const notificationDomain = require('../domains/notification');
+const groupDomain = require('../domains/group');
 const userModel = require('../models/user');
 
 const router = express.Router();
@@ -117,6 +118,17 @@ router.delete('/:friend_id/unfriend', (req, res) => {
       res.json(data);
     }
   });
+});
+
+router.get('/:friend_id/group_id', (req, res) => {
+  const { user_id: userId } = res.locals;
+  const { friend_id: friendId } = req.params;
+  groupDomain.getFriendGroup({ userId, friendId })
+    .then(data => res.json(data))
+    .catch((error) => {
+      const message = JSON.parse(error.message);
+      res.status(message.status_code || 501).send(message);
+    });
 });
 
 module.exports = router;

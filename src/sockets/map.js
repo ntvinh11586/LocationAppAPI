@@ -533,10 +533,7 @@ function groupLocation(mapNamespace) {
             const date = 1496175420001;
             const groupIds = [];
 
-            console.log('kakaka');
             for (let i = 0; i < data.length; i += 1) {
-              console.log(data[i].start_time);
-              console.log(data[i].end_time);
               if (data[i].start_time < date && date < data[i].end_time) {
                 groupIds.push(data[i]._id);
               } else {

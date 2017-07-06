@@ -542,6 +542,14 @@ function updateAvatar(groupId, { avatarUrl }) {
   });
 }
 
+function readFriendGroupFromName({ name }) {
+  return new Promise((resolve) => {
+    groupRepository.findOne({ name }, (error, group) => {
+      resolve(group);
+    });
+  });
+}
+
 module.exports = {
   // trip plan
   setTripPlan,
@@ -585,4 +593,7 @@ module.exports = {
 
   updateAvatar: ({ groupId, avatarUrl }) =>
     updateAvatar(groupId, { avatarUrl }),
+
+  readFriendGroup: ({ name }) =>
+    readFriendGroupFromName({ name }),
 };

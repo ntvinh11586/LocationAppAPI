@@ -91,14 +91,14 @@ module.exports = {
     const createdDate = (new Date()).getTime();
     const name = `${userId}${friendId}`;
     return groupModel.createNewGroup({ name, type, createdDate })
-    .then((group) => {
-      const { _id: groupId } = group;
-      return groupModel.addMember({ groupId, userId });
-    })
-    .then((group) => {
-      const { group_id: groupId } = group;
-      return groupModel.addMember({ groupId, friendId });
-    });
+      .then((group) => {
+        const { _id: groupId } = group;
+        return groupModel.addMember({ groupId, userId });
+      })
+      .then((group) => {
+        const { group_id: groupId } = group;
+        return groupModel.addMember({ groupId, friendId });
+      });
   },
 
   addUserIntoGroup: (groupId, userId) =>
@@ -106,4 +106,27 @@ module.exports = {
 
   uploadAvatar: ({ groupId, avatarUrl }) =>
     groupModel.updateAvatar({ groupId, avatarUrl }),
+
+  getFriendGroup: (({ userId, friendId }) => {
+    const name = `${userId}${friendId}`;
+    const reversedName = `${friendId}${userId}`;
+
+    const groups = [];
+    groups.push(groupModel.readFriendGroup({ name }));
+    groups.push(groupModel.readFriendGroup({ reversedName }));
+
+    return Promise.all(groups)
+      .then((data) => {
+        const group1 = data[0];
+        const group2 = data[1];
+        if (group1 !== null && group1 !== undefined) {
+          return { group_id: group1._id };
+        } else if (group2 !== null && group2 !== undefined) {
+          return { group_id: group2._id };
+        }
+
+        return this.createNewTwoPersonsGroup(userId, friendId, 'friend')
+          .then(group => ({ group_id: group._id }));
+      });
+  }),
 };
