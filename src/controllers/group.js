@@ -53,8 +53,8 @@ router.post('/:group_id/members', (req, res) => {
       groupDomain.getGroup(groupId)
         .then((groupDataResponse) => {
           notificationDomain.addNotification({
-            content: `You've received request from group ${groupDataResponse.name || groupId}`,
-            type: 'add_into_group',
+            content: `Nhóm ${groupDataResponse.name || groupId} gửi cho bạn một yêu cầu tham gia.`,
+            type: 'group',
             date: (new Date()).getTime(),
             userId: friendId,
           });

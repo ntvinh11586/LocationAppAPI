@@ -65,8 +65,8 @@ router.post('/:friend_id/add', (req, res) => {
 
       userModel.getUserInfo(userId, (error, userDataResponse) => {
         notificationDomain.addNotification({
-          content: `${userDataResponse.fullname || userDataResponse.username || userId} send your friend request!`,
-          type: 'friend_request',
+          content: `${userDataResponse.fullname || userDataResponse.username || userId} gửi cho bạn một yêu cầu kết bạn.`,
+          type: 'friend',
           date: (new Date()).getTime(),
           userId: acceptedFriendId,
         });
@@ -86,8 +86,8 @@ router.post('/:friend_id/accept', (req, res) => {
 
       userModel.getUserInfo(friendId, (error, friendDataResponse) => {
         notificationDomain.addNotification({
-          content: `${friendDataResponse.fullname || friendDataResponse.username || userId} accept your friend requests.`,
-          type: 'friend_request',
+          content: `${friendDataResponse.fullname || friendDataResponse.username || userId} chấp nhận lời mới kết bạn.`,
+          type: 'friend',
           date: (new Date()).getTime(),
           userId,
         });

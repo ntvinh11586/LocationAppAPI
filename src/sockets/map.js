@@ -109,8 +109,8 @@ function groupLocation(mapNamespace) {
           socket.broadcast.to(groupId).emit('add_arriving_user_callback', data);
 
           notificationDomain.addNotification({
-            content: 'You are in starting point',
-            type: 'in_starting_point',
+            content: 'Bạn đang ở điểm bắt đầu hành trình',
+            type: 'map',
             date: (new Date()).getTime(),
             userId,
           });
@@ -119,7 +119,7 @@ function groupLocation(mapNamespace) {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.fullname || data.username} is at starting point.`,
+                body: `${data.fullname || data.username} đang ở điểm bắt đầu hành trình`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -140,8 +140,8 @@ function groupLocation(mapNamespace) {
           socket.broadcast.to(groupId).emit('delete_arriving_user_callback', data);
 
           notificationDomain.addNotification({
-            content: 'You are out starting point',
-            type: 'out_starting_point',
+            content: 'Bạn đã ra khỏi điểm bắt đầu hành trình',
+            type: 'map',
             date: (new Date()).getTime(),
             userId,
           });
@@ -150,7 +150,7 @@ function groupLocation(mapNamespace) {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.fullname || data.username || data.user_id} left Starting Point now!`,
+                body: `${data.fullname || data.username || data.user_id} đã ra khỏi điểm bắt đầu hành trình.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -185,8 +185,8 @@ function groupLocation(mapNamespace) {
           socket.broadcast.to(groupId).emit('add_destination_user_callback', data);
 
           notificationDomain.addNotification({
-            content: 'You are in ending point',
-            type: 'in_ending_point',
+            content: 'Bạn đang ở điểm kết thúc hành trình.',
+            type: 'map',
             date: (new Date()).getTime(),
             userId,
           });
@@ -195,7 +195,7 @@ function groupLocation(mapNamespace) {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.fullname || data.username || data.user_id} is at ending point.`,
+                body: `${data.fullname || data.username || data.user_id} đang ở điểm kết thúc hành trình.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -216,8 +216,8 @@ function groupLocation(mapNamespace) {
           socket.broadcast.to(groupId).emit('delete_destination_user_callback', data);
 
           notificationDomain.addNotification({
-            content: 'You are out ending point',
-            type: 'out_ending_poing',
+            content: 'Bạn đã ra khỏi điểm kết thúc của hành trình.',
+            type: 'map',
             date: (new Date()).getTime(),
             userId,
           });
@@ -226,7 +226,7 @@ function groupLocation(mapNamespace) {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.fullname || data.username || data.user_id} left ending point.`,
+                body: `${data.fullname || data.username || data.user_id} đã ra khỏi điểm kết thúc của hành trình.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -250,18 +250,11 @@ function groupLocation(mapNamespace) {
           socket.join(groupId);
           socket.broadcast.to(groupId).emit('add_user_into_stopover_callback', data);
 
-          notificationDomain.addNotification({
-            content: 'You are in stopover',
-            type: 'in_stopover',
-            date: (new Date()).getTime(),
-            userId,
-          });
-
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.fullname || data.username || data.user_id} is at stopover ${data.stopover_position}!`,
+                body: `${data.fullname || data.username || data.user_id} đang ở điểm dừng chân thứ ${data.stopover_position}!`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -285,18 +278,11 @@ function groupLocation(mapNamespace) {
           socket.join(groupId);
           socket.broadcast.to(groupId).emit('delete_user_into_stopover_callback', data);
 
-          notificationDomain.addNotification({
-            content: 'You are out stopover',
-            type: 'out_stopover',
-            date: (new Date()).getTime(),
-            userId,
-          });
-
           notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
             fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
               notification: {
                 title: data.name || data.group_id,
-                body: `${data.fullname || data.username || data.user_id} left stopover ${data.stopover_position}.`,
+                body: `${data.fullname || data.username || data.user_id} ra khỏi điểm dừng chân thứ ${data.stopover_position}.`,
               },
               data: {
                 group_id: JSON.stringify(data.group_id),
@@ -401,23 +387,23 @@ function groupLocation(mapNamespace) {
             socket.join(groupId);
             socket.broadcast.to(groupId).emit('add_user_to_appointment_callback', data);
 
-            notificationDomain.addNotification({
-              content: 'You are in starting point',
-              type: 'in_starting_point',
-              date: (new Date()).getTime(),
-              userId,
-            });
-
             notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
               userModel.getUserInfo(userId, (error, userDataResponse) => {
                 groupDomain.getGroup(groupId)
                   .then((groupDataResponse) => {
                     appointmentDomain.getAppointment({ appointmentId })
                       .then((appointmentDataResponse) => {
+                        notificationDomain.addNotification({
+                          content: `Bạn đang ở điểm hẹn ${appointmentDataResponse.address || data.appointment_id}.`,
+                          type: 'map',
+                          date: (new Date()).getTime(),
+                          userId,
+                        });
+
                         fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                           notification: {
                             title: groupDataResponse.name || data.group_id,
-                            body: `${userDataResponse.username || data.user_id} is at appointment ${appointmentDataResponse.address || data.appointment_id}.`,
+                            body: `${userDataResponse.username || data.user_id} đang ở điểm hẹn ${appointmentDataResponse.address || data.appointment_id}.`,
                           },
                           data: {
                             group_id: JSON.stringify(data.group_id),
@@ -445,19 +431,19 @@ function groupLocation(mapNamespace) {
             socket.join(groupId);
             socket.broadcast.to(groupId).emit('delete_user_from_appointment_callback', data);
 
-            notificationDomain.addNotification({
-              content: 'You are in starting point',
-              type: 'in_starting_point',
-              date: (new Date()).getTime(),
-              userId,
-            });
-
             notificationDomain.notifyNewMessage(groupId, (err, dTokens) => {
               userModel.getUserInfo(userId, (error, userDataResponse) => {
                 groupDomain.getGroup(groupId)
                   .then((groupDataResponse) => {
                     appointmentDomain.getAppointment({ appointmentId })
                       .then((appointmentDataResponse) => {
+                        notificationDomain.addNotification({
+                          content: `Bạn đã rời khỏi điểm hẹn ${appointmentDataResponse.address || data.appointment_id}.`,
+                          type: 'map',
+                          date: (new Date()).getTime(),
+                          userId,
+                        });
+
                         fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
                           notification: {
                             title: groupDataResponse.name || data.group_id,
