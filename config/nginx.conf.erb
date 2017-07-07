@@ -109,6 +109,9 @@ http {
 	 upstream nodebeats {
 		 ip_hash;
 		 server unix:/tmp/nginx.socket fail_timeout=0;
+		 server unix:/tmp/nginx.socket fail_timeout=0;
+		 server unix:/tmp/nginx.socket fail_timeout=0;
+		 server unix:/tmp/nginx.socket fail_timeout=0;
 		 keepalive	32;
 	}
 
