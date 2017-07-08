@@ -88,30 +88,6 @@ admin.initializeApp({
   databaseURL: 'https://locationapp-f02ac.firebaseio.com/',
 });
 
-function loadServer() {
-  locationAppAPI.ioServer(app).listen(app.get('port'), () => {
-    console.log('LocationAppAPI is running on Port:', app.get('port'));
-  });
-}
-
-function loadServerWithNginx() {
-  locationAppAPI.ioServer(app).listen('/tmp/nginx.socket', () => {
-    if (process.env.DYNO) {
-      console.log('This is on Heroku..!!');
-      fs.openSync('/tmp/app-initialized', 'w');
-    }
-    console.log('LocationAppAPI is running on Port:', app.get('port'));
-  });
-}
-
-// locationAppAPI.ioServer(app).listen(app.get('port'), () => {
-//   console.log('LocationAppAPI is running on Port:', app.get('port'));
-// });
-
-(() => {
-  if (app.get('env') !== 'production') {
-    loadServer();
-  } else {
-    loadServerWithNginx();
-  }
-})();
+locationAppAPI.ioServer(app).listen(app.get('port'), () => {
+  console.log('LocationAppAPI is running on Port:', app.get('port'));
+});
