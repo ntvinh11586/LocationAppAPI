@@ -4,7 +4,7 @@ function get(callback) {
   callback(null, {
     status_code: 200,
     status_message: 'demo',
-    version: 'v0.6.0',
+    version: 'v0.13.0',
   });
 }
 
