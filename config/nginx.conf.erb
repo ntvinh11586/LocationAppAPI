@@ -130,7 +130,7 @@ http {
 		  proxy_http_version 1.1;
 		  proxy_set_header 	Upgrade	$http_upgrade;
 		  proxy_set_header	Connection $connection_upgrade;
-		  proxy_pass http://express.vn;
+		  proxy_pass http://vnexpress.net;
 		}
 
 		location ~/(chats|socket\.io).*$ {
