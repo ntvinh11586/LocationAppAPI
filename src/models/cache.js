@@ -5,7 +5,7 @@ const cache = (new UserCache()).getInstance();
 function getUserValue(userId) {
   return new Promise((resolve) => {
     cache.get(JSON.stringify(userId), (error, value) => {
-      if (value === undefined) {
+      if (value === null || value === undefined) {
         resolve({ _id: userId });
       } else {
         console.log('getUserValue', userId, JSON.parse(value));

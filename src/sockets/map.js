@@ -34,7 +34,8 @@ function groupLocation(mapNamespace) {
         socket.emit('update_latlng_callback', response);
         cacheDomain.loadUserInfo({ userId })
           .then((cachedUserData) => {
-            if (cachedUserData.groups !== undefined
+            if (cachedUserData.groups !== null
+              && cachedUserData.groups !== undefined
               && cachedUserData.groups.length > 0) {
               cachedUserData.groups.forEach((group) => {
                 socket.join(group);
