@@ -112,44 +112,63 @@ http {
 		 keepalive	32;
 	}
 
-	server {
-	 listen 8001;
-	 server_name  _;
-	 root	"/";
+		server {
+		 listen 8001;
+		 server_name  _;
+		 root	"/";
 
-	 location / {
-		 proxy_redirect off;
-		 proxy_set_header   X-Real-IP            $remote_addr;
-		 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-		 proxy_set_header   X-Forwarded-Proto $scheme;
-		 proxy_set_header   X-NginX-Proxy    true;
-		 proxy_set_header   Connection "";
-		 proxy_http_version 1.1;
-		 proxy_set_header 	Upgrade	$http_upgrade;
-		 proxy_set_header	Connection $connection_upgrade;
-		 proxy_pass http://vnexpress.net;
-	 }
+		 location / {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://blooming-mesa-65873.herokuapp.com;
+		 }
 
-	 location ~/(chats|socket\.io).*$ {
-		 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		 proxy_set_header Host $http_host;
-		 proxy_pass         http://vnexpress.net;
-		 proxy_http_version 1.1;
-		 proxy_set_header   Upgrade    $http_upgrade;
-		 proxy_set_header   Connection "upgrade";
-		 proxy_redirect off;
-	 }
+		 location ~/(chats|socket\.io).*$ {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://blooming-mesa-65873.herokuapp.com;
+		 }
 
-	 location ~/(maps|socket\.io).*$ {
-		 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		 proxy_set_header Host $http_host;
-		 proxy_pass         http://vnexpress.net;
-		 proxy_http_version 1.1;
-		 proxy_set_header   Upgrade    $http_upgrade;
-		 proxy_set_header   Connection "upgrade";
-		 proxy_redirect off;
+		 location ~/(maps|socket\.io).*$ {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://blooming-mesa-65873.herokuapp.com;
+		 }
+
+		 location ~/(notifications|socket\.io).*$ {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://blooming-mesa-65873.herokuapp.com;
+		 }
 	 }
- 	}
 
 	 server {
 		listen <%= ENV['PORT'] %> default_server;
@@ -170,23 +189,42 @@ http {
 		}
 
 		location ~/(chats|socket\.io).*$ {
-					proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-					proxy_set_header Host $http_host;
-          proxy_pass         http://nodebeats;
-          proxy_http_version 1.1;
-          proxy_set_header   Upgrade    $http_upgrade;
-          proxy_set_header   Connection "upgrade";
-					proxy_redirect off;
+			proxy_redirect off;
+		  proxy_set_header   X-Real-IP            $remote_addr;
+		  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+		  proxy_set_header   X-Forwarded-Proto $scheme;
+		  proxy_set_header   X-NginX-Proxy    true;
+		  proxy_set_header   Connection "";
+		  proxy_http_version 1.1;
+		  proxy_set_header 	Upgrade	$http_upgrade;
+		  proxy_set_header	Connection $connection_upgrade;
+		  proxy_pass http://nodebeats;
     }
 
 		location ~/(maps|socket\.io).*$ {
-				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-				proxy_set_header Host $http_host;
-          proxy_pass         http://nodebeats;
-          proxy_http_version 1.1;
-          proxy_set_header   Upgrade    $http_upgrade;
-          proxy_set_header   Connection "upgrade";
-					proxy_redirect off;
+			proxy_redirect off;
+		  proxy_set_header   X-Real-IP            $remote_addr;
+		  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+		  proxy_set_header   X-Forwarded-Proto $scheme;
+		  proxy_set_header   X-NginX-Proxy    true;
+		  proxy_set_header   Connection "";
+		  proxy_http_version 1.1;
+		  proxy_set_header 	Upgrade	$http_upgrade;
+		  proxy_set_header	Connection $connection_upgrade;
+		  proxy_pass http://nodebeats;
+    }
+
+		location ~/(notifications|socket\.io).*$ {
+			proxy_redirect off;
+		  proxy_set_header   X-Real-IP            $remote_addr;
+		  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+		  proxy_set_header   X-Forwarded-Proto $scheme;
+		  proxy_set_header   X-NginX-Proxy    true;
+		  proxy_set_header   Connection "";
+		  proxy_http_version 1.1;
+		  proxy_set_header 	Upgrade	$http_upgrade;
+		  proxy_set_header	Connection $connection_upgrade;
+		  proxy_pass http://nodebeats;
     }
 	}
 }
