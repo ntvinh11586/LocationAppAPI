@@ -107,8 +107,10 @@ http {
 		'' close;
 	 }
 	 upstream nodebeats {
-		 ip_hash;
 		 server 127.0.0.1:8001 fail_timeout=0;
+		 server 127.0.0.1:8002 fail_timeout=0;
+		 server 127.0.0.1:8003 fail_timeout=0;
+		 server 127.0.0.1:8004 fail_timeout=0;
 		 keepalive	32;
 	}
 
@@ -169,6 +171,180 @@ http {
 			 proxy_pass http://blooming-mesa-65873.herokuapp.com;
 		 }
 	 }
+
+	 server {
+		listen 8002;
+		server_name  _;
+		root	"/";
+
+		location / {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://secret-harbor-69907.herokuapp.com;
+		}
+
+		location ~/(chats|socket\.io).*$ {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://secret-harbor-69907.herokuapp.com;
+		}
+
+		location ~/(maps|socket\.io).*$ {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://secret-harbor-69907.herokuapp.com;
+		}
+
+		location ~/(notifications|socket\.io).*$ {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://secret-harbor-69907.herokuapp.com;
+		}
+	}
+
+		server {
+		 listen 8003;
+		 server_name  _;
+		 root	"/";
+
+		 location / {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://intense-stream-27983.herokuapp.com;
+		 }
+
+		 location ~/(chats|socket\.io).*$ {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://intense-stream-27983.herokuapp.com;
+		 }
+
+		 location ~/(maps|socket\.io).*$ {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://intense-stream-27983.herokuapp.com;
+		 }
+
+		 location ~/(notifications|socket\.io).*$ {
+			 proxy_redirect off;
+			 proxy_set_header   X-Real-IP            $remote_addr;
+			 proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			 proxy_set_header   X-Forwarded-Proto $scheme;
+			 proxy_set_header   X-NginX-Proxy    true;
+			 proxy_set_header   Connection "";
+			 proxy_http_version 1.1;
+			 proxy_set_header 	Upgrade	$http_upgrade;
+			 proxy_set_header	Connection $connection_upgrade;
+			 proxy_pass http://intense-stream-27983.herokuapp.com;
+		 }
+	 }
+
+	 server {
+		listen 8004;
+		server_name  _;
+		root	"/";
+
+		location / {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://guarded-river-48177.herokuapp.com;
+		}
+
+		location ~/(chats|socket\.io).*$ {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://guarded-river-48177.herokuapp.com;
+		}
+
+		location ~/(maps|socket\.io).*$ {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://guarded-river-48177.herokuapp.com;
+		}
+
+		location ~/(notifications|socket\.io).*$ {
+			proxy_redirect off;
+			proxy_set_header   X-Real-IP            $remote_addr;
+			proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+			proxy_set_header   X-Forwarded-Proto $scheme;
+			proxy_set_header   X-NginX-Proxy    true;
+			proxy_set_header   Connection "";
+			proxy_http_version 1.1;
+			proxy_set_header 	Upgrade	$http_upgrade;
+			proxy_set_header	Connection $connection_upgrade;
+			proxy_pass http://guarded-river-48177.herokuapp.com;
+		}
+	}
 
 	 server {
 		listen <%= ENV['PORT'] %> default_server;
