@@ -382,6 +382,8 @@ function getRoute(groupId, callback) {
       } else {
         callback(null, {
           group_id: groupId,
+          start_time: group.start_time,
+          end_time: group.end_time,
           start_latlng: group.start_latlng,
           start_radius: group.start_radius,
           end_latlng: group.end_latlng,
