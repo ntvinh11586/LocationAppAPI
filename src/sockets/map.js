@@ -134,6 +134,35 @@ function groupLocation(mapNamespace) {
         });
       });
 
+      socket.on('notify_getting_lost', (body) => {
+        const { user_id: userId, group_id: groupId } = JSON.parse(body);
+        const { username, group_name: groupName } = JSON.parse(body);
+
+        const response = {
+          user_id: userId,
+          group_id: groupId,
+          username,
+          group_name: groupName,
+        };
+
+        socket.emit('notify_getting_lost_callback', response);
+        socket.broadcast.to(groupId).emit('notify_getting_lost_callback', response);
+
+        notificationDomain.notifyNewMessage(groupId, (error, dTokens) => {
+          fcmDomain.sendMessageToDeviceWithTokens(dTokens.tokens, {
+            notification: {
+              title: groupName || groupId,
+              body: `${username || userId} đã đi lạc.`,
+            },
+            data: {
+              group_id: JSON.stringify(groupId),
+              user_id: JSON.stringify(userId),
+              type: 'maps',
+            },
+          });
+        });
+      });
+
       socket.on('delete_arriving_user', (body) => {
         const { user_id: userId, group_id: groupId } = JSON.parse(body);
 
