@@ -24,9 +24,9 @@ const app = express();
 
 app.use(compression());
 app.use(helmet());
-app.use('/', express.static(process.cwd() + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use('/', express.static(process.cwd() + '/public'));
 app.use(express.static('public'));
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');

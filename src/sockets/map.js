@@ -46,7 +46,9 @@ function groupLocation(mapNamespace) {
                   latlng,
                 };
 
-                socket.broadcast.to(group).emit('update_latlng_callback', responseForBoardcast);
+                if (group !== undefined) {
+                  socket.broadcast.to(group).emit('update_latlng_callback', responseForBoardcast);
+                }
               });
             }
           })
