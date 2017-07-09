@@ -21,4 +21,9 @@ router.use('/gps', gpsRouter);
 router.use('/search', searchRouter);
 router.use('/notification', notificationRouter);
 
+router.get('/loaderio-aa9b30a79843b7297eb76a72779d95e2/', (req, res) => {
+  res.json({ success: '200' });
+});
+
+
 module.exports = router;
