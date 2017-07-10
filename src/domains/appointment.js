@@ -10,6 +10,7 @@ module.exports = {
         return {
           appointment_id: data._id,
           group_id: data.group,
+          radius: data.radus,
           latlng: data.latlng,
           address: data.address,
           start_time: data.start_time,
