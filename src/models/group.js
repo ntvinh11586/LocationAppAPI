@@ -354,6 +354,8 @@ function addRoute(groupId, startLatlng, endLatlng, startRadius,
 
       callback(null, {
         group_id: groupId,
+        start_time: startTime,
+        end_time: endTime,
         start_latlng: startLatlng,
         start_radius: startRadius,
         end_radius: endRadius,

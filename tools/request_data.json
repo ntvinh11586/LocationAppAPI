@@ -1,5 +1,5 @@
 {
-  "group_id": "592d2a842f402a3e081f73b6",
+  "group_id": "59631c900d4ccd18206c17ca",
   "user_id": "5926bfbcf9763736a08fd44e",
   "content": "Message B",
   "latlng": {
@@ -10,5 +10,13 @@
   "start_time": 1494547974415,
   "end_time": 1494547975436,
   "radius": 0.123456789,
-  "appointment_id": "5954c26dd0a6ca8c20654433"
+  "appointment_id": "5954c26dd0a6ca8c20654433",
+  "stopovers": [
+    {
+      "latlng": {
+        "lat": 1234,
+        "lng": 3434
+      }
+    }
+  ]
 }
