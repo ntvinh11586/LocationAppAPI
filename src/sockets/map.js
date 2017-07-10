@@ -332,16 +332,21 @@ function groupLocation(mapNamespace) {
           start_latlng: startLatlng,
           end_latlng: endLatlng,
           stopovers,
+          start_time: startTime,
+          end_time: endTime,
           start_radius: startRadius,
           end_radius: endRadius,
         } = JSON.parse(body);
 
-        groupModel.addRoute(groupId,
+        groupModel.addRoute(
+          groupId,
           startLatlng,
           endLatlng,
           startRadius,
           endRadius,
           stopovers,
+          startTime,
+          endTime,
           (err, data) => {
             socket.emit('add_route_callback', data);
             socket.join(groupId);

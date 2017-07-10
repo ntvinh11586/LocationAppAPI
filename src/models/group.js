@@ -327,7 +327,8 @@ function deleteUserIntoStopover(groupId, userId, stopoverId, callback) {
   });
 }
 
-function addRoute(groupId, startLatlng, endLatlng, startRadius, endRadius, stopovers, callback) {
+function addRoute(groupId, startLatlng, endLatlng, startRadius,
+  endRadius, stopovers, startTime, endTime, callback) {
   groupRepository.findById(groupId, (err, group) => {
     if (err) {
       callback(err, {
@@ -344,6 +345,8 @@ function addRoute(groupId, startLatlng, endLatlng, startRadius, endRadius, stopo
     } else {
       group.start_latlng = startLatlng;
       group.start_radius = startRadius;
+      group.start_time = startTime;
+      group.end_time = endTime;
       group.end_latlng = endLatlng;
       group.end_radius = endRadius;
       group.stopovers = stopovers;
