@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
-const BASE_URL = 'http://localhost:3000';
-// const BASE_URL = 'https://stormy-woodland-18039.herokuapp.com';
+// const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://stormy-woodland-18039.herokuapp.com';
 const NAMESPACE = 'maps';
 const URL = `${BASE_URL}/${NAMESPACE}`;
 

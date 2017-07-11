@@ -3,7 +3,8 @@ const groupRepository = require('../repositories/group');
 
 function createGroup({ name, type, createdDate: created_date }) {
   return new Promise((resolve, reject) => {
-    groupRepository.create({ name, type, created_date }, (error, group) => {
+    const avatarUrl = 'http://res.cloudinary.com/togoimagestore/image/upload/v1499793553/default-group-avatar_dznjmo.png';
+    groupRepository.create({ name, type, created_date, avatar_url: avatarUrl }, (error, group) => {
       if (error) {
         reject(new Error(JSON.stringify({
           status_code: 422,
