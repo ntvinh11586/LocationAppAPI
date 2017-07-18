@@ -108,7 +108,10 @@ http {
 	 }
 	 upstream nodebeats {
 		 ip_hash;
-		 server unix:/tmp/nginx.socket fail_timeout=0;
+		 server 127.0.0.1:8001 fail_timeout=0;
+		 server 127.0.0.1:8002 fail_timeout=0;
+		 server 127.0.0.1:8003 fail_timeout=0;
+		 server 127.0.0.1:8004 fail_timeout=0;
 		 keepalive	32;
 	}
 
